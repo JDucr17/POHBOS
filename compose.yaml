@@ -1,0 +1,52 @@
+name: streamline
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: streamline-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - streamline
+
+  redis:
+    image: redis/redis-stack:7.4.0-v6
+    container_name: streamline-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_INSIGHT_PORT:-8001}:8001"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - streamline
+
+volumes:
+  postgres_data:
+    name: streamline_postgres_data
+  redis_data:
+    name: streamline_redis_data
+
+networks:
+  streamline:
+    name: streamline
+    driver: bridge
