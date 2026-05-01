@@ -2,9 +2,13 @@
 export
 
 MIGRATIONS_DIR = infra/migrations
+PROTO_DIR      = schemas
+GO_PROTO_OUT   = services/event-processor/internal/extractor/proto
+GO_MODULE      = github.com/JDucr17/streamline
+
 DATABASE_URL ?= postgres://streamline:streamline@localhost:5432/streamline?sslmode=disable
 
-.PHONY: up down migrate migrate-down migrate-status psql
+.PHONY: up down migrate migrate-down migrate-status psql proto
 
 up:
 	docker compose up -d
@@ -23,3 +27,11 @@ migrate-status:
 
 psql:
 	docker compose exec postgres psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
+
+proto:
+	mkdir -p $(GO_PROTO_OUT)
+	protoc \
+		--proto_path=$(PROTO_DIR) \
+		--go_out=. \
+		--go_opt=module=$(GO_MODULE) \
+		$(PROTO_DIR)/streamline/v1/feature_registry.proto
