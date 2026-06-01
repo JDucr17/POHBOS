@@ -316,3 +316,4 @@ docker-compose.local.yml
 # Database dumps
 *.sql.gz
 *.dump
+.vscode
