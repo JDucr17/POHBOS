@@ -2,53 +2,53 @@ syntax = "proto3";
 
 package streamline.v1;
 
-option go_package = "github.com/JDucr17/streamline/services/event-processor/internal/extractor/proto;featurepb";
+option go_package = "github.com/JDucr17/streamline/services/pipeline/internal/extractor/proto;featurepb";
 
 // FeatureType represents the set of supported feature types.
 // Each has a different Redis storage strategy.
 enum FeatureType {
-  FEATURE_TYPE_UNSPECIFIED  = 0;
-  FEATURE_TYPE_COUNT        = 1;  // counter incremented per event
-  FEATURE_TYPE_NUMERIC      = 2;  // measured value, aggregated across events
-  FEATURE_TYPE_RATIO        = 3;  // matching events / total events
-  FEATURE_TYPE_HLL_DISTINCT = 4;  // approximate cardinality of a field
-  FEATURE_TYPE_ENTROPY      = 5;  // Shannon entropy over a field's distribution
-  FEATURE_TYPE_TIME_GAP     = 6;  // seconds since the visitor's last event
+  FEATURE_TYPE_UNSPECIFIED = 0;
+  FEATURE_TYPE_COUNT = 1; // counter incremented per event
+  FEATURE_TYPE_NUMERIC = 2; // measured value, aggregated across events
+  FEATURE_TYPE_RATIO = 3; // matching events / total events
+  FEATURE_TYPE_HLL_DISTINCT = 4; // approximate cardinality of a field
+  FEATURE_TYPE_ENTROPY = 5; // Shannon entropy over a field's distribution
+  FEATURE_TYPE_TIME_GAP = 6; // seconds since the visitor's last event
 }
 
 // Transform applied to feature values before histogram fitting and scoring.
 enum Transform {
   TRANSFORM_UNSPECIFIED = 0;
-  TRANSFORM_LOG1P       = 1;  // log(1+x), for compressing count features with wide dynamic range
+  TRANSFORM_LOG1P = 1; // log(1+x), for compressing count features with wide dynamic range
 }
 
 // Aggregation collapses a numeric feature's running Redis state into one value at score time.
 enum Aggregation {
   AGGREGATION_UNSPECIFIED = 0;
-  AGGREGATION_MEAN        = 1;  // running average
-  AGGREGATION_CV          = 2;  // stddev / mean
-  AGGREGATION_LAST        = 3;  // most recent value
-  AGGREGATION_MAX         = 4;  // running maximum
+  AGGREGATION_MEAN = 1; // running average
+  AGGREGATION_CV = 2; // stddev / mean
+  AGGREGATION_LAST = 3; // most recent value
+  AGGREGATION_MAX = 4; // running maximum
 }
 
 // Field names a property of the raw HTTP event.
 // Used by HLL_DISTINCT (which value to dedupe) and ENTROPY (which value to track).
 enum Field {
   FIELD_UNSPECIFIED = 0;
-  FIELD_URI         = 1;
+  FIELD_URI = 1;
   FIELD_HTTP_METHOD = 2;
 }
 
 // FeatureDef declares one feature.
 message FeatureDef {
-  string      name                = 1;
-  FeatureType type                = 2;
-  Transform   transform           = 3;
-  Aggregation aggregation         = 4;
-  Field       field               = 5;
-  string      numerator_predicate = 6;
-  string      denominator         = 7;
-  int32       denominator_offset  = 8;
+  string name = 1;
+  FeatureType type = 2;
+  Transform transform = 3;
+  Aggregation aggregation = 4;
+  Field field = 5;
+  string numerator_predicate = 6;
+  string denominator = 7;
+  int32 denominator_offset = 8;
 }
 
 message Registry {
