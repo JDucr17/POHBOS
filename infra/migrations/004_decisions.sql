@@ -5,9 +5,7 @@ CREATE TABLE decisions (
                                       CHECK (length(source_id) <= 64),
     visitor_id       text             NOT NULL
                                       CHECK (length(visitor_id) <= 128),
-    event_id         uuid             NOT NULL
-                                      REFERENCES events(id)
-                                      ON DELETE RESTRICT,
+    event_id         uuid             NOT NULL,
     score_raw        double precision
                                       CHECK (score_raw IS NULL OR score_raw >= 0),
     risk_level       text
@@ -22,6 +20,8 @@ CREATE TABLE decisions (
     baseline_run_id  bigint           REFERENCES baseline_runs(id)
                                       ON DELETE RESTRICT,
     decided_at       timestamptz      NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT decisions_event_id_unique UNIQUE (event_id),
 
     CHECK (
         (status = 'scored'               AND score_raw IS NOT NULL AND risk_level IS NOT NULL AND baseline_run_id IS NOT NULL) OR
