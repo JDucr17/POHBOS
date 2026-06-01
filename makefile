@@ -1,27 +1,43 @@
 -include .env
 export
 
-# Service abbreviations:
-#   ep   = event-processor
+MIGRATIONS_DIR = infra/migrations
+PROTO_DIR      = schemas
+GO_MODULE      = github.com/JDucr17/streamline
 
-MIGRATIONS_DIR      = infra/migrations
-PROTO_DIR           = schemas
-GO_PROTO_OUT        = services/event-processor/internal/extractor/proto
-GO_MODULE           = github.com/JDucr17/streamline
-EP_DIR              = services/event-processor
-QAPI_DIR            = services/query-api
-BIN_DIR             = bin
+PIPELINE_DIR   = services/pipeline
+BIN_DIR        = bin
 
 DATABASE_URL ?= postgres://streamline:streamline@localhost:5432/streamline?sslmode=disable
+GO_PROTO_OUT = services/pipeline/internal/extractor/proto
 
-.PHONY: up down migrate migrate-down migrate-status psql proto \
-        run-ep build-ep
+PEEK_COUNT ?= 5
+
+.PHONY: up down restart logs ps \
+        migrate migrate-down migrate-status psql \
+        proto kafka-topics list-topics peek-events peek-decisions peek-dlq \
+        run-ingestor build-ingestor \
+        run-event-sink run-decision-sink build-sink \
+        run-detector build-detector \
+        run build \
+		clean
+
+clean:
+	rm -rf $(BIN_DIR)/*
 
 up:
 	docker compose up -d
 
 down:
 	docker compose down
+
+restart: down up
+
+logs:
+	docker compose logs -f
+
+ps:
+	docker compose ps
 
 migrate:
 	goose -dir $(MIGRATIONS_DIR) postgres "$(DATABASE_URL)" up
@@ -43,10 +59,46 @@ proto:
 		--go_opt=module=$(GO_MODULE) \
 		$(PROTO_DIR)/streamline/v1/feature_registry.proto
 
-run-ep:
-	cd $(EP_DIR) && go run ./cmd
+kafka-topics:
+	./infra/kafka/create_topics.sh
 
-build-ep:
-	cd $(EP_DIR) && go build -o $(BIN_DIR)/event-processor ./cmd
+list-topics:
+	docker compose exec redpanda rpk topic list
 
-build: build-ep build-qapi
+peek-events:
+	docker compose exec redpanda rpk topic consume raw_events --num $(PEEK_COUNT)
+
+peek-decisions:
+	docker compose exec redpanda rpk topic consume decisions --num $(PEEK_COUNT)
+
+peek-dlq:
+	docker compose exec redpanda rpk topic consume dead_letter_events --num $(PEEK_COUNT)
+
+run-ingestor:
+	cd $(PIPELINE_DIR) && go run ./cmd/ingestor
+
+build-ingestor:
+	cd $(PIPELINE_DIR) && go build -o ../../$(BIN_DIR)/ingestor ./cmd/ingestor
+
+run-event-sink:
+	cd $(PIPELINE_DIR) && SINK_TARGET=events go run ./cmd/sink
+
+run-decision-sink:
+	cd $(PIPELINE_DIR) && SINK_TARGET=decisions go run ./cmd/sink
+
+build-sink:
+	cd $(PIPELINE_DIR) && go build -o ../../$(BIN_DIR)/sink ./cmd/sink
+
+run-detector:
+	cd $(PIPELINE_DIR) && go run ./cmd/detector
+
+build-detector:
+	cd $(PIPELINE_DIR) && go build -o ../../$(BIN_DIR)/detector ./cmd/detector
+
+build-queryapi:
+	cd $(PIPELINE_DIR) && go build -o ../../$(BIN_DIR)/queryapi ./cmd/queryapi
+
+run-query-api:
+	cd $(PIPELINE_DIR) && go run ./cmd/queryapi
+
+build: build-ingestor build-sink build-detector build-queryapi
