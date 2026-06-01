@@ -40,11 +40,43 @@ services:
     networks:
       - streamline
 
+  redpanda:
+    image: redpandadata/redpanda:v24.3.7
+    container_name: streamline-redpanda
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --mode=dev-container
+      - --smp=1
+      - --memory=1G
+      - --reserve-memory=0M
+      - --overprovisioned
+      - --node-id=0
+      - --check=false
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
+    ports:
+      - "${REDPANDA_HOST_PORT:-19092}:19092"
+      - "${REDPANDA_ADMIN_PORT:-9644}:9644"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - streamline
+
 volumes:
   postgres_data:
     name: streamline_postgres_data
   redis_data:
     name: streamline_redis_data
+  redpanda_data:
+    name: streamline_redpanda_data
 
 networks:
   streamline:
