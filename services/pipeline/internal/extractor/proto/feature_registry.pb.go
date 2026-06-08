@@ -89,18 +89,21 @@ type Transform int32
 
 const (
 	Transform_TRANSFORM_UNSPECIFIED Transform = 0
-	Transform_TRANSFORM_LOG1P       Transform = 1 // log(1+x), for compressing count features with wide dynamic range
+	Transform_TRANSFORM_IDENTITY    Transform = 1 // use the raw feature value
+	Transform_TRANSFORM_LOG1P       Transform = 2 // log(1+x); compresses wide-range count features
 )
 
 // Enum value maps for Transform.
 var (
 	Transform_name = map[int32]string{
 		0: "TRANSFORM_UNSPECIFIED",
-		1: "TRANSFORM_LOG1P",
+		1: "TRANSFORM_IDENTITY",
+		2: "TRANSFORM_LOG1P",
 	}
 	Transform_value = map[string]int32{
 		"TRANSFORM_UNSPECIFIED": 0,
-		"TRANSFORM_LOG1P":       1,
+		"TRANSFORM_IDENTITY":    1,
+		"TRANSFORM_LOG1P":       2,
 	}
 )
 
@@ -407,10 +410,11 @@ const file_streamline_v1_feature_registry_proto_rawDesc = "" +
 	"\x12FEATURE_TYPE_RATIO\x10\x03\x12\x1d\n" +
 	"\x19FEATURE_TYPE_HLL_DISTINCT\x10\x04\x12\x18\n" +
 	"\x14FEATURE_TYPE_ENTROPY\x10\x05\x12\x19\n" +
-	"\x15FEATURE_TYPE_TIME_GAP\x10\x06*;\n" +
+	"\x15FEATURE_TYPE_TIME_GAP\x10\x06*S\n" +
 	"\tTransform\x12\x19\n" +
-	"\x15TRANSFORM_UNSPECIFIED\x10\x00\x12\x13\n" +
-	"\x0fTRANSFORM_LOG1P\x10\x01*\x7f\n" +
+	"\x15TRANSFORM_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12TRANSFORM_IDENTITY\x10\x01\x12\x13\n" +
+	"\x0fTRANSFORM_LOG1P\x10\x02*\x7f\n" +
 	"\vAggregation\x12\x1b\n" +
 	"\x17AGGREGATION_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10AGGREGATION_MEAN\x10\x01\x12\x12\n" +

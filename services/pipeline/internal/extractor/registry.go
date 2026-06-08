@@ -27,6 +27,7 @@ const (
 
 	//Transformations
 	Log1p = pb.Transform_TRANSFORM_LOG1P
+	Identity = pb.Transform_TRANSFORM_IDENTITY
 
 	//Aggregations
 	Mean = pb.Aggregation_AGGREGATION_MEAN
@@ -43,20 +44,20 @@ const (
 var HTTPFeatures = []*pb.FeatureDef{
 	// Volume
 	{Name: "session_request_count", Type: Count, Transform: Log1p},
-	{Name: "session_duration_seconds", Type: Numeric, Aggregation: Last},
+	{Name: "session_duration_seconds", Type: Numeric, Aggregation: Last, Transform: Identity},
 
 	// Timing
-	{Name: "mean_inter_request_gap_ms", Type: Numeric, Aggregation: Mean},
-	{Name: "inter_request_gap_cv", Type: Numeric, Aggregation: CV},
+	{Name: "mean_inter_request_gap_ms", Type: Numeric, Aggregation: Mean, Transform: Identity},
+	{Name: "inter_request_gap_cv", Type: Numeric, Aggregation: CV, Transform: Identity},
 
 	// Resource type
 	{Name: "distinct_endpoints_hit", Type: HLLDistinct, Field: FieldURI, Transform: Log1p},
-	{Name: "html_to_asset_ratio", Type: Ratio, NumeratorPredicate: "is_html", Denominator: "session_request_count"},
+	{Name: "html_to_asset_ratio", Type: Ratio, NumeratorPredicate: "is_html", Denominator: "session_request_count", Transform: Identity},
 
 	// HTTP semantics
-	{Name: "error_4xx_rate", Type: Ratio, NumeratorPredicate: "is_4xx_response", Denominator: "session_request_count"},
-	{Name: "method_entropy", Type: Entropy, Field: FieldHTTPMethod},
+	{Name: "error_4xx_rate", Type: Ratio, NumeratorPredicate: "is_4xx_response", Denominator: "session_request_count", Transform: Identity},
+	{Name: "method_entropy", Type: Entropy, Field: FieldHTTPMethod, Transform: Identity},
 
 	// Headers
-	{Name: "has_referrer_ratio", Type: Ratio, NumeratorPredicate: "has_referrer", Denominator: "session_request_count", DenominatorOffset: -1},
+	{Name: "has_referrer_ratio", Type: Ratio, NumeratorPredicate: "has_referrer", Denominator: "session_request_count", DenominatorOffset: -1, Transform: Identity},
 }

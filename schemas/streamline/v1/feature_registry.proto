@@ -18,8 +18,9 @@ enum FeatureType {
 
 // Transform applied to feature values before histogram fitting and scoring.
 enum Transform {
-  TRANSFORM_UNSPECIFIED = 0;
-  TRANSFORM_LOG1P = 1; // log(1+x), for compressing count features with wide dynamic range
+  TRANSFORM_UNSPECIFIED = 0;  
+  TRANSFORM_IDENTITY = 1;     // use the raw feature value
+  TRANSFORM_LOG1P = 2;        // log(1+x); compresses wide-range count features
 }
 
 // Aggregation collapses a numeric feature's running Redis state into one value at score time.
