@@ -5,10 +5,10 @@ from typing import Annotated
 
 import typer
 
-from streamline_replay.observability import configure_logging
-from streamline_replay.replay import replay_eclog
-from streamline_replay.stats import ReplayStats
-from streamline_replay.errors import EmptyInputError
+from traffic_replay.observability import configure_logging
+from traffic_replay.replay import replay_eclog
+from traffic_replay.stats import ReplayStats
+from traffic_replay.errors import EmptyInputError
 
 logger = logging.getLogger(__name__)
 

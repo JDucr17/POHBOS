@@ -6,7 +6,7 @@ from time import perf_counter
 import aiohttp
 import orjson
 
-from streamline_replay.models import IngestEvent
+from traffic_replay.models import IngestEvent
 
 JSON_HEADERS = {"Content-Type": "application/json"}
 

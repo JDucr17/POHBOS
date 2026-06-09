@@ -1,10 +1,10 @@
 import asyncio
 from collections.abc import Callable, Iterator
 
-from streamline_replay.client import IngestClient, IngestResult
-from streamline_replay.models import IngestEvent
-from streamline_replay.rate import RequestScheduler
-from streamline_replay.stats import ReplayStats
+from traffic_replay.client import IngestClient, IngestResult
+from traffic_replay.models import IngestEvent
+from traffic_replay.rate import RequestScheduler
+from traffic_replay.stats import ReplayStats
 
 DEFAULT_PROGRESS_EVERY = 10000
 

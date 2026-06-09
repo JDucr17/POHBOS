@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from streamline_replay.client import IngestResult
+from traffic_replay.client import IngestResult
 
 
 @dataclass(frozen=True, slots=True)

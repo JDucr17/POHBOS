@@ -14,7 +14,7 @@ from collections.abc import Iterator, Mapping
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from streamline_replay.models import IngestEvent
+from traffic_replay.models import IngestEvent
 
 logger = logging.getLogger(__name__)
 

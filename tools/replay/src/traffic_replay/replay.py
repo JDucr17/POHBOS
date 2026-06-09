@@ -4,13 +4,13 @@ from itertools import islice
 from pathlib import Path
 from time import perf_counter
 
-from streamline_replay.adapters.eclog import iter_eclog_events
-from streamline_replay.client import open_ingest_client
-from streamline_replay.dispatch import ProgressCallback, dispatch_events
-from streamline_replay.models import IngestEvent
-from streamline_replay.rate import RequestScheduler
-from streamline_replay.stats import ReplayStats, ReplaySummary
-from streamline_replay.errors import EmptyInputError
+from traffic_replay.adapters.eclog import iter_eclog_events
+from traffic_replay.client import open_ingest_client
+from traffic_replay.dispatch import ProgressCallback, dispatch_events
+from traffic_replay.models import IngestEvent
+from traffic_replay.rate import RequestScheduler
+from traffic_replay.stats import ReplayStats, ReplaySummary
+from traffic_replay.errors import EmptyInputError
 
 
 async def replay_eclog(
