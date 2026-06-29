@@ -93,7 +93,7 @@ var extensionResourceTypes = map[string]ResourceType{
 // resource vocabulary. It is intentionally coarse: downstream features
 // aggregate these buckets into numeric ratios for HBOS.
 func ClassifyResourceType(rawURI string) ResourceType {
-	requestPath := pathFromRequestURI(rawURI)
+	requestPath := EndpointPath(rawURI)
 	if requestPath == "" {
 		return ResourceOther
 	}
@@ -121,7 +121,12 @@ func ClassifyResourceType(rawURI string) ResourceType {
 	return ResourceOther
 }
 
-func pathFromRequestURI(rawURI string) string {
+// EndpointPath reduces a request URI to its endpoint identity: the path with
+// query and fragment removed. Two requests share an endpoint when their paths
+// match, so /p/1 and /p/2 differ but /p/1?ref=a and /p/1?ref=b do not. Used by
+// resource classification and by the baseline worker's distinct_endpoints_hit
+// feature, which must strip paths identically on the fit and scoring sides.
+func EndpointPath(rawURI string) string {
 	rawURI = strings.TrimSpace(rawURI)
 	if rawURI == "" {
 		return ""
