@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/JDucr17/streamline/services/pipeline/internal/app/queryapi"
 	"github.com/JDucr17/streamline/services/pipeline/internal/logging"
 )
 
@@ -33,13 +34,15 @@ func run() error {
 		return err
 	}
 
-	consumer, closeConsumer, err := setupConsumer(cfg.kafka, store)
+	hub := queryapi.NewHub(cfg.sse.maxClients, cfg.sse.clientBuffer)
+
+	consumer, closeConsumer, err := setupConsumer(cfg.kafka, store, hub)
 	if err != nil {
 		return err
 	}
 	defer closeConsumer()
 
-	server := setupServer(cfg.http, store, db)
+	server := setupServer(cfg.http, cfg.sse, store, db, hub)
 
 	return runWithShutdown(server, consumer, cfg)
 }

@@ -1,10 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/JDucr17/streamline/services/pipeline/internal/config"
@@ -18,12 +15,21 @@ const (
 	envQueryAPIConsumerGroup = "QUERY_API_CONSUMER_GROUP"
 	envVisitorTTL            = "QUERY_VISITOR_TTL"
 	envRecentRingCapacity    = "QUERY_RECENT_RING_CAPACITY"
+
+	envSSEMaxClients    = "QUERY_SSE_MAX_CLIENTS"
+	envSSEClientBuffer  = "QUERY_SSE_CLIENT_BUFFER"
+	envSSEBackfillLimit = "QUERY_SSE_BACKFILL_LIMIT"
+	envSSEAllowOrigin   = "QUERY_SSE_ALLOW_ORIGIN"
 )
 
 const (
 	defaultHTTPAddr           = ":8083"
 	defaultVisitorTTL         = 30 * time.Minute
 	defaultRecentRingCapacity = 1 << 17 // 131,072 retained decisions
+
+	defaultSSEMaxClients    = 100
+	defaultSSEClientBuffer  = 256
+	defaultSSEBackfillLimit = 50
 
 	startupTimeout  = 10 * time.Second
 	shutdownTimeout = 30 * time.Second
@@ -38,6 +44,7 @@ type appConfig struct {
 	http        httpConfig
 	kafka       kafkaConfig
 	store       storeConfig
+	sse         sseConfig
 }
 
 type httpConfig struct {
@@ -53,6 +60,13 @@ type kafkaConfig struct {
 type storeConfig struct {
 	visitorTTL   time.Duration
 	ringCapacity int
+}
+
+type sseConfig struct {
+	maxClients    int
+	clientBuffer  int
+	backfillLimit int
+	allowedOrigin string
 }
 
 func loadConfig() (appConfig, error) {
@@ -71,6 +85,11 @@ func loadConfig() (appConfig, error) {
 		return appConfig{}, err
 	}
 
+	sseCfg, err := loadSSEConfig(storeCfg.ringCapacity)
+	if err != nil {
+		return appConfig{}, err
+	}
+
 	return appConfig{
 		databaseURL: databaseURL,
 		http: httpConfig{
@@ -78,25 +97,23 @@ func loadConfig() (appConfig, error) {
 		},
 		kafka: kafkaCfg,
 		store: storeCfg,
+		sse:   sseCfg,
 	}, nil
 }
 
 func loadKafkaConfig() (kafkaConfig, error) {
-	brokers := config.SplitCSV(os.Getenv(envKafkaBrokers))
-	topic := strings.TrimSpace(os.Getenv(envKafkaDecisionsTopic))
-	group := strings.TrimSpace(os.Getenv(envQueryAPIConsumerGroup))
+	var req config.RequiredVars
 
-	if len(brokers) == 0 || topic == "" || group == "" {
-		return kafkaConfig{}, errors.New(
-			"KAFKA_BROKERS, KAFKA_DECISIONS_TOPIC, and QUERY_API_CONSUMER_GROUP are required",
-		)
+	cfg := kafkaConfig{
+		brokers:        req.CSV(envKafkaBrokers),
+		decisionsTopic: req.Get(envKafkaDecisionsTopic),
+		consumerGroup:  req.Get(envQueryAPIConsumerGroup),
 	}
 
-	return kafkaConfig{
-		brokers:        brokers,
-		decisionsTopic: topic,
-		consumerGroup:  group,
-	}, nil
+	if err := req.Err(); err != nil {
+		return kafkaConfig{}, err
+	}
+	return cfg, nil
 }
 
 func loadStoreConfig() (storeConfig, error) {
@@ -120,4 +137,28 @@ func loadStoreConfig() (storeConfig, error) {
 		visitorTTL:   ttl,
 		ringCapacity: capacity,
 	}, nil
+}
+
+func loadSSEConfig(ringCapacity int) (sseConfig, error) {
+	var opt config.OptionalVars
+
+	cfg := sseConfig{
+		maxClients:    opt.IntAtLeast(envSSEMaxClients, defaultSSEMaxClients, 1),
+		clientBuffer:  opt.IntAtLeast(envSSEClientBuffer, defaultSSEClientBuffer, 1),
+		backfillLimit: opt.IntAtLeast(envSSEBackfillLimit, defaultSSEBackfillLimit, 1),
+		allowedOrigin: config.EnvOrDefault(envSSEAllowOrigin, ""),
+	}
+
+	if err := opt.Err(); err != nil {
+		return sseConfig{}, err
+	}
+
+	// Backfill replays from the recent ring, so it can never ask for more than
+	// the ring retains.
+	if cfg.backfillLimit > ringCapacity {
+		return sseConfig{}, fmt.Errorf("%s (%d) must not exceed %s (%d)",
+			envSSEBackfillLimit, cfg.backfillLimit, envRecentRingCapacity, ringCapacity)
+	}
+
+	return cfg, nil
 }
