@@ -16,6 +16,7 @@ INSERT INTO decisions (
     visitor_id,
     event_id,
     score_raw,
+    score_normalized,
     risk_level,
     action,
     status,
@@ -30,12 +31,13 @@ FROM unnest(
     $3::text[],
     $4::uuid[],
     $5::double precision[],
-    $6::text[],
+    $6::double precision[],
     $7::text[],
     $8::text[],
     $9::text[],
-    $10::bigint[],
-    $11::timestamptz[]
+    $10::text[],
+    $11::bigint[],
+    $12::timestamptz[]
 )
 ON CONFLICT (event_id) DO NOTHING
 `
@@ -75,7 +77,8 @@ func (w *DecisionWriter) InsertDecisions(ctx context.Context, decisions []Decisi
 		cols.sources,
 		cols.visitors,
 		cols.eventIDs,
-		cols.scoreRaws,
+		cols.rawScores,
+		cols.normalizedScores,
 		cols.riskLevels,
 		cols.actions,
 		cols.statuses,
@@ -97,32 +100,34 @@ func (w *DecisionWriter) InsertDecisions(ctx context.Context, decisions []Decisi
 
 // Column arrays passed to UNNEST. All slices must have identical length.
 type decisionColumns struct {
-	ids            []string
-	sources        []string
-	visitors       []string
-	eventIDs       []string
-	scoreRaws      []*float64
-	riskLevels     []*string
-	actions        []string
-	statuses       []string
-	policyVersions []string
-	baselineRunIDs []*int64
-	decidedAt      []time.Time
+	ids              []string
+	sources          []string
+	visitors         []string
+	eventIDs         []string
+	rawScores        []*float64
+	normalizedScores []*float64
+	riskLevels       []*string
+	actions          []string
+	statuses         []string
+	policyVersions   []string
+	baselineRunIDs   []*int64
+	decidedAt        []time.Time
 }
 
 func buildDecisionColumns(decisions []DecisionInsert) decisionColumns {
 	cols := decisionColumns{
-		ids:            make([]string, len(decisions)),
-		sources:        make([]string, len(decisions)),
-		visitors:       make([]string, len(decisions)),
-		eventIDs:       make([]string, len(decisions)),
-		scoreRaws:      make([]*float64, len(decisions)),
-		riskLevels:     make([]*string, len(decisions)),
-		actions:        make([]string, len(decisions)),
-		statuses:       make([]string, len(decisions)),
-		policyVersions: make([]string, len(decisions)),
-		baselineRunIDs: make([]*int64, len(decisions)),
-		decidedAt:      make([]time.Time, len(decisions)),
+		ids:              make([]string, len(decisions)),
+		sources:          make([]string, len(decisions)),
+		visitors:         make([]string, len(decisions)),
+		eventIDs:         make([]string, len(decisions)),
+		rawScores:        make([]*float64, len(decisions)),
+		normalizedScores: make([]*float64, len(decisions)),
+		riskLevels:       make([]*string, len(decisions)),
+		actions:          make([]string, len(decisions)),
+		statuses:         make([]string, len(decisions)),
+		policyVersions:   make([]string, len(decisions)),
+		baselineRunIDs:   make([]*int64, len(decisions)),
+		decidedAt:        make([]time.Time, len(decisions)),
 	}
 
 	for i, item := range decisions {
@@ -130,7 +135,8 @@ func buildDecisionColumns(decisions []DecisionInsert) decisionColumns {
 		cols.sources[i] = item.SourceID
 		cols.visitors[i] = item.VisitorID
 		cols.eventIDs[i] = item.EventID
-		cols.scoreRaws[i] = item.Decision.ScoreRaw
+		cols.rawScores[i] = item.Decision.ScoreRaw
+		cols.normalizedScores[i] = item.Decision.ScoreNormalized
 		cols.riskLevels[i] = item.Decision.RiskLevel
 		cols.actions[i] = item.Decision.Action
 		cols.statuses[i] = item.Decision.Status
