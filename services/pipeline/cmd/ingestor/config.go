@@ -1,9 +1,6 @@
 package main
 
 import (
-	"errors"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/JDucr17/streamline/services/pipeline/internal/config"
@@ -54,15 +51,15 @@ func loadConfig() (appConfig, error) {
 }
 
 func loadKafkaConfig() (kafkaConfig, error) {
-	topic := strings.TrimSpace(os.Getenv(envKafkaRawEventsTopic))
-	brokers := config.SplitCSV(os.Getenv(envKafkaBrokers))
+	var req config.RequiredVars
 
-	if len(brokers) == 0 || topic == "" {
-		return kafkaConfig{}, errors.New("KAFKA_BROKERS and KAFKA_RAW_EVENTS_TOPIC are required")
+	cfg := kafkaConfig{
+		brokers: req.CSV(envKafkaBrokers),
+		topic:   req.Get(envKafkaRawEventsTopic),
 	}
 
-	return kafkaConfig{
-		brokers: brokers,
-		topic:   topic,
-	}, nil
+	if err := req.Err(); err != nil {
+		return kafkaConfig{}, err
+	}
+	return cfg, nil
 }
