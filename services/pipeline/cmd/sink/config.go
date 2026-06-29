@@ -1,10 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/JDucr17/streamline/services/pipeline/internal/config"
@@ -19,6 +16,11 @@ const (
 	envSinkTarget                 = "SINK_TARGET"
 	envSinkEventsConsumerGroup    = "SINK_EVENTS_CONSUMER_GROUP"
 	envSinkDecisionsConsumerGroup = "SINK_DECISIONS_CONSUMER_GROUP"
+)
+
+const (
+	sinkTargetEvents    = "events"
+	sinkTargetDecisions = "decisions"
 )
 
 const (
@@ -67,56 +69,64 @@ func loadConfig() (appConfig, error) {
 }
 
 func loadKafkaConfig() (kafkaConfig, error) {
-	brokers := config.SplitCSV(os.Getenv(envKafkaBrokers))
-	dlqTopic := strings.TrimSpace(os.Getenv(envKafkaDLQTopic))
+	var req config.RequiredVars
 
-	if len(brokers) == 0 || dlqTopic == "" {
-		return kafkaConfig{}, errors.New("KAFKA_BROKERS and KAFKA_DEAD_LETTER_TOPIC are required")
+	cfg := kafkaConfig{
+		brokers:  req.CSV(envKafkaBrokers),
+		dlqTopic: req.Get(envKafkaDLQTopic),
 	}
 
-	return kafkaConfig{
-		brokers:  brokers,
-		dlqTopic: dlqTopic,
-	}, nil
+	if err := req.Err(); err != nil {
+		return kafkaConfig{}, err
+	}
+
+	return cfg, nil
 }
 
 func loadSinkTarget() (sinkTarget, error) {
-	target := strings.TrimSpace(os.Getenv(envSinkTarget))
+	target, err := config.RequiredEnv(envSinkTarget)
+	if err != nil {
+		return sinkTarget{}, err
+	}
 
 	switch target {
-	case "events":
-		topic := strings.TrimSpace(os.Getenv(envKafkaRawEventsTopic))
-		group := strings.TrimSpace(os.Getenv(envSinkEventsConsumerGroup))
+	case sinkTargetEvents:
+		var req config.RequiredVars
 
-		if topic == "" || group == "" {
-			return sinkTarget{}, errors.New(
-				"KAFKA_RAW_EVENTS_TOPIC and SINK_EVENTS_CONSUMER_GROUP are required for SINK_TARGET=events",
-			)
+		cfg := sinkTarget{
+			name:          sinkTargetEvents,
+			sourceTopic:   req.Get(envKafkaRawEventsTopic),
+			consumerGroup: req.Get(envSinkEventsConsumerGroup),
 		}
 
-		return sinkTarget{
-			name:          "events",
-			sourceTopic:   topic,
-			consumerGroup: group,
-		}, nil
-
-	case "decisions":
-		topic := strings.TrimSpace(os.Getenv(envKafkaDecisionsTopic))
-		group := strings.TrimSpace(os.Getenv(envSinkDecisionsConsumerGroup))
-
-		if topic == "" || group == "" {
-			return sinkTarget{}, errors.New(
-				"KAFKA_DECISIONS_TOPIC and SINK_DECISIONS_CONSUMER_GROUP are required for SINK_TARGET=decisions",
-			)
+		if err := req.Err(); err != nil {
+			return sinkTarget{}, fmt.Errorf("load events sink config: %w", err)
 		}
 
-		return sinkTarget{
-			name:          "decisions",
-			sourceTopic:   topic,
-			consumerGroup: group,
-		}, nil
+		return cfg, nil
+
+	case sinkTargetDecisions:
+		var req config.RequiredVars
+
+		cfg := sinkTarget{
+			name:          sinkTargetDecisions,
+			sourceTopic:   req.Get(envKafkaDecisionsTopic),
+			consumerGroup: req.Get(envSinkDecisionsConsumerGroup),
+		}
+
+		if err := req.Err(); err != nil {
+			return sinkTarget{}, fmt.Errorf("load decisions sink config: %w", err)
+		}
+
+		return cfg, nil
 
 	default:
-		return sinkTarget{}, fmt.Errorf("invalid SINK_TARGET %q; expected events or decisions", target)
+		return sinkTarget{}, fmt.Errorf(
+			"invalid %s %q; expected %s or %s",
+			envSinkTarget,
+			target,
+			sinkTargetEvents,
+			sinkTargetDecisions,
+		)
 	}
 }
