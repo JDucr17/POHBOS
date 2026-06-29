@@ -2,23 +2,26 @@
 export
 
 MIGRATIONS_DIR = infra/migrations
-PROTO_DIR      = schemas
 GO_MODULE      = github.com/JDucr17/streamline
 
-PIPELINE_DIR   = services/pipeline
-BIN_DIR        = bin
+PIPELINE_DIR        = services/pipeline
+BASELINE_WORKER_DIR = services/baseline-worker
+BIN_DIR             = bin
 
 DATABASE_URL ?= postgres://streamline:streamline@localhost:5432/streamline?sslmode=disable
-GO_PROTO_OUT = services/pipeline/internal/extractor/proto
+REDIS_URL    ?= redis://localhost:6379
+
 
 PEEK_COUNT ?= 5
 
 .PHONY: up down restart logs ps \
         migrate migrate-down migrate-status psql \
-        proto kafka-topics list-topics peek-events peek-decisions peek-dlq \
+        kafka-topics list-topics peek-events peek-decisions peek-dlq \
         run-ingestor build-ingestor \
         run-event-sink run-decision-sink build-sink \
         run-detector build-detector \
+        run-query-api build-queryapi \
+        run-baseline-worker build-baseline-worker \
         run build \
 		clean
 
@@ -50,14 +53,6 @@ migrate-status:
 
 psql:
 	docker compose exec postgres psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
-
-proto:
-	mkdir -p $(GO_PROTO_OUT)
-	protoc \
-		--proto_path=$(PROTO_DIR) \
-		--go_out=. \
-		--go_opt=module=$(GO_MODULE) \
-		$(PROTO_DIR)/streamline/v1/feature_registry.proto
 
 kafka-topics:
 	./infra/kafka/create_topics.sh
@@ -101,4 +96,10 @@ build-queryapi:
 run-query-api:
 	cd $(PIPELINE_DIR) && go run ./cmd/queryapi
 
-build: build-ingestor build-sink build-detector build-queryapi
+run-baseline-worker:
+	cd $(PIPELINE_DIR) && go run ./cmd/baseline-worker
+
+build-baseline-worker:
+	cd $(PIPELINE_DIR) && go build -o ../../$(BIN_DIR)/baseline-worker ./cmd/baseline-worker
+
+build: build-ingestor build-sink build-detector build-queryapi build-baseline-worker
