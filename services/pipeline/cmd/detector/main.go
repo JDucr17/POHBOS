@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 
@@ -23,13 +24,37 @@ func run() error {
 		return err
 	}
 
-	consumer, decisionsProducer, dlqProducer, closeBrokers, err := setupBrokers(kafkaCfg)
+	storeCfg, err := loadStoreConfig()
 	if err != nil {
 		return err
 	}
-	defer closeBrokers()
 
-	det := detector.NewDetector(consumer, decisionsProducer, dlqProducer)
+	windowCfg, err := loadWindowConfig()
+	if err != nil {
+		return err
+	}
 
-	return runWithShutdown(det, kafkaCfg)
+	startupCtx, cancel := context.WithTimeout(context.Background(), startupTimeout)
+	defer cancel()
+
+	c, err := setupClients(startupCtx, kafkaCfg, storeCfg, windowCfg)
+	if err != nil {
+		return err
+	}
+	defer c.close()
+
+	// No active policy is a configuration error, not a runtime status: refuse to
+	// start rather than emit decisions with no policy_version.
+	policy, err := detector.LoadActivePolicy(startupCtx, c.db)
+	if err != nil {
+		return err
+	}
+
+	servingSpec := servingExtractorSpec(windowCfg)
+	visitors := detector.NewVisitorStore(servingSpec.Length, servingSpec.Length)
+
+	det := detector.NewDetector(c.events, c.decisions, c.dlq, visitors, c.cache, policy, servingSpec)
+	signalConsumer := detector.NewBaselineSignalConsumer(c.signals, c.cache)
+
+	return runWithShutdown(det, signalConsumer, kafkaCfg)
 }
