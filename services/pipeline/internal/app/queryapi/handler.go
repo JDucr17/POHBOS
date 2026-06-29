@@ -10,20 +10,29 @@ import (
 type API struct {
 	store  *Store
 	reader *Reader
+	hub    *Hub
+	stream streamConfig
 }
 
-func NewAPI(store *Store, reader *Reader) *API {
+func NewAPI(store *Store, reader *Reader, hub *Hub, backfillLimit int, allowedOrigin string) *API {
 	return &API{
 		store:  store,
 		reader: reader,
+		hub:    hub,
+		stream: streamConfig{
+			backfillLimit: backfillLimit,
+			allowedOrigin: allowedOrigin,
+		},
 	}
 }
 
 func (a *API) HandleHealth(w http.ResponseWriter, r *http.Request) *httpapi.Error {
 	body := map[string]any{
-		"status":        "ok",
-		"visitor_count": a.store.VisitorCount(),
-		"recent_size":   a.store.RecentSize(),
+		"status":          "ok",
+		"visitor_count":   a.store.VisitorCount(),
+		"recent_size":     a.store.RecentSize(),
+		"sse_clients":     a.hub.ClientCount(),
+		"sse_max_clients": a.hub.MaxClients(),
 	}
 
 	return httpapi.EncodeJSON(w, http.StatusOK, body)

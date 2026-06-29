@@ -52,6 +52,47 @@ func (s *Store) Recent(limit int) []envelope.DecisionEnvelope {
 	return s.recent.Latest(limit)
 }
 
+// RecentInArrivalOrder returns recent retained decisions in the order they arrived.
+// limit<=0 means no backfill.
+func (s *Store) RecentInArrivalOrder(limit int) []envelope.DecisionEnvelope {
+	if limit <= 0 {
+		return nil
+	}
+
+	decisions := s.recent.Snapshot()
+	if limit >= len(decisions) {
+		return decisions
+	}
+
+	return decisions[len(decisions)-limit:]
+}
+
+// RecentForSourceInArrivalOrder returns recent retained decisions for one source
+// in arrival order, so SSE backfill matches the live stream's source filter. A
+// blank sourceID matches every source. limit<=0 means no backfill. It scans the
+// ring snapshot at call time rather than keeping a per-source index.
+func (s *Store) RecentForSourceInArrivalOrder(sourceID string, limit int) []envelope.DecisionEnvelope {
+	if limit <= 0 {
+		return nil
+	}
+	if sourceID == "" {
+		return s.RecentInArrivalOrder(limit)
+	}
+
+	matching := make([]envelope.DecisionEnvelope, 0, limit)
+	for _, decision := range s.recent.Snapshot() {
+		if decision.SourceID == sourceID {
+			matching = append(matching, decision)
+		}
+	}
+
+	if limit >= len(matching) {
+		return matching
+	}
+
+	return matching[len(matching)-limit:]
+}
+
 // EvictExpired removes expired visitor entries. Ring entries expire by overwrite.
 func (s *Store) EvictExpired() {
 	s.visitors.EvictExpired()

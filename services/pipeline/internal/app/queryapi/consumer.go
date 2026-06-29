@@ -21,12 +21,14 @@ const (
 type Consumer struct {
 	consumer *broker.Consumer
 	store    *Store
+	hub      *Hub
 }
 
-func NewConsumer(consumer *broker.Consumer, store *Store) *Consumer {
+func NewConsumer(consumer *broker.Consumer, store *Store, hub *Hub) *Consumer {
 	return &Consumer{
 		consumer: consumer,
 		store:    store,
+		hub:      hub,
 	}
 }
 
@@ -86,6 +88,7 @@ func (c *Consumer) pollAndProcess(ctx context.Context) error {
 
 	decisions := decodeDecisions(records)
 	c.store.RecordBatch(decisions)
+	c.hub.PublishBatch(decisions)
 
 	c.consumer.Client.MarkCommitRecords(records...)
 	return nil
