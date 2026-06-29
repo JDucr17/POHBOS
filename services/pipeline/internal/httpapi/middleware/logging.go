@@ -36,3 +36,9 @@ func (r *statusRecorder) WriteHeader(code int) {
 	r.status = code
 	r.ResponseWriter.WriteHeader(code)
 }
+
+// Unwrap exposes the wrapped writer so http.ResponseController can reach
+// capabilities this wrapper hides, such as the flush an SSE stream needs.
+func (r *statusRecorder) Unwrap() http.ResponseWriter {
+	return r.ResponseWriter
+}
