@@ -317,3 +317,9 @@ docker-compose.local.yml
 *.sql.gz
 *.dump
 .vscode
+
+# Node / Astro
+node_modules/
+.astro/
+.output/
+*.tsbuildinfo
