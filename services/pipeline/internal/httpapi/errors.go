@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/JDucr17/streamline/services/pipeline/internal/postgres"
-	"github.com/JDucr17/streamline/services/pipeline/internal/redis"
 )
 
 const StatusClientClosedRequest = 499
@@ -58,9 +57,6 @@ func ErrorFor(r *http.Request, err error) *Error {
 		return e
 	}
 
-	if errors.Is(err, redis.ErrUnavailable) {
-		return ServiceUnavailable(err)
-	}
 
 	return Internal(err)
 }
