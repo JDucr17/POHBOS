@@ -1,0 +1,110 @@
+---
+const groups = [
+  {
+    name: "Volume and pace",
+    features: [
+      { name: "window_request_count", desc: "How many requests the visitor made inside the window." },
+      { name: "window_span_seconds", desc: "How much time the window’s observed activity spans." },
+    ],
+  },
+  {
+    name: "Rhythm",
+    features: [
+      { name: "mean_inter_request_gap_ms", desc: "The average delay between page requests." },
+      { name: "inter_request_gap_cv", desc: "How variable the delay between page requests is." },
+    ],
+  },
+  {
+    name: "Content mix",
+    features: [
+      { name: "distinct_endpoints_hit", desc: "How many distinct endpoints the visitor touched." },
+      { name: "html_to_asset_ratio", desc: "How much of the traffic is page navigation versus supporting assets." },
+    ],
+  },
+  {
+    name: "Client hygiene",
+    features: [
+      { name: "error_4xx_rate", desc: "How often the visitor receives client-error responses." },
+      { name: "method_entropy", desc: "How varied the visitor’s HTTP methods are." },
+      { name: "has_referrer_ratio", desc: "How often requests include a referrer header." },
+    ],
+  },
+];
+---
+
+<div class="ftable my-6">
+  {
+    groups.map((g) => (
+      <div class="fgroup">
+        <div class="fgroup__label">{g.name}</div>
+        {g.features.map((f) => (
+          <div class="frow">
+            <span class="frow__name">{f.name}</span>
+            <span class="frow__desc">{f.desc}</span>
+          </div>
+        ))}
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .ftable {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    font-size: 0.875rem;
+  }
+
+  .fgroup {
+    border-top: 1px solid var(--border);
+  }
+
+  .fgroup:first-child {
+    border-top: none;
+  }
+
+  .fgroup__label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: color-mix(in oklch, var(--primary) 8%, transparent);
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .frow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 0.9rem;
+  }
+
+  .frow + .frow {
+    border-top: 1px solid var(--border);
+  }
+
+  .frow__name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    color: var(--foreground);
+  }
+
+  .frow__desc {
+    color: var(--muted-foreground);
+  }
+
+  @media (min-width: 640px) {
+    .frow {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    .frow__name {
+      width: 15rem;
+      flex-shrink: 0;
+    }
+  }
+</style>

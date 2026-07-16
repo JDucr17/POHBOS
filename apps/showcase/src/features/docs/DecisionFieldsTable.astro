@@ -1,0 +1,145 @@
+---
+type Mark = "yes" | "no" | "partial";
+
+interface Row {
+  field: string;
+  scored: Mark;
+  nonScored: Mark;
+  desc: string;
+  status?: boolean;
+}
+
+const rows: Row[] = [
+  { field: "decided_at", scored: "yes", nonScored: "yes", desc: "When the decision was made" },
+  { field: "score_raw", scored: "yes", nonScored: "no", desc: "The raw HBOS score" },
+  { field: "score_normalized", scored: "yes", nonScored: "no", desc: "The score's percentile against the baseline" },
+  { field: "risk_level", scored: "yes", nonScored: "no", desc: "The risk band assigned by policy" },
+  { field: "action", scored: "yes", nonScored: "yes", desc: "The recommended action" },
+  { field: "status", scored: "yes", nonScored: "yes", desc: "", status: true },
+  { field: "policy_version", scored: "yes", nonScored: "yes", desc: "The policy that produced the decision" },
+  { field: "baseline_run_id", scored: "yes", nonScored: "partial", desc: "The baseline scored against" },
+];
+---
+
+<div class="my-6 overflow-x-auto">
+  <table class="dfields">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th class="dfields__center">Scored</th>
+        <th class="dfields__center">Non-scored</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr>
+            <td>
+              <span class="dfields__mono">{r.field}</span>
+            </td>
+            {[r.scored, r.nonScored].map((m) => (
+              <td class="dfields__center">
+                {m === "yes" ? (
+                  <span class="dm dm--yes" aria-label="present">
+                    ✓
+                  </span>
+                ) : m === "partial" ? (
+                  <span class="dm dm--partial" aria-label="partial">
+                    partial
+                  </span>
+                ) : (
+                  <span class="dm dm--no" aria-label="absent">
+                    —
+                  </span>
+                )}
+              </td>
+            ))}
+            <td class="dfields__desc">
+              {r.status ? (
+                <span>
+                  <span class="dfields__mono">scored</span>,{" "}
+                  <span class="dfields__mono">no_baseline</span>, or{" "}
+                  <span class="dfields__mono">insufficient_history</span>
+                </span>
+              ) : (
+                r.desc
+              )}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .dfields {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .dfields th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--muted);
+  }
+
+  .dfields td {
+    padding: 0.6rem 0.9rem;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--muted-foreground);
+  }
+
+  .dfields tbody tr:first-child td {
+    border-top: none;
+  }
+
+  .dfields__center {
+    text-align: center;
+  }
+
+  .dfields__desc {
+    color: var(--muted-foreground);
+  }
+
+  .dfields__mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82em;
+    background: var(--muted);
+    color: var(--foreground);
+    padding: 0.1em 0.36em;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .dm--yes {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .dm--no {
+    color: var(--muted-foreground);
+  }
+
+  .dm--partial {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.68rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+  }
+</style>

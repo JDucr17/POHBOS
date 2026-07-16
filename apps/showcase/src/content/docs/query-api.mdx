@@ -1,0 +1,38 @@
+---
+title: Query API
+description: The read layer that exposes the detector's decisions.
+accent: flow
+section: Services
+---
+
+The Query API is the read layer and view into the system. Its responsibility is to expose the decisions produced by the detector so they can be consumed and queried by external clients, for example the showcase web application.
+
+The service has two roles running in the same process. In the background, it consumes decision envelopes from the decisions topic and uses them to keep fast in-memory views up to date. In the foreground, it serves HTTP endpoints and a live event stream built on top of those views.
+
+## Available Functionality
+
+The Query API exposes three main query surfaces.
+
+`GET /health` reports whether the service is running and includes read-side state such as the number of cached visitors, retained recent decisions, and connected SSE clients.
+
+`GET /latest?source_id=...&visitor_id=...` returns the latest decision known for a visitor. The service checks its in-memory visitor index first, and if the decision is not available there, it falls back to durable storage.
+
+`GET /list?source_id=...&limit=...` returns recent decisions for a source, newest first. This endpoint is backed by durable storage so it can serve historical decisions outside the in-memory cache window.
+
+The service also exposes `GET /stream`, an SSE endpoint used to watch decisions as they arrive. The stream can be filtered by source, and it can send a small backfill of recent decisions before switching to live updates.
+
+## In-Memory Views
+
+The Query API keeps two in-memory views of consumed decisions. The first is a latest decision per visitor index, which stores the most recent decision for each source and visitor pair. This makes the latest-decision endpoint fast for recently active visitors.
+
+The second is a recent-decision ring, which keeps the last retained decisions in arrival order. This is used by the live stream to send backfill when a client connects, so the client can quickly catch up with recent activity before receiving live events.
+
+These views are intentionally temporary. Visitor entries expire, and the recent ring eventually overwrites old decisions. The durable record remains in Postgres through the sink service, the Query API’s memory is a hot read path not the system for records.
+
+## Live Decision Stream
+
+The live stream is designed for the showcase UI. When a client connects, the Query API subscribes it to either all decisions or only decisions for one source. It then sends recent backfill from the in-memory ring and continues with live decisions as they arrive.
+
+The stream favors keeping the pipeline moving over waiting on slow clients. If a browser cannot keep up and its buffer fills, the server disconnects that client instead of blocking decision consumption. The client can reconnect and receive backfill again, which makes temporary disconnects recoverable without server-side replay state.
+
+This design is meant to be simple for v1 decisions are consumed once, stored in the hot read views, and fanned out to connected clients.

@@ -1,0 +1,39 @@
+---
+title: Ingestor
+description: The entrypoint of the anomaly detection system.
+accent: primary
+section: Services
+---
+
+import FieldList from "@/features/docs/FieldList.astro";
+
+The ingestor service acts as the entrypoint for the anomaly detection system, it receives an event through HTTP and is responsible for publishing an envelope to the events topic that contains the original event information along with metadata of the ingestion.
+
+The metadata included contains a server-assigned event ID, an ingest timestamp, and a schema version identifying the envelope format.
+
+<FieldList
+  title="Raw event"
+  items={[
+    { name: "source_id", desc: "the site the request belongs to" },
+    { name: "visitor_id", desc: "the visitor the request belongs to" },
+    { name: "event_time", desc: "when the request occurred" },
+    { name: "http_method", desc: "the request method" },
+    { name: "uri", desc: "the requested path" },
+    { name: "status_code", desc: "the response status" },
+    { name: "referrer_present", desc: "whether a referrer header was sent" },
+    { name: "user_agent", desc: "the client's user-agent string (optional)" },
+    { name: "bytes", desc: "the response size (optional)" },
+    { name: "resource_type", desc: "derived from the URI at ingest (html, script, image, …)" },
+  ]}
+/>
+
+<FieldList
+  title="Envelope"
+  items={[
+    { name: "event_id", desc: "server-assigned identifier" },
+    { name: "ingested_at", desc: "event reception timestamp" },
+    { name: "schema_version", desc: "envelope format version" },
+    { name: "source_id, visitor_id", desc: "lifted from the event for routing" },
+    { name: "payload", desc: "the raw event above" },
+  ]}
+/>

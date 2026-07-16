@@ -1,0 +1,111 @@
+---
+import {
+  Clock,
+  AudioWaveform,
+  Users,
+  type Icon as IconType,
+} from "@lucide/astro";
+
+const ICONS = {
+  clock: Clock,
+  waveform: AudioWaveform,
+  users: Users,
+} satisfies Record<string, typeof IconType>;
+
+type IconKey = keyof typeof ICONS;
+
+interface Props {
+  items: { icon: IconKey; term: string; desc: string }[];
+}
+
+const { items } = Astro.props;
+
+function resolveIcon(icon: string): typeof IconType {
+  if (!(icon in ICONS)) {
+    throw new Error(
+      `Unknown TermList icon key: "${icon}". Expected one of: ${Object.keys(ICONS).join(", ")}.`,
+    );
+  }
+
+  return ICONS[icon as IconKey];
+}
+
+const terms = items.map((item) => ({ ...item, icon: resolveIcon(item.icon) }));
+---
+
+<dl class="termlist">
+  {
+    terms.map((item) => (
+      <div class="termrow">
+        <dt class="termname">
+          <span class="termicon">
+            <item.icon class="size-5" stroke-width={1.75} />
+          </span>
+          <span>{item.term}</span>
+        </dt>
+        <dd class="termbody">{item.desc}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .termlist {
+    display: flex;
+    flex-direction: column;
+    gap: 1.45rem;
+    margin: 1.5rem 0 1.75rem;
+  }
+
+  .termrow {
+    display: grid;
+    grid-template-columns: clamp(11rem, 24vw, 13rem) minmax(0, 1fr);
+    column-gap: 1.5rem;
+    align-items: start;
+  }
+
+  .termname {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: start;
+    margin: 0;
+    color: var(--foreground);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .termname > span:last-child {
+    padding-top: 0.35rem;
+  }
+
+  .termicon {
+    display: inline-flex;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    color: var(--doc-accent);
+    background: color-mix(in oklch, var(--doc-accent) 10%, transparent);
+    border: 1px solid color-mix(in oklch, var(--doc-accent) 18%, transparent);
+  }
+
+  .termbody {
+    margin: 0;
+    color: var(--foreground);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 640px) {
+    .termrow {
+      grid-template-columns: 1fr;
+      row-gap: 0.5rem;
+    }
+
+    .termbody {
+      padding-left: 3.5rem;
+    }
+  }
+</style>

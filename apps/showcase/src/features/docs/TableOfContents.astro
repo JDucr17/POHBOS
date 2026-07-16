@@ -1,0 +1,138 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+  items.length > 0 && (
+    <nav
+      aria-label="On this page"
+      class="toc ml-auto hidden w-56 shrink-0 lg:block"
+    >
+      <div class="sticky top-0 pt-10 pb-12">
+        <p class="toc-label mb-4 text-muted-foreground">On this page</p>
+        <ul class="flex flex-col border-l border-border">
+          {items.map((h) => (
+            <li>
+              <a
+                href={`#${h.slug}`}
+                data-toc-link
+                class:list={[
+                  "toc-link block py-1.5 text-sm leading-snug",
+                  h.depth === 3 ? "pl-7" : "pl-4",
+                ]}
+              >
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  )
+}
+
+<style>
+  .toc-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .toc-link {
+    color: var(--muted-foreground);
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .toc-link:hover {
+    color: var(--foreground);
+  }
+
+  .toc-link[data-active] {
+    color: var(--doc-accent);
+    border-left-color: var(--doc-accent);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"),
+  );
+
+  const entries = links
+    .map((link) => {
+      const id = decodeURIComponent((link.getAttribute("href") ?? "").slice(1));
+      return { link, el: document.getElementById(id) };
+    })
+    .filter((entry): entry is { link: HTMLAnchorElement; el: HTMLElement } =>
+      Boolean(entry.el),
+    );
+
+  const firstEntry = entries[0];
+  const lastEntry = entries.at(-1);
+
+  if (firstEntry && lastEntry) {
+    const OFFSET = 120;
+
+    let active: HTMLAnchorElement | null = null;
+
+    const setActive = (link: HTMLAnchorElement) => {
+      if (link === active) return;
+
+      active?.removeAttribute("data-active");
+      link.setAttribute("data-active", "");
+      active = link;
+    };
+
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2;
+
+      if (atBottom) {
+        setActive(lastEntry.link);
+        return;
+      }
+
+      let current = firstEntry.link;
+
+      for (const { link, el } of entries) {
+        if (el.getBoundingClientRect().top <= OFFSET) {
+          current = link;
+        } else {
+          break;
+        }
+      }
+
+      setActive(current);
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+  }
+</script>

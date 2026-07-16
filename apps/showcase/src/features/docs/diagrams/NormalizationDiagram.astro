@@ -1,0 +1,373 @@
+---
+const features = [
+  { name: "window_request_count", surprise: "0.8" },
+  { name: "html_to_asset_ratio", surprise: "1.6" },
+  { name: "error_4xx_rate", surprise: "0.3" },
+  { name: "has_referrer_ratio", surprise: "1.1" },
+];
+
+const distribution = [
+  8, 12, 17, 23, 31, 42, 55, 70, 88, 106, 123, 137, 148, 158, 166, 172, 172,
+  164, 153, 139, 124, 109, 94, 81, 69, 58, 49, 42, 36, 31, 27, 24, 21, 18,
+  16, 14, 12, 10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 2, 1, 1,
+];
+---
+
+<figure class="normalization-diagram">
+  <svg
+    viewBox="0 0 1200 850"
+    width="100%"
+    role="img"
+    aria-labelledby="normalization-title normalization-desc"
+  >
+    <title id="normalization-title">Raw score to percentile normalization</title>
+    <desc id="normalization-desc">
+      Four feature surprise terms sum to a raw score of 3.8. That score falls at
+      the ninety-fifth percentile of the source baseline score distribution and
+      becomes a normalized score of 0.95.
+    </desc>
+
+    <defs>
+      <marker
+        id="normalization-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0 0 10 5 0 10Z" class="fill-flow" />
+      </marker>
+      <marker
+        id="distribution-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0 0 10 5 0 10Z" class="fill-muted" />
+      </marker>
+      <marker
+        id="result-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0 0 10 5 0 10Z" class="fill-risk-low" />
+      </marker>
+    </defs>
+
+    <rect x="1" y="1" width="1198" height="848" rx="18" class="frame" />
+    <text x="600" y="58" text-anchor="middle" class="heading accent-text">
+      Raw score → percentile normalization
+    </text>
+    <text x="600" y="88" text-anchor="middle" class="body muted-text">
+      Per-feature surprise terms are summed, then compared with the source baseline score distribution.
+    </text>
+
+    <g aria-label="Per-feature surprise terms">
+      {features.map((feature, index) => {
+        const x = 210 + index * 180;
+        return (
+          <g transform={`translate(${x} 118)`}>
+            <rect width="170" height="150" rx="12" class="feature-card" />
+            <text x="85" y="31" text-anchor="middle" class="feature-name">{feature.name}</text>
+            <g transform="translate(18 57)">
+              <rect x="0" y="42" width="7" height="18" class="mini-bar" />
+              <rect x="11" y="31" width="7" height="29" class="mini-bar" />
+              <rect x="22" y="18" width="7" height="42" class="mini-bar" />
+              <rect x="33" y="37" width="7" height="23" class="mini-bar" />
+              <rect x="44" y="8" width="7" height="52" class="mini-bar" />
+              <rect x="55" y="20" width="7" height="40" class="mini-bar" />
+              <rect x="66" y="36" width="7" height="24" class="mini-bar" />
+            </g>
+            <text x="130" y="92" text-anchor="middle" class="score flow-text">{feature.surprise}</text>
+            <text x="130" y="120" text-anchor="middle" class="small muted-text">surprise</text>
+          </g>
+        );
+      })}
+    </g>
+
+    <g aria-label="Raw score calculation">
+      <text x="220" y="345" text-anchor="end" class="label accent-text">Raw score</text>
+      <text x="220" y="369" text-anchor="end" class="small muted-text">sum of surprises</text>
+
+      {features.map((feature, index) => {
+        const x = 256 + index * 180;
+        const targetX = x + 39;
+        return (
+          <g>
+            <line x1={targetX} y1="281" x2={targetX} y2="313" class="flow-line" marker-end="url(#normalization-arrow)" />
+            <rect x={x} y="320" width="78" height="62" rx="9" class="sum-term" />
+            <text x={x + 39} y="359" text-anchor="middle" class="score-small flow-text">{feature.surprise}</text>
+            {index < features.length - 1 && (
+              <text x={385 + index * 180} y="358" text-anchor="middle" class="operator">+</text>
+            )}
+          </g>
+        );
+      })}
+
+      <text x="925" y="358" text-anchor="middle" class="operator">=</text>
+      <rect x="960" y="315" width="88" height="72" rx="10" class="raw-score" />
+      <text x="1004" y="361" text-anchor="middle" class="score-total">3.8</text>
+      <text x="1072" y="340" class="small accent-text">Raw score</text>
+      <text x="1072" y="362" class="small muted-text">for new window</text>
+    </g>
+
+    <line x1="35" y1="424" x2="1165" y2="424" class="divider" />
+
+    <g aria-label="Source baseline raw score distribution">
+      <text x="48" y="472" class="section-title accent-text">Source baseline score distribution</text>
+      <text x="48" y="497" class="small muted-text">(from historical windows for this source)</text>
+
+      <line x1="48" y1="680" x2="914" y2="680" class="axis" marker-end="url(#distribution-arrow)" />
+      {distribution.map((height, index) => (
+        <rect
+          x={74 + index * 16}
+          y={680 - height}
+          width="11"
+          height={height}
+          class="distribution-bar"
+        />
+      ))}
+
+      <text x="48" y="709" class="small muted-text">low raw score</text>
+      <text x="914" y="709" text-anchor="end" class="small muted-text">high raw score</text>
+
+      <line x1="360" y1="680" x2="360" y2="692" class="axis" />
+      <text x="360" y="719" text-anchor="middle" class="time">p50</text>
+      <text x="360" y="741" text-anchor="middle" class="small muted-text">50th pct</text>
+
+      <line x1="560" y1="680" x2="560" y2="692" class="axis" />
+      <text x="560" y="719" text-anchor="middle" class="time">p75</text>
+      <text x="560" y="741" text-anchor="middle" class="small muted-text">75th pct</text>
+
+      <line x1="730" y1="680" x2="730" y2="692" class="axis" />
+      <text x="730" y="719" text-anchor="middle" class="time">p90</text>
+      <text x="730" y="741" text-anchor="middle" class="small muted-text">90th pct</text>
+
+      <line x1="870" y1="546" x2="870" y2="670" class="percentile-line" />
+      <circle cx="870" cy="525" r="12" class="fill-primary" />
+      <circle cx="870" cy="525" r="19" class="primary-ring" />
+      <text x="870" y="478" text-anchor="middle" class="label accent-text">New window</text>
+      <text x="870" y="501" text-anchor="middle" class="small accent-text">raw score = 3.8</text>
+      <text x="870" y="719" text-anchor="middle" class="time accent-text">p95</text>
+      <text x="870" y="741" text-anchor="middle" class="small accent-text">95th pct</text>
+    </g>
+
+    <g aria-label="Normalized score result">
+      <line x1="906" y1="584" x2="945" y2="584" class="result-line" marker-end="url(#result-arrow)" />
+      <rect x="962" y="515" width="205" height="145" rx="12" class="result-card" />
+      <circle cx="1002" cy="566" r="24" class="result-outline" />
+      <text x="1002" y="574" text-anchor="middle" class="score-small risk-low-text">95</text>
+      <text x="1097" y="551" text-anchor="middle" class="label risk-low-text">Normalized score</text>
+      <text x="1097" y="575" text-anchor="middle" class="label risk-low-text">0.95</text>
+      <text x="1065" y="610" text-anchor="middle" class="small">More unusual than about</text>
+      <text x="1065" y="632" text-anchor="middle" class="small">95% of baseline windows.</text>
+    </g>
+
+    <g aria-label="Normalization summary">
+      <rect x="218" y="782" width="764" height="44" rx="8" class="summary" />
+      <text x="600" y="810" text-anchor="middle" class="small">
+        <tspan class="flow-text strong">Higher raw score</tspan>
+        <tspan> = more accumulated surprise across features.</tspan>
+      </text>
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .normalization-diagram {
+    margin: 2rem 0 2.5rem;
+  }
+
+  svg {
+    display: block;
+    height: auto;
+    font-family: inherit;
+  }
+
+  .frame,
+  .feature-card,
+  .sum-term,
+  .result-card,
+  .summary {
+    fill: var(--card);
+    stroke: var(--border);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .result-card {
+    stroke: var(--risk-low);
+  }
+
+  .summary {
+    fill: color-mix(in oklch, var(--flow) 4%, var(--card));
+  }
+
+  .heading,
+  .body,
+  .section-title,
+  .feature-name,
+  .small,
+  .label,
+  .operator,
+  .time {
+    fill: var(--foreground);
+  }
+
+  .heading {
+    font-size: 30px;
+    font-weight: 700;
+  }
+
+  .body {
+    font-size: 16px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 650;
+  }
+
+  .feature-name,
+  .time {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .feature-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .small,
+  .time {
+    font-size: 13px;
+  }
+
+  .label {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .score,
+  .score-small,
+  .score-total {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 700;
+  }
+
+  .score {
+    font-size: 29px;
+  }
+
+  .score-small {
+    font-size: 22px;
+  }
+
+  .score-total {
+    fill: var(--primary-foreground);
+    font-size: 28px;
+  }
+
+  .operator {
+    font-size: 25px;
+    font-weight: 500;
+  }
+
+  .strong {
+    font-weight: 650;
+  }
+
+  .muted-text {
+    fill: var(--muted-foreground);
+  }
+
+  .accent-text {
+    fill: var(--primary);
+  }
+
+  .flow-text {
+    fill: var(--flow);
+  }
+
+  .risk-low-text {
+    fill: var(--risk-low);
+  }
+
+  .mini-bar,
+  .distribution-bar {
+    fill: var(--primary);
+    fill-opacity: 0.58;
+  }
+
+  .raw-score,
+  .fill-primary {
+    fill: var(--primary);
+  }
+
+  .fill-flow {
+    fill: var(--flow);
+  }
+
+  .fill-risk-low {
+    fill: var(--risk-low);
+  }
+
+  .fill-muted {
+    fill: var(--muted-foreground);
+  }
+
+  .flow-line,
+  .axis,
+  .divider,
+  .percentile-line,
+  .primary-ring,
+  .flow-outline {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .result-line,
+  .result-outline {
+    fill: none;
+    stroke: var(--risk-low);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .flow-line,
+  .flow-outline {
+    stroke: var(--flow);
+    stroke-width: 2;
+  }
+
+  .axis {
+    stroke: var(--muted-foreground);
+    stroke-width: 1.5;
+  }
+
+  .divider {
+    stroke: var(--border);
+  }
+
+  .percentile-line,
+  .primary-ring {
+    stroke: var(--primary);
+    stroke-width: 2;
+  }
+
+  .percentile-line {
+    stroke-dasharray: 6 6;
+  }
+</style>

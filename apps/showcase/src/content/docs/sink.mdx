@@ -1,0 +1,18 @@
+---
+title: Sink
+description: Projects consumed envelopes into durable external storage.
+accent: primary
+section: Services
+---
+
+import SinkBatchFlowDiagram from "@/features/docs/diagrams/SinkBatchFlowDiagram.astro";
+
+The sinks services are responsible for projecting a consumed envelope into a durable external storage used for tasks like analytics, baseline computation and traceability.
+
+Every sink follows the same principle: consume records in batches, persist each batch, and only advance the consumer offsets once the batch is durably stored or dead-lettered.
+
+What changes between sinks is how a record is decoded into a domain type, and how a batch of that type is written to storage. Because only those two pieces vary the service creates an abstraction for it allowing for reusability through configuration by environment variables. The deployment contains two sink instances: one for projecting decisions and another one for projecting events.
+
+As mentioned earlier, offsets advance only after the batch is durably persisted or dead-lettered, any failure leaves offsets uncommitted so the records redeliver. This redelivery is safe because inserts are idempotent, a record whose key is already stored is skipped by the database, not duplicated. Transient failures, like the storage service being briefly unavailable, are what redelivery is for. Permanent failures, like corrupted records instead go to a dead-letter queue (DLQ) so they don't block the partition's progress.
+
+<SinkBatchFlowDiagram />

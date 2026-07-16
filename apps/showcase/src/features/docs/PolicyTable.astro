@@ -1,0 +1,113 @@
+---
+const rows = [
+  { score: "< 0.70", risk: "low", action: "allow", band: "var(--risk-low)" },
+  { score: "0.70 – 0.90", risk: "medium", action: "log", band: "var(--risk-medium)" },
+  { score: "0.90 – 0.98", risk: "high", action: "challenge", band: "var(--risk-high)" },
+  { score: "≥ 0.98", risk: "critical", action: "block", band: "var(--risk-critical)" },
+];
+---
+
+<div class="my-6 overflow-x-auto">
+  <table class="policy">
+    <thead>
+      <tr>
+        <th>Normalized score</th>
+        <th>Risk level</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr style={`--band: ${r.band};`}>
+            <td>
+              <span class="policy__score">
+                <span class="policy__bar" />
+                <span class="policy__mono">{r.score}</span>
+              </span>
+            </td>
+            <td>
+              <span class="policy__pill policy__pill--risk">{r.risk}</span>
+            </td>
+            <td>
+              <span class="policy__pill policy__pill--action">{r.action}</span>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .policy {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+
+  .policy th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--muted);
+  }
+
+  .policy td {
+    padding: 0.7rem 0.9rem;
+    vertical-align: middle;
+  }
+
+  .policy tbody tr {
+    background: color-mix(in oklch, var(--band) 8%, transparent);
+    border-top: 1px solid var(--border);
+  }
+
+  .policy tbody tr:first-child {
+    border-top: none;
+  }
+
+  .policy__score {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .policy__bar {
+    width: 4px;
+    height: 1.15rem;
+    border-radius: 2px;
+    background: var(--band);
+  }
+
+  .policy__mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--foreground);
+  }
+
+  .policy__pill {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0.3rem 0.6rem;
+    border-radius: 9999px;
+    color: color-mix(in oklch, var(--band) 62%, var(--foreground));
+  }
+
+  .policy__pill--risk {
+    background: color-mix(in oklch, var(--band) 18%, transparent);
+  }
+
+  .policy__pill--action {
+    border: 1px solid color-mix(in oklch, var(--band) 45%, transparent);
+  }
+</style>

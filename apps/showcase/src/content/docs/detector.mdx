@@ -1,0 +1,58 @@
+---
+title: Detector
+description: The hot-path service that turns events into decisions.
+accent: flow
+section: Services
+---
+
+import PolicyTable from "@/features/docs/PolicyTable.astro";
+import DecisionFieldsTable from "@/features/docs/DecisionFieldsTable.astro";
+import DetectorOutcomeDiagram from "@/features/docs/diagrams/DetectorOutcomeDiagram.astro";
+
+The detector is the hot-path service that turns incoming events into decisions. It consumes raw event envelopes, maintains each visitor’s live trailing window, decides when that visitor's accumulated state should be scored through a cadence gate, scores the window against the source’s current baseline, applies the active policy, and publishes a decision envelope.
+
+## How it works
+
+For each consumed event, the detector decodes the event envelope, checks whether the event can join the visitor's current timeline, and if so folds it into that visitor's in-memory trailing window. An event that arrives out of order is skipped rather than folded in, because the trailing window is maintained in event-time order and accepting an older event after newer ones would make the live window inconsistent.
+
+Not every event produces a decision. After folding the event in, the detector checks whether the visitor's cadence gate is open. The cadence gate controls how often a visitor can be evaluated, if the visitor was already evaluated recently, the new event still updates the trailing window, but no decision is emitted. Once enough event-time has passed since the visitor's last published evaluation, the gate opens and the detector produces one decision for the current window.
+
+When the cadence gate is open, the detector resolves the event into one of three outcomes. If the source has no usable baseline, it emits a `no_baseline` decision. If a baseline exists but the visitor's current window does not contain enough recent activity, it emits an `insufficient_history` decision. If the baseline exists and the window is eligible, the detector computes the feature vector, scores it with HBOS, classifies the normalized score with the active policy, and emits a `scored` decision.
+
+<DetectorOutcomeDiagram />
+
+## From score to decision
+
+A raw score isn't directly actionable so policies are established for interpretation. Policies are a versioned configurable mapping of a normalized score to a risk level and a recommended action. Creating a policy layer decouples scoring from interpretation, allowing for a similar score coefficient to be handled more or less strictly.
+
+A policy is a set of bands, each mapping a score range to a risk level and an action:
+
+<PolicyTable />
+
+*(The active `v1` policy — bands are configurable.)* Bands are upper-exclusive and the final band is open-ended, so every score maps to exactly one band.
+
+For windows that can't be scored, the policy defines fallback actions: `no_baseline` (the source has no baseline yet) and `insufficient_history` (the window has too little activity). Under `v1` both fall back to `log`. These decisions carry the fallback action but no score or risk level, the detector still emits them so the pipeline records why scoring didn't happen.
+
+Every decision carries:
+
+<DecisionFieldsTable />
+
+*`baseline_run_id` is present for `scored` and `insufficient_history` decisions, it is null for `no_baseline`, since there is no baseline to reference.*
+
+The detector's responsibility is to flag behavior that is anomalous relative to a source's learned normal activity, and to emit a decision that downstream enforcement layers can act on accordingly. It is not responsible for enforcing any action itself, it reports what was observed and what the active policy recommends, acting on that recommendation is a separate responsibility.
+
+## Staying Current with Baselines
+
+The detector keeps the latest usable baseline for each source in memory. At startup, it loads the latest succeeded baseline for every source, so it can begin scoring without waiting for a new baseline signal.
+
+When the baseline worker finishes fitting a baseline, it emits a signal for the source that changed. The detector treats that signal as a prompt to reload the latest succeeded baseline for that source from the attached external storage. The external storage service remains the source of truth, the signal only tells the detector that it should refresh.
+
+The cache is updated without blocking the scoring path. Readers use the current immutable snapshot of the cache, while a refresh builds a new snapshot with the updated source baseline and swaps it in atomically, following a Copy on Write pattern. This means live scoring can continue reading the old snapshot while the refresh prepares the new one.
+
+Before a baseline is accepted into the cache, the detector verifies that it matches the detector’s feature registry and window configuration. This prevents the detector from scoring with a baseline trained under a different feature set, transform configuration, or trailing-window definition.
+
+If a refresh fails, the detector keeps the last valid baseline instead of blanking the source. A bad or incompatible new baseline does not interrupt live scoring.
+
+## Delivery guarantees
+
+The detector guarantees to deliver a decision at least once. A decision is published to the decisions topic before the event's offset is committed, so if publishing fails, the offset stays uncommitted and the event is redelivered and reevaluated cleanly rather than lost.

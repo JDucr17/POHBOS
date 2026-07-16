@@ -1,0 +1,297 @@
+<figure class="feature-extraction-diagram">
+  <svg
+    viewBox="0 120 1200 565"
+    width="100%"
+    role="img"
+    aria-labelledby="feature-extraction-title feature-extraction-desc"
+  >
+    <title id="feature-extraction-title">Feature extraction</title>
+    <desc id="feature-extraction-desc">
+      Recent requests in a visitor's trailing window are reduced into volume
+      and pace, rhythm, content mix, and client hygiene features.
+    </desc>
+
+
+    <defs>
+      <marker
+        id="feature-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0 0 10 5 0 10Z" class="fill-accent" />
+      </marker>
+    </defs>
+
+    <rect x="1" y="121" width="1198" height="563" rx="18" class="frame" />
+
+
+    <g aria-label="Trailing window containing recent requests">
+      <rect x="42" y="142" width="320" height="520" rx="14" class="panel" />
+      <path d="M72 174h28v25H72zm7-7v12m15-12v12m6 9h12m-6-6v12" class="accent-stroke" />
+      <text x="124" y="192" class="section-title">Trailing window</text>
+
+      <text x="62" y="235" class="small muted-text">Now</text>
+      <line x1="78" y1="252" x2="78" y2="544" class="window-line" marker-end="url(#feature-arrow)" />
+      <text x="58" y="588" class="small muted-text">Older</text>
+
+      <circle cx="78" cy="254" r="6" class="timeline-dot" />
+      <circle cx="78" cy="316" r="6" class="timeline-dot" />
+      <circle cx="78" cy="378" r="6" class="timeline-dot" />
+      <circle cx="78" cy="440" r="6" class="timeline-dot" />
+      <circle cx="78" cy="502" r="6" class="timeline-dot" />
+      <circle cx="78" cy="564" r="6" class="timeline-dot" />
+
+      <g transform="translate(110 226)">
+        <rect width="220" height="52" rx="8" class="request" />
+        <circle cx="28" cy="26" r="13" class="flow-outline" />
+        <path d="M28 18v9l7 4" class="flow-stroke" />
+        <text x="52" y="32" class="request-text">GET /home</text>
+      </g>
+      <g transform="translate(110 288)">
+        <rect width="220" height="52" rx="8" class="request" />
+        <circle cx="28" cy="26" r="13" class="flow-outline" />
+        <path d="M28 18v9l7 4" class="flow-stroke" />
+        <text x="52" y="32" class="request-text">GET /app.js</text>
+      </g>
+      <g transform="translate(110 350)">
+        <rect width="220" height="52" rx="8" class="request" />
+        <circle cx="28" cy="26" r="13" class="flow-outline" />
+        <path d="M28 18v9l7 4" class="flow-stroke" />
+        <text x="52" y="32" class="request-text">GET /products</text>
+      </g>
+      <g transform="translate(110 412)">
+        <rect width="220" height="52" rx="8" class="request" />
+        <circle cx="28" cy="26" r="13" class="flow-outline" />
+        <path d="M28 18v9l7 4" class="flow-stroke" />
+        <text x="52" y="32" class="request-text">GET /img/hero.jpg</text>
+      </g>
+      <g transform="translate(110 474)">
+        <rect width="220" height="52" rx="8" class="request" />
+        <circle cx="28" cy="26" r="13" class="flow-outline" />
+        <path d="M28 18v9l7 4" class="flow-stroke" />
+        <text x="52" y="32" class="request-text">GET /checkout</text>
+      </g>
+      <g transform="translate(110 536)">
+        <rect width="220" height="52" rx="8" class="request" />
+        <circle cx="28" cy="26" r="13" class="error-outline" />
+        <path d="M28 18v9m0 6v1" class="error-stroke" />
+        <text x="52" y="32" class="request-text error-text">404 /admin</text>
+      </g>
+
+      <line x1="62" y1="614" x2="342" y2="614" class="divider" />
+      <text x="202" y="640" text-anchor="middle" class="small muted-text">
+        Recent requests for one visitor
+      </text>
+    </g>
+
+    <g aria-label="Feature extraction operation">
+      <line x1="362" y1="400" x2="420" y2="400" class="connector" marker-end="url(#feature-arrow)" />
+      <rect x="438" y="325" width="150" height="150" rx="12" class="operation" />
+      <path d="M480 355h66l-25 29v28l-16 12v-40Z" class="accent-stroke funnel" />
+      <circle cx="493" cy="344" r="3" class="fill-accent" />
+      <circle cx="511" cy="337" r="3" class="fill-accent" />
+      <circle cx="529" cy="344" r="3" class="fill-accent" />
+      <text x="513" y="447" text-anchor="middle" class="section-title">Feature</text>
+      <text x="513" y="470" text-anchor="middle" class="section-title">extraction</text>
+      <line x1="588" y1="400" x2="636" y2="400" class="connector" marker-end="url(#feature-arrow)" />
+    </g>
+
+    <g aria-label="Extracted feature groups">
+      <g transform="translate(656 142)">
+        <rect width="235" height="230" rx="12" class="feature-card" />
+        <rect width="7" height="230" rx="7" class="fill-accent" />
+        <path d="M34 64v-16h10v16m7 0V37h10v27m7 0V27h10v37M30 67h52" class="accent-stroke" />
+        <text x="30" y="110" class="section-title">Volume and pace</text>
+        <circle cx="34" cy="146" r="4" class="fill-accent" />
+        <text x="50" y="151" class="feature-text">window_request_count</text>
+        <circle cx="34" cy="184" r="4" class="fill-accent" />
+        <text x="50" y="189" class="feature-text">window_span_seconds</text>
+      </g>
+
+      <g transform="translate(915 142)">
+        <rect width="243" height="230" rx="12" class="feature-card" />
+        <rect width="7" height="230" rx="7" class="fill-flow" />
+        <path d="M31 51h13l7-27 11 49 10-34 8 20h14" class="flow-stroke pulse" />
+        <text x="30" y="110" class="section-title">Rhythm</text>
+        <circle cx="34" cy="146" r="4" class="fill-flow" />
+        <text x="50" y="151" class="feature-text">mean_inter_request_gap_ms</text>
+        <circle cx="34" cy="184" r="4" class="fill-flow" />
+        <text x="50" y="189" class="feature-text">inter_request_gap_cv</text>
+      </g>
+
+      <g transform="translate(656 396)">
+        <rect width="235" height="230" rx="12" class="feature-card" />
+        <rect width="7" height="230" rx="7" class="fill-accent" />
+        <circle cx="52" cy="50" r="22" class="accent-outline" />
+        <path d="M52 28v22h22M52 50l16 16" class="accent-stroke" />
+        <text x="30" y="110" class="section-title">Content mix</text>
+        <circle cx="34" cy="146" r="4" class="fill-accent" />
+        <text x="50" y="151" class="feature-text">distinct_endpoints_hit</text>
+        <circle cx="34" cy="184" r="4" class="fill-accent" />
+        <text x="50" y="189" class="feature-text">html_to_asset_ratio</text>
+      </g>
+
+      <g transform="translate(915 396)">
+        <rect width="243" height="230" rx="12" class="feature-card" />
+        <rect width="7" height="230" rx="7" class="fill-flow" />
+        <path d="M52 28c9 7 18 7 27 0v20c0 17-11 27-27 36-16-9-27-19-27-36V28c9 7 18 7 27 0Z" class="flow-stroke" />
+        <path d="m42 55 7 7 14-16" class="flow-stroke" />
+        <text x="30" y="110" class="section-title">Client hygiene</text>
+        <circle cx="34" cy="142" r="4" class="fill-flow" />
+        <text x="50" y="147" class="feature-text">error_4xx_rate</text>
+        <circle cx="34" cy="176" r="4" class="fill-flow" />
+        <text x="50" y="181" class="feature-text">method_entropy</text>
+        <circle cx="34" cy="210" r="4" class="fill-flow" />
+        <text x="50" y="215" class="feature-text">has_referrer_ratio</text>
+      </g>
+    </g>
+
+  </svg>
+</figure>
+
+<style>
+  .feature-extraction-diagram {
+    margin: 2rem 0 2.5rem;
+  }
+
+  svg {
+    display: block;
+    height: auto;
+    font-family: inherit;
+  }
+
+  .frame,
+  .panel,
+  .request,
+  .operation,
+  .feature-card,
+  .note {
+    fill: var(--card);
+    stroke: var(--border);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .operation,
+  .note {
+    fill: color-mix(in oklch, var(--doc-accent) 3%, var(--card));
+  }
+
+  .heading,
+  .section-title,
+  .body,
+  .small,
+  .request-text,
+  .feature-text,
+  .info {
+    fill: var(--foreground);
+  }
+
+  .heading {
+    font-size: 30px;
+    font-weight: 700;
+  }
+
+  .section-title {
+    font-size: 17px;
+    font-weight: 650;
+  }
+
+  .body {
+    font-size: 16px;
+  }
+
+  .small {
+    font-size: 13px;
+  }
+
+  .request-text {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 14px;
+  }
+
+  .feature-text {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+  }
+
+  .info {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 21px;
+    font-weight: 700;
+  }
+
+  .muted-text {
+    fill: var(--muted-foreground);
+  }
+
+  .accent-stroke,
+  .flow-stroke,
+  .accent-outline,
+  .flow-outline,
+  .error-outline,
+  .error-stroke,
+  .connector,
+  .window-line,
+  .divider {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .accent-stroke,
+  .accent-outline,
+  .connector,
+  .window-line {
+    stroke: var(--doc-accent);
+    stroke-width: 2;
+  }
+
+  .flow-stroke,
+  .flow-outline {
+    stroke: var(--flow);
+    stroke-width: 2;
+  }
+
+  .error-outline,
+  .error-stroke {
+    stroke: var(--destructive);
+    stroke-width: 2;
+  }
+
+  .error-text {
+    fill: var(--destructive);
+  }
+
+  .connector {
+    stroke-width: 2.5;
+  }
+
+  .divider {
+    stroke: var(--border);
+  }
+
+  .funnel {
+    stroke-width: 3;
+  }
+
+  .pulse {
+    stroke-width: 2.5;
+  }
+
+  .timeline-dot {
+    fill: var(--muted-foreground);
+  }
+
+  .fill-accent {
+    fill: var(--doc-accent);
+  }
+
+  .fill-flow {
+    fill: var(--flow);
+  }
+</style>

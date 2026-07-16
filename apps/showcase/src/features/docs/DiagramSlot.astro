@@ -1,0 +1,65 @@
+---
+import { ImageIcon } from "@lucide/astro";
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div
+  class="diagram-slot"
+  role="img"
+  aria-label={`Diagram placeholder — ${label}`}
+>
+  <span class="diagram-slot__icon" aria-hidden="true">
+    <ImageIcon size={20} stroke-width={1.75} />
+  </span>
+  <span class="diagram-slot__tag">Diagram</span>
+  <span class="diagram-slot__label">{label}</span>
+</div>
+
+<style>
+  .diagram-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 2rem 0;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    border: 1px dashed color-mix(in oklch, var(--doc-accent) 30%, var(--border));
+    border-radius: 0.75rem;
+    background: color-mix(in oklch, var(--doc-accent) 3%, var(--muted));
+  }
+
+  .diagram-slot__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 0.25rem;
+    border-radius: 9999px;
+    color: var(--doc-accent);
+    background: color-mix(in oklch, var(--doc-accent) 10%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--doc-accent) 18%, transparent);
+  }
+
+  .diagram-slot__tag {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--doc-accent);
+  }
+
+  .diagram-slot__label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+</style>

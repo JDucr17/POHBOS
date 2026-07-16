@@ -1,0 +1,243 @@
+---
+const stages = [
+  { number: 1, x: 22, width: 170, title: "Read history" },
+  { number: 2, x: 208, width: 210, title: "Reconstruct windows" },
+  { number: 3, x: 434, width: 310, title: "Feature matrix" },
+  { number: 4, x: 760, width: 194, title: "Fit baseline" },
+  { number: 5, x: 970, width: 168, title: "Store baseline" },
+  { number: 6, x: 1154, width: 190, title: "Publish signal" },
+];
+
+const matrixRows = [
+  ["w₁", "42", "18.4", "120", "0.05", "…"],
+  ["w₂", "37", "15.1", "95", "0.03", "…"],
+  ["⋮", "…", "…", "…", "…", "…"],
+  ["wₘ", "51", "22.7", "180", "0.07", "…"],
+];
+---
+
+<figure class="baseline-fit-cycle">
+  <svg viewBox="0 0 1400 900" width="100%" role="img" aria-labelledby="baseline-title baseline-desc">
+    <title id="baseline-title">Baseline Worker — Fit Cycle</title>
+    <desc id="baseline-desc">
+      The baseline worker reads source history, reconstructs windows, creates a feature matrix,
+      fits and stores a baseline, publishes a signal, and exits. The running detector receives
+      the signal and activates the new baseline without restarting.
+    </desc>
+
+    <defs>
+      <marker id="arrow-primary" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0 0 10 5 0 10Z" class="primary-fill" />
+      </marker>
+      <marker id="arrow-cold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0 0 10 5 0 10Z" class="cold-fill" />
+      </marker>
+      <marker id="arrow-sink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0 0 10 5 0 10Z" class="sink-fill" />
+      </marker>
+    </defs>
+
+    <rect x="1" y="1" width="1398" height="898" rx="18" class="frame" />
+    <text x="700" y="52" text-anchor="middle" class="diagram-title">Baseline Worker — Fit Cycle</text>
+    <text x="700" y="84" text-anchor="middle" class="diagram-subtitle">
+      Cold-path job that fits a baseline, stores it, publishes a signal, and exits.
+    </text>
+
+    {stages.map((stage) => (
+      <g>
+        <rect x={stage.x} y="132" width={stage.width} height="366" rx="10" class="stage-card" />
+        <circle cx={stage.x + 28} cy="166" r="14" class="primary-fill" />
+        <text x={stage.x + 28} y="171" text-anchor="middle" class="step-number">{stage.number}</text>
+        {stage.number === 2 ? (
+          <text x={stage.x + 56} y="160" class="stage-title">
+            <tspan x={stage.x + 56} dy="0">Reconstruct</tspan>
+            <tspan x={stage.x + 56} dy="22">windows</tspan>
+          </text>
+        ) : stage.number === 5 ? (
+          <text x={stage.x + 48} y="172" class="stage-title">{stage.title}</text>
+        ) : (
+          <text x={stage.x + 56} y="172" class="stage-title">{stage.title}</text>
+        )}
+      </g>
+    ))}
+
+    <g aria-label="Read history from Postgres" transform="translate(-10 0)">
+      <ellipse cx="117" cy="232" rx="30" ry="11" class="primary-stroke" />
+      <path d="M87 232v48c0 6 13 11 30 11s30-5 30-11v-48m-60 24c0 6 13 11 30 11s30-5 30-11" class="primary-stroke" />
+      <text x="117" y="326" text-anchor="middle" class="label">External storage</text>
+      <text x="117" y="351" text-anchor="middle" class="body">(Postgres)</text>
+      <line x1="43" y1="386" x2="191" y2="386" class="divider" />
+      <text x="117" y="422" text-anchor="middle" class="body">Read recent events</text>
+      <text x="117" y="448" text-anchor="middle" class="body">for each source.</text>
+    </g>
+
+    <g aria-label="Reconstruct trailing windows" transform="translate(-44 0)">
+      <line x1="270" y1="270" x2="450" y2="270" class="muted-line" marker-end="url(#arrow-primary)" />
+      {[274, 300].map((x) => <circle cx={x} cy="270" r="6" class="aged-dot" />)}
+      <rect x="320" y="247" width="100" height="48" rx="8" class="window-box" />
+      {[332, 358, 384, 408].map((x) => <circle cx={x} cy="270" r="6" class="active-dot" />)}
+      <text x="357" y="370" text-anchor="middle" class="body">Build trailing windows</text>
+      <text x="357" y="398" text-anchor="middle" class="body">per source &amp; visitor</text>
+      <text x="357" y="426" text-anchor="middle" class="body">(cadenced).</text>
+    </g>
+
+    <g aria-label="Feature matrix" transform="translate(-42 0)">
+      <text x="572" y="215" class="matrix-head">req_count</text>
+      <text x="626" y="215" class="matrix-head">span_s</text>
+      <text x="680" y="215" class="matrix-head">gap_ms</text>
+      <text x="734" y="215" class="matrix-head">4xx_rate</text>
+      <rect x="538" y="226" width="232" height="134" class="matrix" />
+      {[584, 636, 688, 740].map((x) => <line x1={x} y1="226" x2={x} y2="360" class="matrix-line" />)}
+      {[259.5, 293, 326.5].map((y) => <line x1="538" y1={y} x2="770" y2={y} class="matrix-line" />)}
+      {matrixRows.map((row, rowIndex) => (
+        <g>
+          <text x="522" y={249 + rowIndex * 33.5} text-anchor="end" class="matrix-label">{row[0]}</text>
+          {row.slice(1).map((value, columnIndex) => (
+            <text x={561 + columnIndex * 52} y={249 + rowIndex * 33.5} text-anchor="middle" class="matrix-value">{value}</text>
+          ))}
+        </g>
+      ))}
+      <text x="641" y="402" text-anchor="middle" class="body">Rows = eligible windows (w₁ … wₘ)</text>
+      <text x="641" y="432" text-anchor="middle" class="body">Columns = extracted features</text>
+      <text x="641" y="458" text-anchor="middle" class="body">(registry order)</text>
+    </g>
+
+    <g aria-label="Fit histograms and quantiles" transform="translate(-28 0)">
+      <path d="M818 270h12v-37h10v37h12v-22h10v22h14" class="cold-stroke" transform="translate(-10 0)" />
+      <line x1="812" y1="270" x2="880" y2="270" class="cold-stroke" transform="translate(-10 0)" />
+      <text x="882" y="245" class="body">Fit histogram</text>
+      <text x="882" y="270" class="body">per feature</text>
+      <path d="M812 385c14 0 14-42 28-42s14 42 30 42" class="cold-stroke" transform="translate(-10 0)" />
+      <line x1="812" y1="385" x2="874" y2="385" class="cold-stroke" transform="translate(-10 0)" />
+      <text x="874" y="350" class="body">Compute raw</text>
+      <text x="874" y="376" class="body">score quantiles</text>
+      <text x="874" y="402" class="small">(1001 cut points)</text>
+    </g>
+
+    <g aria-label="Store baseline" transform="translate(-18 0)">
+      <ellipse cx="1072" cy="232" rx="29" ry="11" class="sink-stroke" />
+      <path d="M1043 232v48c0 6 13 11 29 11s29-5 29-11v-48m-58 24c0 6 13 11 29 11s29-5 29-11" class="sink-stroke" />
+      <text x="1072" y="326" text-anchor="middle" class="label">baseline_runs</text>
+      <text x="1072" y="351" text-anchor="middle" class="body">(artifacts table)</text>
+      <line x1="1004" y1="386" x2="1140" y2="386" class="divider" />
+      <text x="1072" y="422" text-anchor="middle" class="body">Store baseline with</text>
+      <text x="1072" y="448" text-anchor="middle" class="body">metadata and quantiles.</text>
+    </g>
+
+    <g aria-label="Publish baseline signal" transform="translate(-12 0)">
+      <path d="M1244 248h18l28-18v72l-28-18h-18c-8 0-12-7-12-18s4-18 12-18Zm18 36 5 35h-14l-5-35m42-37c13 0 13 38 0 38" class="sink-stroke" transform="translate(256 52) scale(.8)" />
+      <path d="m1303 244 11-9m-11 27h16m-16 18 11 9" class="sink-stroke" transform="translate(256 52) scale(.8)" />
+      <text x="1274" y="326" text-anchor="middle" class="label">baseline signal</text>
+      <text x="1274" y="351" text-anchor="middle" class="body">(Kafka topic)</text>
+      <line x1="1196" y1="386" x2="1352" y2="386" class="divider" />
+      <text x="1200" y="420" class="label">Signal contains:</text>
+      <text x="1200" y="450" class="body">• source_id</text>
+      <text x="1200" y="478" class="body">• baseline_run_id</text>
+    </g>
+
+    <g aria-label="Fit gates">
+      <rect x="64" y="548" width="486" height="132" rx="10" class="gate-card" />
+      <line x1="324" y1="565" x2="324" y2="664" class="divider" />
+      <line x1="360" y1="548" x2="360" y2="506" class="cold-line dashed" marker-end="url(#arrow-cold)" />
+      <text x="124" y="582" class="gate-title">Fit gates (per source)</text>
+      {[610, 642].map((y) => (
+        <g><circle cx="96" cy={y - 5} r="11" class="cold-outline" /><path d={`m91 ${y - 5} 4 4 7-9`} class="cold-stroke" /></g>
+      ))}
+      <text x="120" y="610" class="body">Enough sampled windows</text>
+      <text x="120" y="642" class="body">Enough distinct visitors</text>
+      <circle cx="368" cy="590" r="14" class="error-outline" /><path d="m361 583 14 14m0-14-14 14" class="error-stroke" />
+      <text x="402" y="580" class="error-title">If not met</text>
+      <text x="402" y="610" class="body">Record</text>
+      <text x="402" y="636" class="code-label">insufficient_history</text>
+      <text x="402" y="662" class="body">and skip source.</text>
+    </g>
+
+    <path d="M1274 498V592Q1274 604 1262 604H664Q652 604 652 616V710" class="sink-line" marker-end="url(#arrow-sink)" />
+
+    <g aria-label="Live pipeline receives the signal">
+      <rect x="100" y="714" width="942" height="150" rx="11" class="live-card" />
+      <text x="571" y="745" text-anchor="middle" class="live-title">Live pipeline (no restart required)</text>
+      <rect x="120" y="758" width="390" height="88" rx="9" class="live-inner" />
+      <g aria-label="Detector gear" transform="translate(162 802)">
+        <path
+          d="M-3-20h6l1 7c2 1 3 1 5 3l7-3 4 6-6 5v4l6 5-4 6-7-3c-2 2-3 2-5 3l-1 7h-6l-1-7c-2-1-3-1-5-3l-7 3-4-6 6-5v-4l-6-5 4-6 7 3c2-2 3-2 5-3Z"
+          class="sink-stroke gear-outline"
+        />
+        <circle r="7" class="sink-outline" />
+      </g>
+      <text x="198" y="789" class="live-label">Detector (running)</text>
+      <text x="198" y="817" class="small">Scores windows using in-memory baselines</text>
+      <line x1="526" y1="802" x2="570" y2="802" class="sink-line" marker-end="url(#arrow-sink)" />
+      <g aria-label="Baseline signal antenna">
+        <circle cx="616" cy="802" r="27" class="sink-outline" />
+        <g transform="translate(599.2 785.2) scale(1.4)">
+          <circle cx="12" cy="12" r="2.5" class="sink-fill" />
+          <path d="M12 15v6" class="sink-stroke antenna-mast" />
+          <path d="M7.8 7.8a6 6 0 0 0 0 8.4m8.4-8.4a6 6 0 0 1 0 8.4" class="sink-stroke antenna-wave" />
+          <path d="M5.6 5.6a9 9 0 0 0 0 12.8m12.8-12.8a9 9 0 0 1 0 12.8" class="sink-stroke antenna-wave" />
+        </g>
+      </g>
+      <text x="616" y="844" text-anchor="middle" class="small">Listens for baseline signal</text>
+      <line x1="662" y1="802" x2="744" y2="802" class="sink-line" marker-end="url(#arrow-sink)" />
+      <rect x="762" y="758" width="260" height="88" rx="9" class="live-inner" />
+      <circle cx="794" cy="802" r="16" class="sink-outline" /><path d="m786 802 6 6 11-14" class="sink-stroke active-check" />
+      <text x="824" y="789" class="live-label">New baseline active</text>
+      <text x="824" y="817" class="small">Used for scoring new windows</text>
+    </g>
+
+    <g aria-label="Process behavior">
+      <rect x="1070" y="722" width="266" height="134" rx="10" class="behavior-card" />
+      <circle cx="1108" cy="775" r="17" class="sink-outline" /><path d="M1108 764v12l8 5" class="sink-stroke" />
+      <text x="1142" y="756" class="live-label">Process behavior</text>
+      <text x="1142" y="786" class="body">Runs on a schedule,</text>
+      <text x="1142" y="812" class="body">completes one cycle,</text>
+      <text x="1142" y="838" class="body">and exits cleanly.</text>
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .baseline-fit-cycle { width: 112%; margin: 2rem 0 2.5rem -1%; }
+  svg { display: block; height: auto; font-family: inherit; }
+  .frame, .stage-card { fill: var(--card); stroke: var(--border); vector-effect: non-scaling-stroke; }
+  .stage-card { stroke: color-mix(in oklch, var(--primary) 22%, var(--border)); }
+  .gate-card { fill: color-mix(in oklch, var(--cold-path) 3%, var(--card)); stroke: var(--cold-path); stroke-dasharray: 5 4; }
+  .live-card, .live-inner, .behavior-card { fill: color-mix(in oklch, var(--sink) 3%, var(--card)); stroke: color-mix(in oklch, var(--sink) 58%, var(--border)); }
+  .behavior-card { stroke-dasharray: 5 4; }
+  .diagram-title { fill: var(--foreground); font-size: 31px; font-weight: 750; }
+  .diagram-subtitle { fill: var(--muted-foreground); font-size: 18px; }
+  .stage-title, .label, .gate-title, .error-title, .live-label { fill: var(--foreground); font-size: 17px; font-weight: 650; }
+  .body { fill: var(--foreground); font-size: 15px; }
+  .small { fill: var(--foreground); font-size: 13px; }
+  .code-label { fill: var(--foreground); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  .step-number { fill: var(--primary-foreground); font-size: 13px; font-weight: 700; }
+  .gate-title { fill: var(--cold-path); }
+  .error-title { fill: var(--destructive); }
+  .live-title, .live-label { fill: var(--sink); font-weight: 700; }
+  .live-title { font-size: 19px; }
+  .primary-fill { fill: var(--primary); }
+  .cold-fill { fill: var(--cold-path); }
+  .sink-fill { fill: var(--sink); }
+  .primary-line, .cold-line, .sink-line, .muted-line, .primary-stroke, .cold-stroke, .sink-stroke, .error-stroke,
+  .primary-outline, .cold-outline, .sink-outline, .error-outline, .divider, .matrix-line {
+    fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
+  }
+  .primary-line, .primary-stroke, .primary-outline { stroke: var(--primary); stroke-width: 2; }
+  .cold-line, .cold-stroke, .cold-outline { stroke: var(--cold-path); stroke-width: 2; }
+  .sink-line, .sink-stroke, .sink-outline { stroke: var(--sink); stroke-width: 2; }
+  .gear-outline { stroke-width: 2.25; }
+  .antenna-mast { stroke-width: 2.25; }
+  .antenna-wave { stroke-width: 1.75; }
+  .active-check { stroke-width: 1.75; }
+  .error-stroke, .error-outline { stroke: var(--destructive); stroke-width: 2; }
+  .muted-line { stroke: var(--muted-foreground); stroke-width: 2; }
+  .divider, .matrix-line { stroke: var(--border); }
+  .dashed { stroke-dasharray: 5 4; }
+  .aged-dot { fill: var(--muted); stroke: var(--muted-foreground); }
+  .active-dot { fill: var(--cold-path); stroke: var(--cold-path); }
+  .window-box { fill: color-mix(in oklch, var(--cold-path) 4%, transparent); stroke: var(--cold-path); stroke-dasharray: 6 4; }
+  .matrix { fill: var(--card); stroke: var(--border); }
+  .matrix-head { fill: var(--foreground); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+  .matrix-label, .matrix-value { fill: var(--foreground); font-size: 13px; }
+  @media (max-width: 48rem) { .baseline-fit-cycle { width: 100%; margin-left: 0; } }
+</style>

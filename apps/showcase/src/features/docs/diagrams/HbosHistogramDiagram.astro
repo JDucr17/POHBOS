@@ -1,0 +1,292 @@
+---
+const denseBins = [18, 34, 58, 86, 118, 150, 180, 205, 230, 225, 198, 172, 143, 112, 86, 64, 47, 32, 21, 12, 6];
+const sparseBins = [205, 230, 212, 176, 140, 104, 76, 55, 36, 23, 14, 8, 5, 4, 3, 3, 3, 3, 3, 3, 7];
+const denseObservedHeight = denseBins.at(8) ?? 0;
+---
+
+<figure class="hbos-histogram-diagram">
+  <svg
+    viewBox="0 0 1200 750"
+    width="100%"
+    role="img"
+    aria-labelledby="hbos-histogram-title hbos-histogram-desc"
+  >
+    <title id="hbos-histogram-title">HBOS histogram lookup</title>
+    <desc id="hbos-histogram-desc">
+      A dense bin at eight requests represents a common value. A small sparse
+      bin at twenty requests represents an uncommon value.
+    </desc>
+
+    <defs>
+      <marker
+        id="axis-arrow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0 0 10 5 0 10Z" class="fill-muted" />
+      </marker>
+    </defs>
+
+    <rect x="1" y="1" width="1198" height="748" rx="18" class="frame" />
+    <text x="600" y="62" text-anchor="middle" class="heading accent-text">
+      HBOS histogram lookup
+    </text>
+    <text x="600" y="94" text-anchor="middle" class="body muted-text">
+      Example feature: window_request_count
+    </text>
+
+    <g aria-label="Histogram explanation">
+      <rect x="285" y="122" width="630" height="76" rx="10" class="note" />
+      <circle cx="330" cy="160" r="20" class="accent-outline" />
+      <path d="M320 160h20m-7-7 7 7-7 7" class="accent-stroke" />
+      <text x="370" y="153" class="small">
+        Histogram bins show how often each request count appeared
+      </text>
+      <text x="370" y="177" class="small">
+        across past windows for a given source's baseline.
+      </text>
+    </g>
+
+    <g aria-label="Dense histogram bin">
+      <rect x="32" y="230" width="552" height="500" rx="14" class="panel" />
+      <text x="308" y="270" text-anchor="middle" class="section-title risk-low-text">Dense bin</text>
+      <g transform="translate(0 30)">
+      <text x="48" y="450" text-anchor="middle" transform="rotate(-90 48 450)" class="small muted-text">
+        Frequency in baseline
+      </text>
+
+      <line x1="70" y1="550" x2="550" y2="550" class="axis" marker-end="url(#axis-arrow)" />
+      <line x1="70" y1="550" x2="70" y2="350" class="axis" marker-end="url(#axis-arrow)" />
+
+      {denseBins.map((height, index) => (
+        <rect
+          x={90 + index * 21}
+          y={550 - height}
+          width="15"
+          height={height}
+          rx="2"
+          class="dense-histogram-bar"
+        />
+      ))}
+      <rect x={90 + 8 * 21} y={550 - denseObservedHeight} width="15" height={denseObservedHeight} rx="2" class="dense-observed-bar" />
+
+      <line x1="265.5" y1="302" x2="265.5" y2="312" class="dense-lookup-line" />
+      <circle cx="265.5" cy="302" r="7" class="fill-risk-low" />
+      <text x="265.5" y="286" text-anchor="middle" class="label risk-low-text">8 requests</text>
+
+      <text x="78" y="581" class="time">0</text>
+      <text x="183" y="581" text-anchor="middle" class="time">5</text>
+      <text x="288" y="581" text-anchor="middle" class="time">10</text>
+      <text x="393" y="581" text-anchor="middle" class="time">15</text>
+      <text x="498" y="581" text-anchor="middle" class="time">20</text>
+      <text x="310" y="610" text-anchor="middle" class="small muted-text">Request count in window</text>
+      </g>
+
+      <text x="308" y="676" text-anchor="middle" class="section-title risk-low-text">Common value</text>
+      <text x="308" y="705" text-anchor="middle" class="label risk-low-text">Low surprise</text>
+    </g>
+
+    <g aria-label="Sparse histogram bin">
+      <rect x="616" y="230" width="552" height="500" rx="14" class="panel" />
+      <text x="892" y="270" text-anchor="middle" class="section-title risk-medium-text">Sparse bin</text>
+      <g transform="translate(0 30)">
+      <text x="632" y="450" text-anchor="middle" transform="rotate(-90 632 450)" class="small muted-text">
+        Frequency in baseline
+      </text>
+
+      <line x1="654" y1="550" x2="1134" y2="550" class="axis" marker-end="url(#axis-arrow)" />
+      <line x1="654" y1="550" x2="654" y2="350" class="axis" marker-end="url(#axis-arrow)" />
+
+      {sparseBins.map((height, index) => (
+        <rect
+          x={674 + index * 21}
+          y={548 - height}
+          width="15"
+          height={height}
+          rx="2"
+          class="sparse-histogram-bar"
+        />
+      ))}
+      <rect x={674 + 20 * 21} y="541" width="15" height="7" rx="2" class="sparse-observed-bar" />
+
+      <line x1="1101.5" y1="463" x2="1101.5" y2="535" class="sparse-lookup-line" />
+      <circle cx="1101.5" cy="537" r="6" class="fill-risk-medium" />
+      <text x="1101.5" y="447" text-anchor="middle" class="label risk-medium-text">20 requests</text>
+
+      <text x="662" y="581" class="time">0</text>
+      <text x="767" y="581" text-anchor="middle" class="time">5</text>
+      <text x="872" y="581" text-anchor="middle" class="time">10</text>
+      <text x="977" y="581" text-anchor="middle" class="time">15</text>
+      <text x="1082" y="581" text-anchor="middle" class="time">20</text>
+      <text x="894" y="610" text-anchor="middle" class="small muted-text">Request count in window</text>
+      </g>
+
+      <text x="892" y="676" text-anchor="middle" class="section-title risk-medium-text">Uncommon value</text>
+      <text x="892" y="705" text-anchor="middle" class="label risk-medium-text">High surprise</text>
+    </g>
+
+  </svg>
+</figure>
+
+<style>
+  .hbos-histogram-diagram {
+    margin: 2rem 0 2.5rem;
+  }
+
+  svg {
+    display: block;
+    height: auto;
+    font-family: inherit;
+  }
+
+  .frame,
+  .panel,
+  .note {
+    fill: var(--card);
+    stroke: var(--border);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .note {
+    fill: color-mix(in oklch, var(--doc-accent) 3%, var(--card));
+  }
+
+  .heading,
+  .section-title,
+  .body,
+  .small,
+  .label,
+  .time {
+    fill: var(--foreground);
+  }
+
+  .heading {
+    font-size: 31px;
+    font-weight: 700;
+  }
+
+  .section-title {
+    font-size: 19px;
+    font-weight: 650;
+  }
+
+  .body {
+    font-size: 17px;
+  }
+
+  .small,
+  .time {
+    font-size: 14px;
+  }
+
+  .label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .time {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .muted-text {
+    fill: var(--muted-foreground);
+  }
+
+  .accent-text {
+    fill: var(--doc-accent);
+  }
+
+  .flow-text {
+    fill: var(--flow);
+  }
+
+  .risk-low-text {
+    fill: var(--risk-low);
+  }
+
+  .risk-medium-text {
+    fill: var(--risk-medium);
+  }
+
+  .axis,
+  .accent-outline,
+  .accent-stroke,
+  .dense-lookup-line,
+  .sparse-lookup-line {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .axis {
+    stroke: var(--muted-foreground);
+    stroke-width: 1.5;
+  }
+
+  .accent-outline,
+  .accent-stroke {
+    stroke: var(--doc-accent);
+    stroke-width: 2;
+  }
+
+  .dense-lookup-line {
+    stroke: var(--risk-low);
+    stroke-width: 1.5;
+  }
+
+  .sparse-lookup-line {
+    stroke: var(--risk-medium);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 5;
+  }
+
+  .dense-histogram-bar {
+    fill: var(--risk-low);
+    fill-opacity: 0.18;
+    stroke: var(--risk-low);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .dense-observed-bar {
+    fill: var(--risk-low);
+    fill-opacity: 0.42;
+    stroke: var(--risk-low);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sparse-histogram-bar {
+    fill: var(--risk-medium);
+    fill-opacity: 0.18;
+    stroke: var(--risk-medium);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sparse-observed-bar {
+    fill: var(--risk-medium);
+    fill-opacity: 0.42;
+    stroke: var(--risk-medium);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .fill-accent {
+    fill: var(--doc-accent);
+  }
+
+  .fill-muted {
+    fill: var(--muted-foreground);
+  }
+
+  .fill-risk-low {
+    fill: var(--risk-low);
+  }
+
+  .fill-risk-medium {
+    fill: var(--risk-medium);
+  }
+
+</style>

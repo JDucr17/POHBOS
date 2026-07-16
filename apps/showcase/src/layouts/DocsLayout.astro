@@ -1,0 +1,87 @@
+---
+import "@/styles/global.css";
+import type { MarkdownHeading } from "astro";
+import Sidebar from "@/features/navigation/Sidebar.astro";
+import Footer from "@/features/navigation/Footer.astro";
+import TableOfContents from "@/features/docs/TableOfContents.astro";
+import CopyLink from "@/features/docs/CopyLink.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  accent?: "primary" | "flow" | "cold";
+  section?: string;
+  headings?: MarkdownHeading[];
+}
+
+const {
+  title,
+  description,
+  accent = "primary",
+  section,
+  headings = [],
+} = Astro.props;
+
+const accentVar =
+  accent === "flow"
+    ? "var(--flow)"
+    : accent === "cold"
+      ? "var(--cold-path)"
+      : "var(--primary)";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="flex min-h-screen flex-col bg-background">
+    <div class="flex flex-1 flex-col md:flex-row md:items-start">
+      <Sidebar />
+      <main class="doc-main min-w-0 flex-1 bg-card" style={`--doc-accent: ${accentVar};`}>
+        <div class="flex gap-10 px-6 lg:px-12 xl:gap-16">
+          <article class="doc-article min-w-0 flex-1 pt-10 pb-24">
+            <header class="mb-10 flex items-start justify-between gap-6">
+              <div class="min-w-0">
+                {section && <p class="doc-eyebrow">{section}</p>}
+                <h1 class="doc-title">{title}</h1>
+              </div>
+              <CopyLink />
+            </header>
+            <slot />
+          </article>
+          <TableOfContents headings={headings} />
+        </div>
+      </main>
+    </div>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .doc-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--doc-accent);
+    margin: 0 0 0.7rem;
+  }
+
+  .doc-title {
+    font-size: 2.5rem;
+    line-height: 1.08;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--foreground);
+    margin: 0;
+  }
+  .doc-article {
+    max-width: 54rem;
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+title: Mechanics of Anomaly Scoring
+description: How POHBOS turns a visitor's recent activity into an anomaly score and a decision.
+accent: primary
+section: Concepts
+---
+
+import FeaturesTable from "@/features/docs/FeaturesTable.astro";
+import TermList from "@/features/docs/TermList.astro";
+import TrailingWindowDiagram from "@/features/docs/diagrams/TrailingWindowDiagram.astro";
+import FeatureExtractionDiagram from "@/features/docs/diagrams/FeatureExtractionDiagram.astro";
+import HbosHistogramDiagram from "@/features/docs/diagrams/HbosHistogramDiagram.astro";
+import NormalizationDiagram from "@/features/docs/diagrams/NormalizationDiagram.astro";
+
+## Trailing Window Model
+
+The pipeline performs anomaly scoring by looking at a visitor's activity using a trailing window model, where activity details are measured within a configured span of time.
+
+A window is defined by three concepts:
+
+<TermList
+  items={[
+    {
+      icon: "clock",
+      term: "Length",
+      desc: "the time span covered by the trailing window. For a window with a five minute length, each scoring decision is based on that visitor’s requests from the previous five minutes, ending at the event being evaluated.",
+    },
+    {
+      icon: "waveform",
+      term: "Cadence",
+      desc: "the shortest amount of time between two scoring decisions for the same visitor. Cadence exists because adjacent requests often describe the same behavior. Scoring every request in a burst would produce repeated decisions over nearly identical windows, so the detector emits at a controlled rhythm instead.",
+    },
+    {
+      icon: "users",
+      term: "Minimum number of events",
+      desc: "minimum number of requests a window must contain to be scored.",
+    },
+  ]}
+/>
+
+The window is anchored to the visitor's most recent request and reaches backwards from there. As new requests arrive, old ones age out depending on the defined window length, so the window continuously reflects the visitors current behavior rather than what they did when they first showed up.
+
+<TrailingWindowDiagram />
+
+## Features
+
+As mentioned earlier, the trailing window collects activity details for a given visitor within a defined timespan, the system reduces that window into a series of features used to determine if user behavior can be considered anomalous given the learned common behavior of a particular source. These features describe the visitor’s activity level, timing, resource mix, HTTP behavior, and request headers.
+
+<FeaturesTable />
+
+<FeatureExtractionDiagram />
+
+The rhythm features are computed over page requests rather than every request. This avoids treating a browser’s burst of image, script, and stylesheet loads as navigation behavior. The goal is to capture how the visitor moves through the site, not how the browser fetches assets after a page load.
+
+These features are adapted from published research on session-level bot detection in e-commerce traffic ([Rovetta et al.](https://doi.org/10.1016/j.jnca.2020.102577)), which uses HTTP-level behavioral signals like request counts, timing, error rates, resource mix, referrer presence, and request methods to distinguish human from automated sessions.
+
+## HBOS
+
+Anomaly scoring is done by comparing a visitor's behavior against a sources baseline. A baseline is a learned model of what normal activity looks like for a given source. Each source has its own baseline, built from a collection of that source's past visitors activity which is modeled using the trailing window model. The baseline is produced with an unsupervised algorithm  called ([HBOS](https://towardsdatascience.com/hbos-vs-iforest-on-macbook-pro-m1-c258d2b5fe6b/)), which builds one histogram per feature, capturing how that feature is usually distributed for the source. To score a visitors new window of activty, the system looks up each feature value in its corresponding histogram and asks: how common is a value like this, according to the baseline? A value in a densely populated bin is common, and therefore unsurprising. A value in a sparse bin is uncommon, and therefore surprising.
+
+<HbosHistogramDiagram />
+
+Each feature's likelihood is turned into a surprise term, the less likely the value, the larger the term and because HBOS treats features as independent, the observation's total anomaly score is the sum of those surprises: one per feature, each from looking up that feature's value in its own histogram.
+
+An observation scores high not by being unusual on a single feature, but by accumulating surprise across the features it's unusual on. The score rises with both the number of unusual feature values and the severity of their surprise, in which a higher score proposes anomalous behavior.
+
+Once a raw score is computed, it is normalized into a percentile by comparing it to the source’s own baseline score distribution. A normalized score of `0.95` means the window is more unusual than about 95% of the windows used to fit that source’s baseline.
+
+<NormalizationDiagram />
+
+This is possible because, after the feature histograms are built, the baseline worker scores the same baseline windows against those histograms. Those raw scores form a reference distribution, and the system stores its quantiles. Later, when a new window is scored, its raw score is compared against those stored quantiles so the result has a clear source-relative meaning.
+
+As mentioned earlier, the score measures how atypical a window of activity is relative to a source's learned baseline. It does not identify bots, prove automation, or judge intent, the system is designed to flag behavior defined as anomalous sending a downstream signal for enforcement layers to proceed accordingly.

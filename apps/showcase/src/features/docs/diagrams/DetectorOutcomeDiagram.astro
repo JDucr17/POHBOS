@@ -1,0 +1,197 @@
+<figure class="detector-outcome-diagram">
+  <svg viewBox="0 0 1024 476" width="100%" role="img" aria-labelledby="detector-title detector-desc">
+    <title id="detector-title">Detector — Three-Outcome Resolution</title>
+    <desc id="detector-desc">
+      A consumed event is decoded, joined to a visitor timeline, folded into a trailing window,
+      checked by the cadence gate, resolved to no baseline, insufficient history, or scored, and published.
+    </desc>
+    <defs>
+      <marker id="arrow-primary" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="primary-fill" /></marker>
+      <marker id="arrow-success" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="success-fill" /></marker>
+      <marker id="arrow-error" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="error-fill" /></marker>
+      <marker id="arrow-warning" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="warning-fill" /></marker>
+    </defs>
+
+    <rect x="1" y="1" width="1022" height="474" rx="12" class="frame" />
+    <text x="512" y="48" text-anchor="middle" class="diagram-title">Detector — Three-Outcome Resolution</text>
+    <text x="512" y="78" text-anchor="middle" class="diagram-subtitle">From each consumed event to a decision.</text>
+
+    <g aria-label="Consume and decode">
+      <rect x="18" y="115" width="136" height="248" rx="7" class="stage" />
+      <text x="32" y="139" class="stage-title">1. Consume &amp; Decode</text>
+      <circle cx="82" cy="168" r="5" class="sink-outline" />
+      <circle cx="94" cy="178" r="5" class="sink-outline" />
+      <circle cx="77" cy="187" r="5" class="sink-outline" />
+      <circle cx="77" cy="203" r="5" class="sink-outline" />
+      <path d="M82 173l8 3m-10 7 10-3m-13 12v6" class="sink-stroke" />
+      <text x="86" y="226" text-anchor="middle" class="small">Consume raw event</text>
+      <text x="86" y="244" text-anchor="middle" class="small">from Kafka.</text>
+      <line x1="30" y1="258" x2="142" y2="258" class="divider" />
+      <path d="M74 275h18l8 8v34H74Zm18 0v9h9" class="sink-stroke" />
+      <text x="86" y="327" text-anchor="middle" class="small">Decode event</text>
+      <text x="86" y="345" text-anchor="middle" class="small">envelope.</text>
+    </g>
+
+    <line x1="154" y1="199" x2="176" y2="199" class="success-line" marker-end="url(#arrow-success)" />
+
+    <g aria-label="Join visitor timeline">
+      <rect x="178" y="115" width="155" height="165" rx="7" class="stage" />
+      <text x="199" y="139" class="stage-title">2. Join Visitor Timeline</text>
+      <line x1="197" y1="196" x2="317" y2="196" class="primary-line" marker-end="url(#arrow-primary)" />
+      {[197, 220, 243, 266].map((x) => <circle cx={x} cy="196" r="5.5" class="timeline-dot" />)}
+      <line x1="286" y1="185" x2="286" y2="205" class="primary-line" />
+      <text x="275" y="182" class="micro">event-time</text>
+      <text x="255" y="235" text-anchor="middle" class="small">Can the event join the</text>
+      <text x="255" y="253" text-anchor="middle" class="small">visitor's timeline?</text>
+    </g>
+
+    <line x1="333" y1="199" x2="355" y2="199" class="success-line" marker-end="url(#arrow-success)" />
+    <text x="339" y="214" class="success-label">Yes</text>
+
+    <g aria-label="Update trailing window">
+      <rect x="357" y="115" width="153" height="205" rx="7" class="stage" />
+      <text x="370" y="139" class="stage-title">3. Update Trailing Window</text>
+      <line x1="378" y1="181" x2="378" y2="217" class="primary-line dashed" />
+      <line x1="493" y1="181" x2="493" y2="217" class="primary-line dashed" />
+      <rect x="390" y="180" width="94" height="35" rx="6" class="window" />
+      <line x1="378" y1="197" x2="493" y2="197" class="muted-line" />
+      {[403, 426, 449, 472].map((x) => <circle cx={x} cy="197" r="5.5" class="cold-fill cold-outlined" />)}
+      <path d="M386 229v8m0-4h98m0-4v8" class="cold-line window-span" />
+      <text x="435" y="247" text-anchor="middle" class="cold-label">window length</text>
+      <text x="434" y="265" text-anchor="middle" class="small">Fold the event into the</text>
+      <text x="434" y="283" text-anchor="middle" class="small">in-memory trailing window</text>
+      <text x="434" y="301" text-anchor="middle" class="small">(prune by event-time).</text>
+    </g>
+
+    <line x1="510" y1="199" x2="529" y2="199" class="success-line" marker-end="url(#arrow-success)" />
+
+    <g aria-label="Cadence gate">
+      <rect x="531" y="115" width="120" height="165" rx="7" class="stage" />
+      <text x="548" y="139" class="stage-title">4. Cadence Gate</text>
+      <circle cx="591" cy="192" r="20" class="sink-outline" />
+      <path d="M591 178v15l10 6" class="sink-stroke" />
+      <text x="591" y="235" text-anchor="middle" class="small">Is the cadence gate open?</text>
+    </g>
+
+    <line x1="651" y1="199" x2="682" y2="199" class="success-line outcome-connector" marker-end="url(#arrow-success)" />
+    <text x="660" y="191" class="success-label">Yes</text>
+
+    <g aria-label="Resolve decision" class="resolve-stage" transform="translate(8 0)">
+      <rect x="679" y="115" width="195" height="328" rx="7" class="stage" />
+      <text x="690" y="134" class="stage-title">
+        <tspan x="690" dy="0">5. Resolve Decision</tspan>
+        <tspan x="690" dy="14">(Three Outcomes)</tspan>
+      </text>
+
+      <rect x="688" y="158" width="181" height="68" rx="6" class="error-card" />
+      <ellipse cx="714" cy="174" rx="13" ry="5" class="error-outline" />
+      <path d="M701 174v21c0 4 6 7 13 7s13-3 13-7v-21m-26 10c0 4 6 7 13 7s13-3 13-7" class="error-stroke" />
+      <text x="743" y="177" class="outcome-title error-text">No baseline</text>
+      <text x="743" y="195" class="micro">No usable baseline.</text>
+      <text x="743" y="211" class="micro">Emit:</text>
+      <text x="773" y="211" class="status">no_baseline</text>
+
+      <rect x="688" y="234" width="181" height="94" rx="6" class="warning-card" />
+      <circle cx="714" cy="261" r="14" class="warning-outline dashed" />
+      <path d="M714 251v11l7 4" class="warning-stroke" />
+      <text x="743" y="254" class="outcome-title warning-text">Insufficient history</text>
+      <text x="743" y="273" class="micro">Baseline found.</text>
+      <text x="743" y="289" class="micro">Window not eligible.</text>
+      <text x="743" y="306" class="micro">Emit:</text>
+      <text x="743" y="322" class="status">insufficient_history</text>
+
+      <rect x="688" y="332" width="181" height="94" rx="6" class="success-card" />
+      <circle cx="714" cy="359" r="14" class="success-outline" />
+      <path d="m706 359 6 6 11-14" class="success-line" />
+      <text x="743" y="351" class="outcome-title success-text">Scored</text>
+      <text x="743" y="366" class="micro">Window eligible.</text>
+      <text x="743" y="381" class="micro">Extract features and score.</text>
+      <text x="743" y="396" class="micro">Apply policy.</text>
+      <text x="743" y="408" class="micro">Emit decision with status:</text>
+      <text x="743" y="422" class="status">scored</text>
+    </g>
+
+    <line x1="882" y1="260" x2="896" y2="260" class="success-line outcome-connector" marker-end="url(#arrow-success)" />
+
+    <g aria-label="Publish decision">
+      <rect x="898" y="185" width="113" height="174" rx="7" class="stage" />
+      <text x="912" y="209" class="stage-title">6. Publish Decision</text>
+      <path d="M935 247h15l24-15v55l-24-15h-15c-7 0-10-5-10-12s3-13 10-13Zm15 25 4 25h-11l-4-25m35-28c10 0 10 29 0 29" class="sink-stroke" />
+      <path d="m984 244 8-7m-8 20h12m-12 13 8 7" class="sink-stroke" />
+      <text x="954" y="312" text-anchor="middle" class="small">Publish decision</text>
+      <text x="954" y="330" text-anchor="middle" class="small">envelope to the</text>
+      <text x="954" y="348" text-anchor="middle" class="small">decisions topic.</text>
+    </g>
+
+    <path d="M85 363v22" class="sink-line" marker-end="url(#arrow-primary)" />
+    <rect x="35" y="389" width="100" height="70" rx="6" class="error-card" />
+    <text x="85" y="411" text-anchor="middle" class="exit-title error-text">Decode failed</text>
+    <text x="85" y="433" text-anchor="middle" class="small">Route to DLQ</text>
+    <text x="85" y="450" text-anchor="middle" class="small">and commit.</text>
+
+    <path d="M243 280v74" class="error-line" marker-end="url(#arrow-error)" />
+    <text x="250" y="307" class="error-label">No (late event)</text>
+    <rect x="186" y="359" width="134" height="70" rx="6" class="error-card" />
+    <text x="253" y="382" text-anchor="middle" class="exit-title error-text">Skip late event.</text>
+    <text x="253" y="405" text-anchor="middle" class="small">Do not fold into window.</text>
+    <text x="253" y="422" text-anchor="middle" class="small">No decision emitted.</text>
+
+    <path d="M573 280v74" class="warning-line" marker-end="url(#arrow-warning)" />
+    <text x="581" y="307" class="warning-label">No (gate closed)</text>
+    <rect x="526" y="359" width="125" height="86" rx="6" class="warning-card" />
+    <text x="588" y="382" text-anchor="middle" class="exit-title warning-text">Update window only.</text>
+    <text x="588" y="405" text-anchor="middle" class="small">Gate opens after more</text>
+    <text x="588" y="422" text-anchor="middle" class="small">event-time passes.</text>
+    <text x="588" y="439" text-anchor="middle" class="status">No decision emitted.</text>
+  </svg>
+</figure>
+
+<style>
+  .detector-outcome-diagram { width: 112%; margin: 2rem 0 2.5rem -1%; }
+  svg { display: block; height: auto; font-family: inherit; }
+  .frame, .stage { fill: var(--card); stroke: var(--border); vector-effect: non-scaling-stroke; }
+  .error-card { fill: color-mix(in oklch, var(--destructive) 5%, var(--card)); stroke: color-mix(in oklch, var(--destructive) 45%, var(--border)); }
+  .warning-card { fill: color-mix(in oklch, var(--risk-medium) 5%, var(--card)); stroke: color-mix(in oklch, var(--risk-medium) 48%, var(--border)); }
+  .success-card { fill: color-mix(in oklch, var(--risk-low) 5%, var(--card)); stroke: color-mix(in oklch, var(--risk-low) 48%, var(--border)); }
+  .error-card, .warning-card, .success-card { vector-effect: non-scaling-stroke; }
+  .diagram-title { fill: var(--foreground); font-size: 27px; font-weight: 750; }
+  .diagram-subtitle { fill: var(--muted-foreground); font-size: 17px; }
+  .stage-title { fill: var(--primary); font-size: 11px; font-weight: 700; }
+  .small { fill: var(--foreground); font-size: 10px; }
+  .micro { fill: var(--foreground); font-size: 8.5px; }
+  .status, .outcome-title, .exit-title { fill: var(--foreground); font-size: 10px; font-weight: 700; }
+  .resolve-stage .stage-title { font-size: 12px; }
+  .resolve-stage .micro { font-size: 9.5px; }
+  .resolve-stage .status, .resolve-stage .outcome-title { font-size: 11px; }
+  .success-label, .error-label, .warning-label, .cold-label { font-size: 9px; font-weight: 650; }
+  .success-label, .success-text { fill: var(--risk-low); }
+  .error-label, .error-text { fill: var(--destructive); }
+  .warning-label, .warning-text { fill: var(--risk-medium); }
+  .cold-label { fill: var(--cold-path); }
+  .primary-fill { fill: var(--primary); }
+  .success-fill { fill: var(--risk-low); }
+  .error-fill { fill: var(--destructive); }
+  .warning-fill { fill: var(--risk-medium); }
+  .cold-fill { fill: var(--cold-path); }
+  .primary-line, .success-line, .error-line, .warning-line, .sink-line, .cold-line, .muted-line,
+  .sink-stroke, .sink-outline, .success-outline, .error-outline, .warning-outline, .error-stroke,
+  .warning-stroke, .divider {
+    fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
+  }
+  .primary-line { stroke: var(--primary); stroke-width: 1.5; }
+  .success-line, .success-outline { stroke: var(--risk-low); stroke-width: 1.5; }
+  .outcome-connector { stroke-width: 2.25; }
+  .error-line, .error-stroke, .error-outline { stroke: var(--destructive); stroke-width: 1.5; }
+  .warning-line, .warning-stroke, .warning-outline { stroke: var(--risk-medium); stroke-width: 1.5; }
+  .sink-line, .sink-stroke, .sink-outline { stroke: var(--sink); stroke-width: 1.6; }
+  .cold-line { fill: none; stroke: var(--cold-path); stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .muted-line { stroke: var(--muted-foreground); stroke-width: 1.5; }
+  .divider { stroke: var(--border); }
+  .dashed { stroke-dasharray: 4 4; }
+  .timeline-dot { fill: color-mix(in oklch, var(--flow) 48%, var(--card)); stroke: var(--primary); }
+  .window { fill: color-mix(in oklch, var(--cold-path) 4%, var(--card)); stroke: var(--cold-path); }
+  .outlined { stroke: var(--risk-low); }
+  .cold-outlined { stroke: var(--cold-path); }
+  .window-span { stroke-dasharray: 3 3; }
+  @media (max-width: 48rem) { .detector-outcome-diagram { width: 100%; margin-left: 0; } }
+</style>

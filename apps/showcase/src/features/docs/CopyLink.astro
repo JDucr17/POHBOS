@@ -1,0 +1,87 @@
+---
+import { Link2, Check } from "@lucide/astro";
+---
+
+<button type="button" class="copylink" data-copy-link>
+  <span class="copylink__icon copylink__icon--link" aria-hidden="true">
+    <Link2 size={15} stroke-width={2} />
+  </span>
+  <span class="copylink__icon copylink__icon--check" aria-hidden="true">
+    <Check size={15} stroke-width={2} />
+  </span>
+  <span class="copylink__label">Copy link</span>
+</button>
+
+<style>
+  .copylink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .copylink:hover {
+    color: var(--foreground);
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
+  }
+
+  .copylink__icon {
+    display: inline-flex;
+  }
+
+  .copylink__icon--check {
+    display: none;
+    color: var(--risk-low);
+  }
+
+  .copylink[data-copied] .copylink__icon--link {
+    display: none;
+  }
+
+  .copylink[data-copied] .copylink__icon--check {
+    display: inline-flex;
+  }
+
+  .copylink[data-copied] {
+    color: var(--foreground);
+    border-color: color-mix(in oklch, var(--risk-low) 45%, var(--border));
+  }
+</style>
+
+<script>
+  const buttons =
+    document.querySelectorAll<HTMLButtonElement>("[data-copy-link]");
+
+  buttons.forEach((btn) => {
+    let timer: ReturnType<typeof setTimeout>;
+    const label = btn.querySelector(".copylink__label");
+    const original = label?.textContent ?? "Copy link";
+
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+      } catch {
+        return;
+      }
+      btn.setAttribute("data-copied", "");
+      if (label) label.textContent = "Copied";
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        btn.removeAttribute("data-copied");
+        if (label) label.textContent = original;
+      }, 1800);
+    });
+  });
+</script>

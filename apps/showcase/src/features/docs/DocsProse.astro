@@ -1,0 +1,132 @@
+---
+interface Props {
+  accent?: "primary" | "flow" | "cold";
+}
+
+const { accent = "primary" } = Astro.props;
+
+const accentVar =
+  accent === "flow"
+    ? "var(--flow)"
+    : accent === "cold"
+      ? "var(--cold-path)"
+      : "var(--primary)";
+---
+
+<div class="docs-prose" style={`--doc-accent: ${accentVar};`}>
+  <slot />
+</div>
+
+<style>
+  .docs-prose {
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .docs-prose :global(h2) {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    scroll-margin-top: 1.5rem;
+  }
+
+  .docs-prose :global(h2)::after {
+    content: "";
+    display: block;
+    width: 2.5rem;
+    height: 3px;
+    margin-top: 0.65rem;
+    border-radius: 9999px;
+    background: var(--doc-accent);
+  }
+
+  .docs-prose :global(h3) {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+    margin-top: 1.85rem;
+    margin-bottom: 0.5rem;
+    scroll-margin-top: 1.5rem;
+  }
+
+  .docs-prose :global(p) {
+    margin: 0 0 1.05rem;
+  }
+
+  .docs-prose :global(a) {
+    color: var(--doc-accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+  }
+
+  .docs-prose :global(a:hover) {
+    color: var(--primary-hover);
+  }
+
+  .docs-prose :global(strong) {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .docs-prose :global(em) {
+    font-style: italic;
+    color: var(--muted-foreground);
+  }
+
+  .docs-prose :global(ul) {
+    margin: 0 0 1.05rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  .docs-prose :global(li) {
+    margin-bottom: 0.35rem;
+  }
+
+  .docs-prose :global(li)::marker {
+    color: var(--muted-foreground);
+  }
+
+  .docs-prose :global(code) {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82em;
+    font-weight: 500;
+    background: color-mix(in oklch, var(--doc-accent) 8%, var(--card));
+    color: color-mix(in oklch, var(--doc-accent) 55%, var(--foreground));
+    padding: 0.15em 0.42em;
+    border-radius: 5px;
+    border: 1px solid color-mix(in oklch, var(--doc-accent) 22%, var(--border));
+    white-space: nowrap;
+  }
+
+  .docs-prose :global(p:has(> em:only-child)) {
+    margin: 1.5rem 0;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    border-left: 3px solid color-mix(in oklch, var(--doc-accent) 55%, transparent);
+    background: color-mix(in oklch, var(--doc-accent) 6%, transparent);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .docs-prose :global(p:has(> em:only-child) em) {
+    font-style: italic;
+    color: var(--muted-foreground);
+  }
+
+  .docs-prose :global(p:has(> em:only-child) code) {
+    white-space: nowrap;
+  }
+
+  .docs-prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.25rem 0;
+  }
+</style>

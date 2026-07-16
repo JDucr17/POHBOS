@@ -1,0 +1,16 @@
+---
+title: Baseline Worker
+description: The cold-path service that fits per-source baselines.
+accent: cold
+section: Services
+---
+
+import BaselineFitCycleDiagram from "@/features/docs/diagrams/BaselineFitCycleDiagram.astro";
+
+The baseline is computed by the baseline worker, a cold-path service that runs one fit cycle on a schedule. Each time it runs, it reads a source’s recent event history from external storage, reconstructs that history into trailing windows, fits and stores the baseline, emits a signal announcing that a new baseline is available for that source, and exits the process cleanly. That signal is the worker’s point of contact with the live pipeline: the detector listens for it and refreshes the corresponding source baseline it scores against, so newly fit baselines take effect without restarting anything.
+
+<BaselineFitCycleDiagram />
+
+A source’s baseline can only be computed if it has enough history to support one. The worker examines two independent thresholds to determine if a baseline can be fit: a minimum number of windows, so the fit rests on enough samples to be stable, and a minimum number of distinct visitors, so that the computed baseline is representative of different visitors’ activity. A source that meets both criteria is fit; one that doesn’t is recorded as having insufficient history and skipped, without aborting the rest of the run.
+
+Each source is fit independently, so one source failing to fit never blanks the whole run; the failure is recorded and the worker moves on to the next source.
