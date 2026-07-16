@@ -1,0 +1,40 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  eyebrow?: string;
+  image?: string;
+}
+
+const {
+  title,
+  description,
+  eyebrow = "Work in progress",
+  image = "/illustrations/gopher.svg",
+} = Astro.props;
+---
+
+<article
+  class="relative min-h-[38vh] overflow-hidden rounded-lg border border-border bg-muted/30 p-6 sm:p-8"
+>
+  <div class="relative z-10 max-w-[75%] sm:max-w-[70%]">
+    <p
+      class="mb-4 inline-flex rounded-full border border-border bg-background px-3 py-1 text-[0.68rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase"
+    >
+      {eyebrow}
+    </p>
+    <h2 class="text-xl font-semibold tracking-tight text-foreground">
+      {title}
+    </h2>
+    <p class="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+      {description}
+    </p>
+  </div>
+
+  <img
+    src={image}
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute -right-3 -bottom-5 w-28 sm:w-32 lg:w-36"
+  />
+</article>
