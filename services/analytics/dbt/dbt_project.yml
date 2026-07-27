@@ -1,0 +1,23 @@
+name: pohbos_analytics
+version: "0.1.0"
+config-version: 2
+
+profile: pohbos_analytics
+
+model-paths: ["models"]
+target-path: "target"
+
+clean-targets:
+  - "target"
+  - "logs"
+
+models:
+  pohbos_analytics:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+    exports:
+      +materialized: external

@@ -1,0 +1,31 @@
+select
+    source_id,
+    event_date,
+    request_count,
+    distinct_visitor_count,
+    distinct_uri_count,
+    http_4xx_count,
+    http_4xx_rate,
+    referrer_present_count,
+    referrer_present_rate,
+    evaluated_window_count,
+    scored_window_count,
+    no_baseline_window_count,
+    insufficient_history_window_count,
+    low_risk_count,
+    medium_risk_count,
+    high_risk_count,
+    critical_risk_count,
+    allow_action_count,
+    log_action_count,
+    challenge_action_count,
+    block_action_count,
+    average_normalized_score,
+    p90_normalized_score,
+    p99_normalized_score,
+    maximum_normalized_score,
+    baseline_usage_segments
+from {{ ref('mart_source_daily_risk_summary') }}
+order by
+    source_id,
+    event_date

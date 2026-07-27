@@ -5,7 +5,6 @@ MIGRATIONS_DIR = infra/migrations
 GO_MODULE      = github.com/JDucr17/streamline
 
 PIPELINE_DIR        = services/pipeline
-BASELINE_WORKER_DIR = services/baseline-worker
 BIN_DIR             = bin
 
 DATABASE_URL ?= postgres://streamline:streamline@localhost:5432/streamline?sslmode=disable
@@ -15,6 +14,7 @@ REDIS_URL    ?= redis://localhost:6379
 PEEK_COUNT ?= 5
 
 .PHONY: up down restart logs ps \
+        airflow-up airflow-stop airflow-restart airflow-logs airflow-import-errors \
         migrate migrate-down migrate-status psql \
         kafka-topics list-topics peek-events peek-decisions peek-dlq \
         run-ingestor build-ingestor \
@@ -22,8 +22,7 @@ PEEK_COUNT ?= 5
         run-detector build-detector \
         run-query-api build-queryapi \
         run-baseline-worker build-baseline-worker \
-        run build \
-		clean
+        run build clean
 
 clean:
 	rm -rf $(BIN_DIR)/*
@@ -103,3 +102,15 @@ build-baseline-worker:
 	cd $(PIPELINE_DIR) && go build -o ../../$(BIN_DIR)/baseline-worker ./cmd/baseline-worker
 
 build: build-ingestor build-sink build-detector build-queryapi build-baseline-worker
+
+airflow-up:
+	docker compose up -d --build airflow
+
+airflow-stop:
+	docker compose stop airflow
+
+airflow-logs:
+	docker compose logs -f airflow
+
+airflow-import-errors:
+	docker compose exec airflow airflow dags list-import-errors

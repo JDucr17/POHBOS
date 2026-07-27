@@ -70,6 +70,40 @@ services:
     networks:
       - streamline
 
+  airflow:
+    build:
+      context: .
+      dockerfile: infra/airflow/Dockerfile
+    image: streamline-airflow:3.3.0
+    container_name: streamline-airflow
+    restart: unless-stopped
+    command: standalone
+    user: "${AIRFLOW_UID:-50000}:0"
+    environment:
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__PARALLELISM: "1"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/streamline/airflow/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
+      KAFKA_BROKERS: "${KAFKA_BROKERS_INTERNAL:-redpanda:9092}"
+      KAFKA_BASELINE_SIGNALS_TOPIC: "${KAFKA_BASELINE_SIGNALS_TOPIC:-baseline_signals}"
+      LOG_LEVEL: "${LOG_LEVEL:-info}"
+    ports:
+      - "${AIRFLOW_UI_PORT:-8082}:8080"
+    volumes:
+      - airflow_data:/opt/airflow
+      - analytics_data:/opt/streamline/services/analytics/data
+      - ./apps/showcase/public/data:/opt/streamline/apps/showcase/public/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    networks:
+      - streamline
+
 volumes:
   postgres_data:
     name: streamline_postgres_data
@@ -77,6 +111,10 @@ volumes:
     name: streamline_redis_data
   redpanda_data:
     name: streamline_redpanda_data
+  airflow_data:
+    name: streamline_airflow_data
+  analytics_data:
+    name: streamline_analytics_data
 
 networks:
   streamline:
