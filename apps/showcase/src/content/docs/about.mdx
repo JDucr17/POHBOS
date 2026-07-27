@@ -9,29 +9,28 @@ section: Concepts
 
 POHBOS is a learning project I built after reading [Cloudflare's engineering write-up on scaling anomaly detection](https://blog.cloudflare.com/lessons-learned-from-scaling-up-cloudflare-anomaly-detection-platform/).
 
-The project implements a scoring pipeline that uses the Histogram Based Outlier Scoring to analyze anomalous HTTP behavior. 
+The project implements a scoring pipeline that uses the Histogram Based Outlier Scoring to analyze anomalous HTTP behavior.
 Events enter through an ingestor, move through Kafka-compatible topics, get projected into durable storage, and are evaluated by a detector that maintains each visitor's trailing window. Eligible windows are scored against a source-specific HBOS baseline, mapped through a policy, and emitted as decisions.
 
 ## Repository structure
 
 Generally speaking the repository is structured in the following manner
 
-<pre class="my-6 overflow-x-auto rounded-lg border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed text-foreground">{
-    `
+<pre class="border-border bg-muted/30 text-foreground my-6 overflow-x-auto rounded-lg border p-4 font-mono text-sm leading-relaxed">{`
 ├── services/
-│   └── pipeline/        # Pipeline implementation
-├── infra/               # Redpanda/Kafka broker topic setup and Postgres migrations
+│   ├── pipeline/        # Streaming detection pipeline
+│   └── analytics/       # Daily risk insights from stored pipeline data
+├── infra/               # Airflow orchestration, Redpanda topics, and Postgres migrations
 ├── tools/
 │   └── replay/          # Python CLI for replaying HTTP traffic using eclog dataset
 └── apps/
     └── showcase/        # Astro/Svelte documentation and demo site`}</pre>
 
-
 ## Pipeline services
 
 `services/pipeline` is one Go module with multiple service binaries and shared internal packages.
 
-<pre class="my-6 overflow-x-auto rounded-lg border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed text-foreground">{`services/pipeline/
+<pre class="border-border bg-muted/30 text-foreground my-6 overflow-x-auto rounded-lg border p-4 font-mono text-sm leading-relaxed">{`services/pipeline/
 ├── cmd/ 
 |    # Binary/service composition logic including: lifecycle management, configuration and initilization. 
 │   ├── ingestor/      
@@ -52,7 +51,11 @@ Generally speaking the repository is structured in the following manner
 
 The development infrastructure stack is managed through Docker Compose. Redpanda provides the Kafka-compatible broker. Postgres acts as the external storage instance that stores events, decisions, policies, baseline runs, and labels.
 
-<pre class="my-6 overflow-x-auto rounded-lg border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed text-foreground">{`infra/
+<pre class="border-border bg-muted/30 text-foreground my-6 overflow-x-auto rounded-lg border p-4 font-mono text-sm leading-relaxed">{`infra/
+├── airflow/
+│   ├── dags/
+│   │   └── analytics_publish.py # Weekly analytics workflow
+│   └── Dockerfile               # Airflow runtime image
 ├── kafka/
 │   └── create_topics.sh # raw events, decisions, DLQ, baseline signals
 └── migrations/
@@ -65,7 +68,8 @@ The development infrastructure stack is managed through Docker Compose. Redpanda
 ## Replay tool
 
 The replay tool is a Python CLI used to drive realistic traffic into the ingestor. It reads rows from [EClog](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Z834IK), a public dataset containing HTTP access traffic from a real e-commerce website, maps those rows into the ingestor payload shape, and sends them over HTTP with rate and concurrency controls.
-<pre class="my-6 overflow-x-auto rounded-lg border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed text-foreground">{`tools/replay/
+
+<pre class="border-border bg-muted/30 text-foreground my-6 overflow-x-auto rounded-lg border p-4 font-mono text-sm leading-relaxed">{`tools/replay/
 ├── pyproject.toml       # uv project and CLI dependencies
 └── src/traffic_replay/
     ├── cli.py           # command entrypoint
@@ -76,11 +80,25 @@ The replay tool is a Python CLI used to drive realistic traffic into the ingesto
 
 Using EClog keeps the pipeline grounded in real access-log behavior, so the replay tool exercises ingestion, windowing, scoring, and backpressure against traffic patterns that hand-written examples would miss.
 
+## Analytics service
+
+The analytics service creates daily risk insights for each analyzed source from stored events, detector decisions, and baseline runs.
+
+It summarizes traffic, scoring coverage, risk levels, recommended actions, score distributions, and baseline usage for the showcase.
+
+<pre class="border-border bg-muted/30 text-foreground my-6 overflow-x-auto rounded-lg border p-4 font-mono text-sm leading-relaxed">{`services/analytics/
+├── src/pohbos_analytics/ # Snapshot extraction and inspection CLI
+├── dbt/                  # Daily models, tests, and Parquet export
+├── data/                 # Local snapshots and DuckDB warehouse
+└── tests/                # Python command and extraction tests`}</pre>
+
+[See how the analytics pipeline works →](/docs/services/analytics)
+
 ## Showcase app
 
 The showcase is the public read surface, what you're currently reading. It explains the architecture, documents service responsibilities, and renders the pipeline as an interactive system diagram.
 
-<pre class="my-6 overflow-x-auto rounded-lg border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed text-foreground">{`apps/showcase/
+<pre class="border-border bg-muted/30 text-foreground my-6 overflow-x-auto rounded-lg border p-4 font-mono text-sm leading-relaxed">{`apps/showcase/
 ├── src/pages/           # Astro routes
 ├── src/content/docs/    # MDX content pages
 ├── src/layouts/         # Docs and immersive page shells
@@ -93,9 +111,11 @@ The showcase is the public read surface, what you're currently reading. It expla
 
 This showcase is still a work in progress. The next pieces are a live SSE stream for decisions moving through the pipeline, and an interactive session crafter for generating visitor behavior against the ingestor.
 
+The showcase also presents the daily risk summary through browser-side DuckDB queries.
+
 ## Tech stack
 
-<div class="my-6 overflow-x-auto rounded-lg border border-border">
+<div class="border-border my-6 overflow-x-auto rounded-lg border">
   <table class="w-full min-w-[46rem] border-collapse text-left text-sm">
     <thead class="bg-muted/60 text-foreground">
       <tr>
@@ -104,76 +124,198 @@ This showcase is still a work in progress. The next pieces are a live SSE stream
         <th class="px-4 py-3 font-semibold">Role</th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-border">
+    <tbody class="divide-border divide-y">
       <tr>
         <td class="px-4 py-3 align-middle">
           <span class="inline-flex items-center whitespace-nowrap">
-            <img class="size-6 shrink-0 object-contain" src="/Go.svg" alt="" style="margin-right: 1.25rem" />
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/Go.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
             <strong>Go</strong>
           </span>
         </td>
-        <td class="px-4 py-3 align-middle"><code>services/pipeline</code></td>
-        <td class="px-4 py-3 align-middle text-muted-foreground">Service binaries for ingestion, scoring, persistence, baseline fitting, and reads.</td>
+        <td class="px-4 py-3 align-middle">
+          <code>services/pipeline</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Service binaries for ingestion, scoring, persistence, baseline fitting, and reads.
+        </td>
       </tr>
       <tr>
         <td class="px-4 py-3 align-middle">
           <span class="inline-flex items-center whitespace-nowrap">
-            <img class="size-6 shrink-0 object-contain" src="/redpanda.svg" alt="" style="margin-right: 1.25rem" />
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/redpanda.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
             <strong>Redpanda</strong>
           </span>
         </td>
-        <td class="px-4 py-3 align-middle">Compose and <code>infra/kafka</code></td>
-        <td class="px-4 py-3 align-middle text-muted-foreground">Kafka-compatible topics, partitions, offsets, retention, and replay.</td>
+        <td class="px-4 py-3 align-middle">
+          Compose and <code>infra/kafka</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Kafka-compatible topics, partitions, offsets, retention, and replay.
+        </td>
       </tr>
       <tr>
         <td class="px-4 py-3 align-middle">
           <span class="inline-flex items-center whitespace-nowrap">
-            <img class="size-6 shrink-0 object-contain" src="/postgresql.svg" alt="" style="margin-right: 1.25rem" />
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/postgresql.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
             <strong>Postgres</strong>
           </span>
         </td>
-        <td class="px-4 py-3 align-middle"><code>infra/migrations</code></td>
-        <td class="px-4 py-3 align-middle text-muted-foreground">Durable records for events, decisions, policies, baseline runs, and labels.</td>
+        <td class="px-4 py-3 align-middle">
+          <code>infra/migrations</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Durable records for events, decisions, policies, baseline runs, and labels.
+        </td>
       </tr>
       <tr>
         <td class="px-4 py-3 align-middle">
           <span class="inline-flex items-center whitespace-nowrap">
-            <img class="size-6 shrink-0 object-contain" src="/python.svg" alt="" style="margin-right: 1.25rem" />
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/python.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
             <strong>Python</strong>
           </span>
         </td>
-        <td class="px-4 py-3 align-middle"><code>tools/replay</code></td>
-        <td class="px-4 py-3 align-middle text-muted-foreground">CLI tooling for replaying EClog traffic into the ingestor.</td>
+        <td class="px-4 py-3 align-middle">
+          <code>tools/replay</code> and <code>services/analytics</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Replays HTTP traffic and extracts stored data from the operational pipeline for analytics.
+        </td>
       </tr>
       <tr>
         <td class="px-4 py-3 align-middle">
           <span class="inline-flex items-center whitespace-nowrap">
-            <img class="size-6 shrink-0 object-contain" src="/astro.svg" alt="" style="margin-right: 1.25rem" />
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/duckdb.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
+            <strong>DuckDB</strong>
+          </span>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <code>services/analytics</code> and <code>apps/showcase</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          OLAP database that runs analytical queries, reads and writes Parquet representations, and
+          powers browser-side exploration through DuckDB-Wasm.
+        </td>
+      </tr>
+      <tr>
+        <td class="px-4 py-3 align-middle">
+          <span class="inline-flex items-center whitespace-nowrap">
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/dbt.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
+            <strong>dbt</strong>
+          </span>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <code>services/analytics/dbt</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Organizes analytical SQL queries into documented, tested models with explicit
+          dependencies.
+        </td>
+      </tr>
+      <tr>
+        <td class="px-4 py-3 align-middle">
+          <span class="inline-flex items-center whitespace-nowrap">
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/airflow.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
+            <strong>Airflow</strong>
+          </span>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <code>infra/airflow</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Orchestrates the weekly analytics extraction, dbt build and tests, and Parquet export.
+        </td>
+      </tr>
+      <tr>
+        <td class="px-4 py-3 align-middle">
+          <span class="inline-flex items-center whitespace-nowrap">
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/astro.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
             <strong>Astro</strong>
           </span>
         </td>
-        <td class="px-4 py-3 align-middle"><code>apps/showcase</code></td>
-        <td class="px-4 py-3 align-middle text-muted-foreground">Static docs, MDX content pages, and routing.</td>
+        <td class="px-4 py-3 align-middle">
+          <code>apps/showcase</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Static docs, MDX content pages, and routing.
+        </td>
       </tr>
       <tr>
         <td class="px-4 py-3 align-middle">
           <span class="inline-flex items-center whitespace-nowrap">
-            <img class="size-6 shrink-0 object-contain" src="/svelte.svg" alt="" style="margin-right: 1.25rem" />
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/svelte.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
             <strong>Svelte</strong>
           </span>
         </td>
-        <td class="px-4 py-3 align-middle"><code>apps/showcase/src/features</code></td>
-        <td class="px-4 py-3 align-middle text-muted-foreground">Interactive islands like the pipeline visualization and soon to come components.</td>
+        <td class="px-4 py-3 align-middle">
+          <code>apps/showcase/src/features</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Interactive islands like the pipeline visualization and soon to come components.
+        </td>
       </tr>
       <tr>
         <td class="px-4 py-3 align-middle">
           <span class="inline-flex items-center whitespace-nowrap">
-            <img class="size-6 shrink-0 object-contain" src="/Typescript.svg" alt="" style="margin-right: 1.25rem" />
+            <img
+              class="size-6 shrink-0 object-contain"
+              src="/Typescript.svg"
+              alt=""
+              style="margin-right: 1.25rem"
+            />
             <strong>TypeScript</strong>
           </span>
         </td>
-        <td class="px-4 py-3 align-middle"><code>apps/showcase</code></td>
-        <td class="px-4 py-3 align-middle text-muted-foreground">Typed frontend code and stricter UI contracts.</td>
+        <td class="px-4 py-3 align-middle">
+          <code>apps/showcase</code>
+        </td>
+        <td class="text-muted-foreground px-4 py-3 align-middle">
+          Typed frontend code and stricter UI contracts.
+        </td>
       </tr>
     </tbody>
   </table>

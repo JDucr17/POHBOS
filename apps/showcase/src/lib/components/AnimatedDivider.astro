@@ -1,0 +1,40 @@
+<div class="flow-divider" aria-hidden="true">
+  <span class="flow-divider__glow"></span>
+</div>
+
+<style>
+  .flow-divider {
+    position: relative;
+    z-index: 1;
+    height: 2px;
+    pointer-events: none;
+    background: color-mix(in oklch, var(--primary) 38%, var(--border));
+  }
+
+  .flow-divider__glow {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 30%;
+    background: linear-gradient(90deg, transparent, var(--glow-blue), transparent);
+    box-shadow: 0 0 10px 1px color-mix(in oklch, var(--glow-blue) 45%, transparent);
+    will-change: transform;
+    animation: divider-sweep 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes divider-sweep {
+    from {
+      transform: translateX(0%);
+    }
+
+    to {
+      transform: translateX(233%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-divider__glow {
+      display: none;
+    }
+  }
+</style>

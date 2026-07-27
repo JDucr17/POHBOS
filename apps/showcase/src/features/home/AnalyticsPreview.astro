@@ -1,0 +1,126 @@
+---
+import RiskTrendPreview from "@/features/home/RiskTrendPreview.svelte";
+
+const metrics = [
+  { label: "Total requests", value: "500,000", valueClass: "text-foreground" },
+  { label: "Evaluated windows", value: "67,821", valueClass: "text-primary" },
+  { label: "Scored windows", value: "46,230", valueClass: "text-risk-low" },
+] as const;
+
+const riskLevels = [
+  { label: "Low", color: "var(--risk-low)" },
+  { label: "Medium", color: "var(--risk-medium)" },
+  { label: "High", color: "var(--risk-high)" },
+  { label: "Critical", color: "var(--risk-critical)" },
+] as const;
+---
+
+<section class="border-border bg-card border-y" aria-labelledby="analytics-preview-title">
+  <div
+    class="grid w-full gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[0.7fr_1.55fr] lg:items-center lg:px-8"
+  >
+    <div class="max-w-xl">
+      <p class="text-primary text-xs font-semibold tracking-[0.1em] uppercase">Analytics preview</p>
+      <h2
+        id="analytics-preview-title"
+        class="text-foreground mt-3 text-2xl font-semibold tracking-tight sm:text-3xl"
+      >
+        Daily traffic analytics
+      </h2>
+      <p class="text-muted-foreground mt-4 text-sm leading-relaxed sm:text-base">
+        Explore detector coverage, risk levels, policy actions, score distributions, and baseline
+        usage from replayed traffic.
+      </p>
+      <a
+        href="/analytics"
+        class="text-primary hover:text-primary-hover focus-visible:ring-ring mt-6 inline-flex rounded-sm text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      >
+        Explore analytics dashboard →
+      </a>
+    </div>
+
+    <div class="border-border bg-background overflow-hidden rounded-xl border">
+      <dl class="analytics-grid">
+        {
+          metrics.map((metric) => (
+            <div class="analytics-cell bg-card min-w-0 p-4 sm:p-5">
+              <dt class="text-muted-foreground text-xs font-medium">{metric.label}</dt>
+              <dd
+                class:list={[
+                  "mt-2 text-2xl font-semibold tracking-tight tabular-nums",
+                  metric.valueClass,
+                ]}
+              >
+                {metric.value}
+              </dd>
+            </div>
+          ))
+        }
+        <div class="analytics-cell bg-card min-w-0 p-4 sm:p-5">
+          <div class="flex items-start justify-between gap-3">
+            <dt class="text-muted-foreground text-xs font-medium">Risk levels over time</dt>
+            <span
+              class="border-border text-muted-foreground rounded-md border px-2 py-1 text-[0.65rem]"
+            >
+              EClog
+            </span>
+          </div>
+          <dd>
+            <div class="text-muted-foreground mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[0.65rem]">
+              {
+                riskLevels.map((level) => (
+                  <span class="inline-flex items-center gap-1.5">
+                    <span
+                      class="size-2 rounded-sm"
+                      style={`background: ${level.color}`}
+                      aria-hidden="true"
+                    />
+                    {level.label}
+                  </span>
+                ))
+              }
+            </div>
+            <div class="mt-1">
+              <RiskTrendPreview client:load />
+            </div>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-cell {
+    border-top: 1px solid var(--border);
+  }
+
+  .analytics-cell:first-child {
+    border-top: 0;
+  }
+
+  @media (min-width: 30rem) {
+    .analytics-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .analytics-cell:nth-child(even) {
+      border-left: 1px solid var(--border);
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .analytics-grid {
+      grid-template-columns: repeat(3, minmax(0, 0.72fr)) minmax(15rem, 1.35fr);
+    }
+
+    .analytics-cell + .analytics-cell {
+      border-left: 1px solid var(--border);
+    }
+  }
+</style>

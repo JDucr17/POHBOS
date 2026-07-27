@@ -1,0 +1,454 @@
+<figure class="analytics-pipeline-diagram">
+  <svg
+    viewBox="0 0 1400 900"
+    width="100%"
+    role="img"
+    aria-labelledby="analytics-pipeline-title analytics-pipeline-desc"
+  >
+    <title id="analytics-pipeline-title">Analytics pipeline</title>
+    <desc id="analytics-pipeline-desc">
+      The weekly Airflow workflow extracts persisted Postgres records into Parquet snapshots, uses
+      dbt and DuckDB to build and test a daily source-risk mart, exports the mart to Parquet, and
+      makes it available to the browser dashboard through DuckDB-Wasm.
+    </desc>
+
+    <defs>
+      <marker
+        id="analytics-arrow-primary"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0 0 10 5 0 10Z" class="primary-fill"></path>
+      </marker>
+      <marker
+        id="analytics-arrow-airflow"
+        viewBox="0 0 10 10"
+        refX="9"
+        refY="5"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M0 0 10 5 0 10Z" class="airflow-fill"></path>
+      </marker>
+    </defs>
+
+    <rect x="1" y="1" width="1398" height="898" rx="18" class="frame"></rect>
+    <text x="700" y="58" text-anchor="middle" class="diagram-title">Analytics pipeline</text>
+
+    <g aria-label="Extract persisted records into Parquet snapshots">
+      <rect x="24" y="98" width="210" height="350" rx="11" class="stage-card"></rect>
+      <circle cx="54" cy="133" r="15" class="step-badge"></circle>
+      <text x="54" y="139" text-anchor="middle" class="step-number">1</text>
+      <text x="80" y="140" class="stage-title">Extract</text>
+
+      <ellipse cx="88" cy="204" rx="34" ry="12" class="primary-stroke"></ellipse>
+      <path
+        d="M54 204v62c0 7 15 12 34 12s34-5 34-12v-62m-68 31c0 7 15 12 34 12s34-5 34-12"
+        class="primary-stroke"></path>
+      <text x="88" y="306" text-anchor="middle" class="label">Postgres</text>
+
+      <line
+        x1="130"
+        y1="232"
+        x2="155"
+        y2="232"
+        class="primary-line"
+        marker-end="url(#analytics-arrow-primary)"></line>
+      <path d="M166 195h26l18 18v48h-44Zm26 0v19h19" class="cold-stroke"></path>
+      <text x="188" y="286" text-anchor="middle" class="small">Parquet</text>
+      <text x="188" y="307" text-anchor="middle" class="small muted-text">files</text>
+      <text x="129" y="357" text-anchor="middle" class="small muted-text">events · decisions</text>
+      <text x="129" y="379" text-anchor="middle" class="small muted-text">baseline runs</text>
+    </g>
+
+    <line
+      x1="242"
+      y1="276"
+      x2="273"
+      y2="276"
+      class="primary-line"
+      marker-end="url(#analytics-arrow-primary)"></line>
+
+    <g aria-label="Model and test with dbt and DuckDB">
+      <rect x="281" y="98" width="218" height="350" rx="11" class="stage-card"></rect>
+      <circle cx="311" cy="133" r="15" class="step-badge"></circle>
+      <text x="311" y="139" text-anchor="middle" class="step-number">2</text>
+      <text x="337" y="140" class="stage-title">Model &amp; test</text>
+
+      <image href="/dbt.svg" x="331" y="185" width="118" height="72" />
+      <text x="390" y="292" text-anchor="middle" class="plus">+</text>
+      <image href="/duckdb.svg" x="339" y="316" width="52" height="52" />
+      <text x="404" y="350" class="service-name">DuckDB</text>
+    </g>
+
+    <line
+      x1="509"
+      y1="276"
+      x2="536"
+      y2="276"
+      class="primary-line"
+      marker-end="url(#analytics-arrow-primary)"></line>
+
+    <g aria-label="Build the daily source-risk mart">
+      <rect x="546" y="98" width="218" height="350" rx="11" class="stage-card"></rect>
+      <circle cx="576" cy="133" r="15" class="step-badge"></circle>
+      <text x="576" y="139" text-anchor="middle" class="step-number">3</text>
+      <text x="602" y="140" class="stage-title">Build mart</text>
+
+      <rect x="585" y="201" width="140" height="118" rx="6" class="mart-table"></rect>
+      <rect x="585" y="201" width="140" height="24" rx="6" class="table-head"></rect>
+      <path d="M585 225h140M585 256h140M585 287h140M632 201v118M678 201v118" class="table-grid"
+      ></path>
+      <text x="655" y="360" text-anchor="middle" class="label">Daily source-risk</text>
+      <text x="655" y="385" text-anchor="middle" class="label">summary</text>
+    </g>
+
+    <line
+      x1="774"
+      y1="276"
+      x2="801"
+      y2="276"
+      class="primary-line"
+      marker-end="url(#analytics-arrow-primary)"></line>
+
+    <g aria-label="Export the mart as Parquet">
+      <rect x="811" y="98" width="180" height="350" rx="11" class="stage-card"></rect>
+      <circle cx="841" cy="133" r="15" class="step-badge"></circle>
+      <text x="841" y="139" text-anchor="middle" class="step-number">4</text>
+      <text x="867" y="140" class="stage-title">Export</text>
+
+      <path d="M857 203h60l32 32v110h-92Zm60 0v34h34" class="sink-stroke"></path>
+      <text x="902" y="292" text-anchor="middle" class="file-label">PQ</text>
+      <text x="901" y="383" text-anchor="middle" class="small muted-text">Static Parquet</text>
+      <text x="901" y="405" text-anchor="middle" class="small muted-text">artifact</text>
+    </g>
+
+    <line
+      x1="1001"
+      y1="276"
+      x2="1028"
+      y2="276"
+      class="primary-line"
+      marker-end="url(#analytics-arrow-primary)"></line>
+
+    <g aria-label="Query the published artifact in the browser dashboard">
+      <rect x="1038" y="98" width="338" height="350" rx="11" class="stage-card"></rect>
+      <circle cx="1068" cy="133" r="15" class="step-badge"></circle>
+      <text x="1068" y="139" text-anchor="middle" class="step-number">5</text>
+      <text x="1094" y="140" class="stage-title">Browser / dashboard</text>
+
+      <rect x="1066" y="189" width="282" height="153" rx="8" class="browser"></rect>
+      <line x1="1066" y1="218" x2="1348" y2="218" class="primary-stroke"></line>
+      <circle cx="1083" cy="204" r="4" class="primary-fill"></circle>
+      <circle cx="1097" cy="204" r="4" class="primary-fill"></circle>
+      <circle cx="1111" cy="204" r="4" class="primary-fill"></circle>
+
+      <line x1="1088" y1="307" x2="1205" y2="307" class="primary-stroke"></line>
+      <rect x="1097" y="277" width="15" height="30" class="bar-fill"></rect>
+      <rect x="1123" y="255" width="15" height="52" class="bar-fill"></rect>
+      <rect x="1149" y="286" width="15" height="21" class="bar-fill"></rect>
+      <rect x="1175" y="267" width="15" height="40" class="bar-fill"></rect>
+      <circle cx="1282" cy="274" r="33" class="pie-outline"></circle>
+      <path d="M1282 274V241a33 33 0 0 1 26 53Z" class="pie-fill"></path>
+      <line x1="1235" y1="322" x2="1325" y2="322" class="muted-stroke"></line>
+
+      <text x="1207" y="381" text-anchor="middle" class="label">DuckDB-Wasm runs SQL</text>
+      <text x="1207" y="406" text-anchor="middle" class="label">directly in the browser</text>
+    </g>
+
+    <g aria-label="Stage descriptions">
+      <rect x="24" y="468" width="210" height="116" rx="10" class="description-card"></rect>
+      <text x="129" y="504" text-anchor="middle" class="body">
+        <tspan x="129" dy="0">The Python extractor</tspan>
+        <tspan x="129" dy="24">copies operational data</tspan>
+        <tspan x="129" dy="24">into Parquet files.</tspan>
+      </text>
+
+      <rect x="281" y="468" width="218" height="116" rx="10" class="description-card"></rect>
+      <text x="390" y="504" text-anchor="middle" class="body">
+        <tspan x="390" dy="0">dbt organizes models</tspan>
+        <tspan x="390" dy="24">and tests. DuckDB</tspan>
+        <tspan x="390" dy="24">executes them.</tspan>
+      </text>
+
+      <rect x="546" y="468" width="218" height="116" rx="10" class="description-card"></rect>
+      <text x="655" y="504" text-anchor="middle" class="body">
+        <tspan x="655" dy="0">Once the models pass</tspan>
+        <tspan x="655" dy="24">their tests, the daily</tspan>
+        <tspan x="655" dy="24">risk mart is produced.</tspan>
+      </text>
+
+      <rect x="811" y="468" width="180" height="116" rx="10" class="description-card"></rect>
+      <text x="901" y="492" text-anchor="middle" class="body">
+        <tspan x="901" dy="0">The mart is exported</tspan>
+        <tspan x="901" dy="22">as a static Parquet</tspan>
+        <tspan x="901" dy="22">file for the</tspan>
+        <tspan x="901" dy="22">showcase.</tspan>
+      </text>
+
+      <rect x="1038" y="468" width="338" height="116" rx="10" class="description-card"></rect>
+      <text x="1207" y="504" text-anchor="middle" class="body">
+        <tspan x="1207" dy="0">The dashboard loads the Parquet file</tspan>
+        <tspan x="1207" dy="24">and runs SQL in the browser with</tspan>
+        <tspan x="1207" dy="24">DuckDB-Wasm.</tspan>
+      </text>
+    </g>
+
+    {
+      [129, 390, 655, 901, 1207].map((x) => (
+        <line
+          x1={x}
+          y1="638"
+          x2={x}
+          y2="596"
+          class="airflow-line dashed"
+          marker-end="url(#analytics-arrow-airflow)"
+        />
+      ))
+    }
+
+    <g aria-label="Airflow orchestration">
+      <rect x="24" y="640" width="1352" height="220" rx="14" class="airflow-band"></rect>
+
+      <image href="/airflow.svg" x="62" y="708" width="78" height="78" />
+      <text x="164" y="716" class="orchestration-title">Orchestration</text>
+      <text x="164" y="746" class="small">Apache Airflow runs the analytics</text>
+      <text x="164" y="769" class="small">workflow once a week.</text>
+
+      <rect x="440" y="704" width="158" height="84" rx="10" class="airflow-task-card"></rect>
+      <circle cx="470" cy="746" r="15" class="airflow-fill"></circle>
+      <text x="470" y="752" text-anchor="middle" class="step-number">1</text>
+      <text x="496" y="752" class="task-title">Extract</text>
+
+      <line
+        x1="608"
+        y1="746"
+        x2="646"
+        y2="746"
+        class="airflow-line"
+        marker-end="url(#analytics-arrow-airflow)"></line>
+
+      <rect x="654" y="704" width="194" height="84" rx="10" class="airflow-task-card"></rect>
+      <circle cx="684" cy="746" r="15" class="airflow-fill"></circle>
+      <text x="684" y="752" text-anchor="middle" class="step-number">2</text>
+      <text x="710" y="752" class="task-title">Build &amp; test</text>
+
+      <line
+        x1="858"
+        y1="746"
+        x2="896"
+        y2="746"
+        class="airflow-line"
+        marker-end="url(#analytics-arrow-airflow)"></line>
+
+      <rect x="904" y="704" width="158" height="84" rx="10" class="airflow-task-card"></rect>
+      <circle cx="934" cy="746" r="15" class="airflow-fill"></circle>
+      <text x="934" y="752" text-anchor="middle" class="step-number">3</text>
+      <text x="960" y="752" class="task-title">Export</text>
+
+      <g aria-label="Weekly schedule with one active run">
+        <rect x="1132" y="698" width="52" height="48" rx="7" class="airflow-outline"></rect>
+        <line x1="1132" y1="716" x2="1184" y2="716" class="airflow-stroke"></line>
+        <line x1="1144" y1="690" x2="1144" y2="706" class="airflow-stroke"></line>
+        <line x1="1172" y1="690" x2="1172" y2="706" class="airflow-stroke"></line>
+        <circle cx="1182" cy="746" r="18" class="airflow-band"></circle>
+        <path d="M1182 736v11l7 4" class="airflow-stroke"></path>
+        <text x="1209" y="724" class="task-title">Weekly schedule</text>
+        <text x="1209" y="750" class="small">One active run</text>
+      </g>
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .analytics-pipeline-diagram {
+    width: 112%;
+    margin: 2rem 0 2.5rem -1%;
+  }
+
+  svg {
+    display: block;
+    height: auto;
+    font-family: inherit;
+  }
+
+  .frame,
+  .stage-card {
+    fill: var(--card);
+    stroke: var(--border);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .stage-card {
+    stroke: color-mix(in oklch, var(--primary) 24%, var(--border));
+  }
+
+  .description-card {
+    fill: var(--muted);
+    stroke: none;
+  }
+
+  .airflow-band,
+  .airflow-task-card {
+    fill: color-mix(in srgb, var(--risk-low) 8%, var(--card));
+    stroke: color-mix(in srgb, var(--risk-low) 62%, var(--border));
+    vector-effect: non-scaling-stroke;
+  }
+
+  .airflow-task-card {
+    fill: var(--muted);
+    stroke: var(--border);
+  }
+
+  .diagram-title {
+    fill: var(--foreground);
+    font-size: 31px;
+    font-weight: 750;
+  }
+
+  .stage-title,
+  .label,
+  .service-name,
+  .task-title,
+  .orchestration-title {
+    fill: var(--foreground);
+    font-size: 17px;
+    font-weight: 650;
+  }
+
+  .orchestration-title {
+    fill: var(--risk-low);
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  .body {
+    fill: var(--foreground);
+    font-size: 14px;
+  }
+
+  .small {
+    fill: var(--foreground);
+    font-size: 13px;
+  }
+
+  .muted-text {
+    fill: var(--muted-foreground);
+  }
+
+  .step-number {
+    fill: var(--primary-foreground);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .plus {
+    fill: var(--foreground);
+    font-size: 34px;
+    font-weight: 300;
+  }
+
+  .file-label {
+    fill: var(--sink);
+    font-size: 31px;
+    font-weight: 750;
+  }
+
+  .step-badge,
+  .primary-fill,
+  .bar-fill,
+  .pie-fill {
+    fill: var(--primary);
+  }
+
+  .sink-fill {
+    fill: var(--sink);
+  }
+
+  .airflow-fill {
+    fill: var(--risk-low);
+  }
+
+  .primary-line,
+  .sink-line,
+  .airflow-line,
+  .primary-stroke,
+  .cold-stroke,
+  .sink-stroke,
+  .sink-outline,
+  .airflow-stroke,
+  .airflow-outline,
+  .muted-stroke,
+  .table-grid,
+  .browser,
+  .pie-outline {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .primary-line,
+  .primary-stroke,
+  .browser,
+  .pie-outline {
+    stroke: var(--primary);
+    stroke-width: 2;
+  }
+
+  .cold-stroke {
+    stroke: var(--cold-path);
+    stroke-width: 2;
+  }
+
+  .sink-line,
+  .sink-stroke,
+  .sink-outline {
+    stroke: var(--sink);
+    stroke-width: 2;
+  }
+
+  .airflow-line,
+  .airflow-stroke,
+  .airflow-outline {
+    stroke: var(--risk-low);
+    stroke-width: 2;
+  }
+
+  .muted-stroke {
+    stroke: var(--border);
+    stroke-width: 4;
+  }
+
+  .dashed {
+    stroke-dasharray: 6 5;
+  }
+
+  .mart-table {
+    fill: var(--card);
+    stroke: color-mix(in oklch, var(--sink) 65%, var(--border));
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .table-head {
+    fill: color-mix(in oklch, var(--sink) 80%, var(--card));
+  }
+
+  .table-grid {
+    stroke: color-mix(in oklch, var(--sink) 40%, var(--border));
+    stroke-width: 1;
+  }
+
+  @media (max-width: 48rem) {
+    .analytics-pipeline-diagram {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+</style>

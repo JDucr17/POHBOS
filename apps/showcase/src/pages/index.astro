@@ -1,98 +1,28 @@
 ---
 import ImmersiveLayout from "@/layouts/ImmersiveLayout.astro";
 import Pipeline from "@/features/pipeline/Pipeline.svelte";
-import Wordmark from "@/features/brand/Wordmark.astro";
+import AnalyticsPreview from "@/features/home/AnalyticsPreview.astro";
+import HomeHero from "@/features/home/HomeHero.astro";
 import WipCard from "@/features/home/WipCard.astro";
+import HomeHeader from "@/features/navigation/HomeHeader.astro";
+import AnimatedDivider from "@/lib/components/AnimatedDivider.astro";
 ---
 
 <ImmersiveLayout
   title="POHBOS"
   description="A behavioral anomaly detector: watch the streaming pipeline turn events into decisions in real time."
 >
+  <HomeHeader />
+
   <main class="flex-1">
-    <section
-      class="relative isolate overflow-hidden border-b-2 border-primary bg-card"
-    >
-      <div class="hero-lines pointer-events-none absolute inset-0"></div>
+    <HomeHero />
+    <AnimatedDivider />
 
-      <svg
-        class="hero-rings pointer-events-none absolute -top-72 -right-16 h-[36rem] w-[36rem]"
-        viewBox="0 0 400 400"
-        fill="none"
-        aria-hidden="true"
-      >
-        <circle
-          cx="200"
-          cy="200"
-          r="70"
-          stroke="var(--primary)"
-          stroke-width="1.25"
-          opacity="0.6"
-        />
-        <circle
-          cx="200"
-          cy="200"
-          r="118"
-          stroke="var(--primary)"
-          stroke-width="1.25"
-          opacity="0.48"
-        />
-        <circle
-          cx="200"
-          cy="200"
-          r="166"
-          stroke="var(--primary)"
-          stroke-width="1.25"
-          opacity="0.36"
-        />
-        <circle
-          cx="200"
-          cy="200"
-          r="214"
-          stroke="var(--primary)"
-          stroke-width="1.25"
-          opacity="0.26"
-        />
-      </svg>
-
-      <div class="relative z-10 px-8 py-10 lg:px-16">
-        <div class="w-fit">
-          <h1
-            class="w-fit text-5xl font-semibold tracking-tight text-foreground italic sm:text-6xl"
-          >
-            <Wordmark />
-          </h1>
-          <p
-            class="mt-2 font-mono text-[10px] leading-none tracking-[0.18em] text-muted-foreground uppercase"
-          >
-            Pipeline of histogram based outlier scoring
-          </p>
-          <div class="mt-4 h-1 w-full rounded-full bg-primary"></div>
-        </div>
-        <p class="mt-5 max-w-2xl text-base leading-relaxed sm:text-lg">
-          <span class="font-medium text-foreground"
-            >An anomaly scoring pipeline </span
-          ><span class="text-muted-foreground"
-            >that analyzes HTTP traffic behavior against website specific
-            baselines using <span class="font-medium text-primary">HBOS</span>.</span
-          >
-        </p>
-        <a
-          href="/about"
-          class="mt-4 inline-block text-sm font-medium text-primary transition-colors hover:text-primary-hover"
-        >
-          Inspired by Cloudflare's bot-management architecture. Read more →
-        </a>
-      </div>
-
-      <div class="hero-line" aria-hidden="true">
-        <span class="hero-line-glow"></span>
-      </div>
-    </section>
-
-    <section class="w-full">
+    <section class="w-full" aria-label="Pipeline visualization">
       <Pipeline client:load />
     </section>
+
+    <AnalyticsPreview />
 
     <section class="mx-auto w-full max-w-6xl px-6 py-12 lg:px-12">
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-[55fr_45fr]">
@@ -108,56 +38,3 @@ import WipCard from "@/features/home/WipCard.astro";
     </section>
   </main>
 </ImmersiveLayout>
-
-<style>
-  .hero-lines {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in oklch, var(--primary) 12%, transparent) 0,
-      color-mix(in oklch, var(--primary) 12%, transparent) 1px,
-      transparent 1px,
-      transparent 10px
-    );
-  }
-
-  .hero-line {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 2px;
-    pointer-events: none;
-  }
-
-  .hero-line-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 30%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--glow-blue),
-      transparent
-    );
-    box-shadow: 0 0 10px 1px color-mix(in oklch, var(--glow-blue) 55%, transparent);
-    will-change: transform;
-    animation: line-sweep 4s ease-in-out infinite alternate;
-  }
-
-  @keyframes line-sweep {
-    from {
-      transform: translateX(0%);
-    }
-    to {
-      transform: translateX(233%);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-line-glow {
-      display: none;
-    }
-  }
-</style>

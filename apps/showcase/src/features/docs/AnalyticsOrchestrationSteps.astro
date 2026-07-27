@@ -1,0 +1,137 @@
+---
+const steps = [
+  {
+    number: "01",
+    title: "Extract",
+    description:
+      "Copies events, decisions, and baseline runs from Postgres into raw Parquet snapshots.",
+    color: "var(--primary)",
+  },
+  {
+    number: "02",
+    title: "Build and test",
+    description:
+      "Uses dbt and DuckDB to build the daily source-risk mart and validate its results.",
+    color: "var(--cold-path)",
+  },
+  {
+    number: "03",
+    title: "Export",
+    description: "Writes the completed mart as the static Parquet artifact used by the showcase.",
+    color: "var(--risk-low)",
+  },
+] as const;
+---
+
+<ol class="orchestration-steps my-6" aria-label="Weekly analytics workflow">
+  {
+    steps.map((step) => (
+      <li class="orchestration-step" style={`--step-color: ${step.color}`}>
+        <span class="orchestration-step__number" aria-hidden="true">
+          {step.number}
+        </span>
+        <div>
+          <h3>{step.title}</h3>
+          <p>{step.description}</p>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .orchestration-steps {
+    overflow: hidden;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    background: var(--card);
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 5%, transparent);
+    list-style: none;
+  }
+
+  .orchestration-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+    margin: 0;
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .orchestration-step:first-child {
+    border-top: 0;
+  }
+
+  .orchestration-step:not(:last-child)::after {
+    content: "↓";
+    position: absolute;
+    right: 1rem;
+    bottom: -0.72rem;
+    z-index: 1;
+    display: grid;
+    width: 1.4rem;
+    height: 1.4rem;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+  }
+
+  .orchestration-step__number {
+    display: grid;
+    width: 2.1rem;
+    height: 2.1rem;
+    place-items: center;
+    border: 1px solid color-mix(in oklch, var(--step-color) 40%, var(--border));
+    border-radius: 0.5rem;
+    background: color-mix(in oklch, var(--step-color) 9%, var(--card));
+    color: color-mix(in oklch, var(--step-color) 78%, var(--foreground));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .orchestration-step h3 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: 0.92rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .orchestration-step p {
+    margin: 0.3rem 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  @media (min-width: 48rem) {
+    .orchestration-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .orchestration-step {
+      min-height: 9.25rem;
+      border-top: 0;
+      border-left: 1px solid var(--border);
+    }
+
+    .orchestration-step:first-child {
+      border-left: 0;
+    }
+
+    .orchestration-step:not(:last-child)::after {
+      content: "→";
+      right: -0.72rem;
+      bottom: auto;
+      top: 1.35rem;
+    }
+  }
+</style>

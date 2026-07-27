@@ -1,0 +1,30 @@
+---
+import DocsLayout from "@/layouts/DocsLayout.astro";
+import DocsProse from "@/features/docs/DocsProse.astro";
+import { getEntry, render } from "astro:content";
+
+const entry = await getEntry("docs", "analytics");
+if (!entry) throw new Error("Missing docs entry: analytics");
+const { Content, headings } = await render(entry);
+---
+
+<DocsLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  accent={entry.data.accent}
+  section={entry.data.section}
+  headings={headings}
+>
+  <DocsProse accent={entry.data.accent}>
+    <div class="analytics-docs">
+      <Content />
+    </div>
+  </DocsProse>
+</DocsLayout>
+
+<style>
+  .analytics-docs :global(#how-the-data-is-built),
+  .analytics-docs :global(#running-the-workflow) {
+    margin-top: 2rem;
+  }
+</style>

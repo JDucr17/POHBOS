@@ -1,0 +1,65 @@
+<section class="bg-card relative isolate overflow-hidden" aria-labelledby="home-hero-title">
+  <div class="hero-lines pointer-events-none absolute inset-0"></div>
+
+  <svg
+    class="pointer-events-none absolute -top-24 -right-24 hidden h-[28rem] w-[28rem] sm:block lg:-top-32 lg:right-6 lg:h-[34rem] lg:w-[34rem]"
+    viewBox="0 0 400 400"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle cx="200" cy="200" r="70" stroke="var(--primary)" stroke-width="1.25" opacity="0.5"
+    ></circle>
+    <circle cx="200" cy="200" r="118" stroke="var(--primary)" stroke-width="1.25" opacity="0.4"
+    ></circle>
+    <circle cx="200" cy="200" r="166" stroke="var(--primary)" stroke-width="1.25" opacity="0.3"
+    ></circle>
+    <circle cx="200" cy="200" r="214" stroke="var(--primary)" stroke-width="1.25" opacity="0.2"
+    ></circle>
+  </svg>
+
+  <div class="relative z-10 w-full px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+    <div class="max-w-xl">
+      <h1
+        id="home-hero-title"
+        class="text-foreground text-2xl leading-tight font-semibold tracking-tight sm:text-3xl"
+      >
+        An anomaly scoring pipeline that analyzes HTTP traffic behavior against website-specific
+        baselines using <span class="text-primary">HBOS</span>.
+      </h1>
+
+      <a
+        href="/docs/about"
+        class="text-primary hover:text-primary-hover focus-visible:ring-ring mt-4 inline-flex rounded-sm text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      >
+        Inspired by Cloudflare's bot-management architecture.
+      </a>
+
+      <div class="mt-5 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+        <a
+          href="/analytics"
+          class="bg-node-surface-top text-node-fg hover:bg-node-surface focus-visible:ring-ring inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        >
+          Explore analytics →
+        </a>
+        <a
+          href="/docs/scoring"
+          class="text-primary hover:bg-muted hover:text-primary-hover focus-visible:ring-ring inline-flex h-10 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        >
+          Read more →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-lines {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in oklch, var(--primary) 12%, transparent) 0,
+      color-mix(in oklch, var(--primary) 12%, transparent) 1px,
+      transparent 1px,
+      transparent 10px
+    );
+  }
+</style>
