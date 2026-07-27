@@ -8,6 +8,7 @@ import {
   Search,
   FileText,
   Info,
+  ChartNoAxesCombined,
   type Icon as IconType,
 } from "@lucide/astro";
 import SidebarToggle from "@/features/navigation/SidebarToggle.svelte";
@@ -21,24 +22,33 @@ interface NavItem {
 
 const navGroups: { label: string; items: NavItem[] }[] = [
   {
-    label: "Concepts",
+    label: "Overview",
     items: [
-      { label: "About", href: "/about", icon: Info },
-      { label: "How Scoring Works", href: "/scoring", icon: FileText },
+      { label: "About", href: "/docs/about", icon: Info },
+      {
+        label: "How Scoring Works",
+        href: "/docs/scoring",
+        icon: FileText,
+      },
     ],
   },
   {
     label: "Services",
     items: [
-      { label: "Ingestor", href: "/services/ingestor", icon: LogIn },
-      { label: "Sink", href: "/services/sink", icon: Inbox },
+      { label: "Ingestor", href: "/docs/services/ingestor", icon: LogIn },
+      { label: "Sink", href: "/docs/services/sink", icon: Inbox },
       {
         label: "Baseline Worker",
-        href: "/services/baseline-worker",
+        href: "/docs/services/baseline-worker",
         icon: AudioWaveform,
       },
-      { label: "Detector", href: "/services/detector", icon: Target },
-      { label: "Query API", href: "/services/query-api", icon: Search },
+      { label: "Detector", href: "/docs/services/detector", icon: Target },
+      { label: "Query API", href: "/docs/services/query-api", icon: Search },
+      {
+        label: "Analytics",
+        href: "/docs/services/analytics",
+        icon: ChartNoAxesCombined,
+      },
     ],
   },
 ];
@@ -47,13 +57,11 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <aside
-  class="sidebar relative flex w-full flex-col bg-background md:sticky md:top-0 md:h-screen md:w-72 md:shrink-0 md:self-start"
+  class="sidebar bg-background relative flex w-full flex-col md:sticky md:top-0 md:h-screen md:w-72 md:shrink-0 md:self-start"
 >
   <div class="sidebar__header">
     <a href="/" class="flex items-center">
-      <Wordmark
-        class="text-2xl font-semibold tracking-tight text-foreground italic"
-      />
+      <Wordmark class="text-foreground text-2xl font-semibold tracking-tight italic" />
     </a>
     <SidebarToggle client:load />
   </div>
@@ -97,7 +105,7 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
   </nav>
 
   <div class="sidebar__footer">
-    <div class="sidebar__divider" />
+    <div class="sidebar__divider"></div>
     <p class="sidebar__version">POHBOS Docs • v1.0</p>
   </div>
 </aside>
@@ -189,7 +197,7 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
     width: 1.85rem;
     height: 1.85rem;
     border-radius: 0.5rem;
-    background: var(--card);
+    background: var(--muted);
     border: 1px solid var(--border);
     color: var(--muted-foreground);
     transition:
@@ -221,8 +229,8 @@ const current = Astro.url.pathname.replace(/\/$/, "") || "/";
 
   .nav-item--active .nav-item__icon {
     color: var(--glow-blue);
-    background: color-mix(in oklch, var(--glow-blue) 14%, var(--card));
-    border-color: color-mix(in oklch, var(--glow-blue) 30%, var(--border));
+    background: var(--muted);
+    border-color: color-mix(in srgb, var(--glow-blue) 30%, var(--border));
   }
 
   .sidebar__footer {

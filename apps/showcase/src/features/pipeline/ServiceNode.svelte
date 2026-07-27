@@ -1,15 +1,6 @@
 <script lang="ts">
   import type { Component } from "svelte";
-  import {
-    Cog,
-    Info,
-    LogIn,
-    Target,
-    Search,
-    AudioWaveform,
-    Inbox,
-    Funnel,
-  } from "@lucide/svelte";
+  import { Cog, Info, LogIn, Target, Search, AudioWaveform, Inbox, Funnel } from "@lucide/svelte";
   import { scale } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
   import type { PipelineNode } from "./pipelineConfig";
@@ -33,24 +24,23 @@
     funnel: Funnel,
   };
 
-  const href = $derived(`/services/${node.slug}`);
+  const href = $derived(`/docs/services/${node.slug}`);
   const peekBelow = $derived(node.y < 45);
   const Glyph = $derived((node.glyph && GLYPHS[node.glyph]) || Target);
 
   function prefersReducedMotion(): boolean {
     return (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
     );
   }
 
   $effect(() => {
     const p = pulse;
     if (!gearEl || p === 0 || prefersReducedMotion()) return;
-    gearEl.animate(
-      [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
-      { duration: 1400, easing: "linear" },
-    );
+    gearEl.animate([{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }], {
+      duration: 1400,
+      easing: "linear",
+    });
   });
 </script>
 
@@ -82,15 +72,13 @@
       <div class="flex items-center gap-2.5 px-3.5 py-3">
         <div class="min-w-0 flex-1">
           <a
-            href={href}
+            {href}
             class="block leading-tight font-semibold text-[color:var(--node-fg)] transition-opacity hover:opacity-80"
             style="font-size: 16px;"
           >
             {node.label}
           </a>
-          <span
-            class="mt-0.5 block font-mono text-[10px] text-[color:var(--node-fg-muted)]"
-          >
+          <span class="mt-0.5 block font-mono text-[10px] text-[color:var(--node-fg-muted)]">
             {node.role}
           </span>
         </div>
@@ -117,14 +105,12 @@
           ? 'origin-top'
           : 'origin-bottom'}"
       >
-        <p
-          class="mb-1 font-mono text-[10px] tracking-wider text-muted-foreground uppercase"
-        >
+        <p class="mb-1 font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
           {node.label}
         </p>
         <p class="text-xs leading-relaxed text-foreground">{node.peek}</p>
         <a
-          href={href}
+          {href}
           class="mt-2 inline-block font-mono text-[11px] font-medium text-primary hover:text-primary-hover"
         >
           Read more →

@@ -1,0 +1,15 @@
+---
+import AnalyticsDashboard from "@/features/analytics/components/AnalyticsDashboard.svelte";
+import HomeHeader from "@/features/navigation/HomeHeader.astro";
+import ImmersiveLayout from "@/layouts/ImmersiveLayout.astro";
+---
+
+<ImmersiveLayout
+  title="Daily traffic analytics · POHBOS"
+  description="Explore daily traffic, detector coverage, risk, policy actions, scores, and baseline usage."
+>
+  <HomeHeader />
+  <main class="flex-1">
+    <AnalyticsDashboard client:load />
+  </main>
+</ImmersiveLayout>

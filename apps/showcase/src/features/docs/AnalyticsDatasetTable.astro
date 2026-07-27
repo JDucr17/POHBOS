@@ -1,0 +1,132 @@
+---
+const rows = [
+  {
+    category: "Traffic",
+    contents: "Total requests, distinct visitors and URIs, 4xx responses, and referrer activity.",
+    color: "var(--primary)",
+  },
+  {
+    category: "Evaluation",
+    contents: "Evaluated, scored, no-baseline, and insufficient-history windows.",
+    color: "var(--cold-path)",
+  },
+  {
+    category: "Risk",
+    contents: "Low, medium, high, and critical risk levels assigned to scored windows.",
+    color: "var(--risk-high)",
+  },
+  {
+    category: "Actions",
+    contents: "Allow, log, challenge, and block recommendations from the active policy.",
+    color: "var(--risk-medium)",
+  },
+  {
+    category: "Scores",
+    contents: "Average, p90, p99, and maximum anomaly scores.",
+    color: "var(--sink)",
+  },
+  {
+    category: "Baseline usage",
+    contents: "When each baseline was used and how many windows it evaluated.",
+    color: "var(--risk-low)",
+  },
+];
+---
+
+<div class="analytics-dataset-frame my-6 overflow-x-auto">
+  <table class="analytics-dataset">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Daily summary contents</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr style={`--row-accent: ${row.color}`}>
+            <td>
+              <span class="analytics-dataset__category">
+                <span class="analytics-dataset__marker" aria-hidden="true" />
+                {row.category}
+              </span>
+            </td>
+            <td>{row.contents}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .analytics-dataset-frame {
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    background: var(--card);
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 5%, transparent);
+  }
+
+  .analytics-dataset {
+    width: 100%;
+    min-width: 36rem;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .analytics-dataset th {
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in oklch, var(--primary) 5%, var(--muted));
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .analytics-dataset td {
+    padding: 0.75rem 0.9rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted-foreground);
+    line-height: 1.5;
+    transition: background 0.15s ease;
+    vertical-align: top;
+  }
+
+  .analytics-dataset td:first-child {
+    box-shadow: inset 3px 0 var(--row-accent);
+  }
+
+  .analytics-dataset tbody tr:hover td {
+    background: color-mix(in oklch, var(--row-accent) 4%, var(--card));
+  }
+
+  .analytics-dataset tbody tr:first-child td {
+    border-top: 0;
+  }
+
+  .analytics-dataset__category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.18rem 0.5rem;
+    border: 1px solid color-mix(in oklch, var(--row-accent) 30%, var(--border));
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--row-accent) 8%, var(--card));
+    color: color-mix(in oklch, var(--row-accent) 82%, var(--foreground));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .analytics-dataset__marker {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    background: var(--row-accent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--row-accent) 12%, transparent);
+  }
+</style>

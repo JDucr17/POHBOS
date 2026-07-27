@@ -1,0 +1,36 @@
+---
+title: Analytics
+description: How stored pipeline data becomes daily source-risk insights.
+accent: primary
+section: Services
+---
+
+import AnalyticsDatasetTable from "@/features/docs/AnalyticsDatasetTable.astro";
+import AnalyticsOrchestrationSteps from "@/features/docs/AnalyticsOrchestrationSteps.astro";
+import AnalyticsPipelineDiagram from "@/features/docs/diagrams/AnalyticsPipelineDiagram.astro";
+
+The analytics service turns stored pipeline data into insights about traffic and detector behavior. It summarizes total requests, scoring outcomes, risk levels, recommended actions, score trends, and baseline usage.
+
+## Data extraction and mart construction
+
+A Python extractor service copies events, decisions, and baseline runs from Postgres into Parquet snapshots.
+
+dbt is used to aid in data modeling workflows by organizing the analytical SQL queries and the tests that validate their results. DuckDB executes these models and builds the final mart, which contains a daily anomaly summary for each analyzed source.
+
+After the models pass their checks, the mart is exported as a static Parquet file for the showcase. The browser loads this file into DuckDB-Wasm, allowing the dashboard to run SQL queries directly in the browser without a separate analytics API.
+
+## Output structure
+
+The final mart contains daily summaries of:
+
+<AnalyticsDatasetTable />
+
+The dashboard combines these daily summaries across the selected source and date range.
+
+## Orchestration
+
+Apache Airflow orchestrates the analytics service's weekly workflow, which extracts operational data, builds and tests the daily-risk mart, and produces the static Parquet artifact consumed by the showcase.
+
+<AnalyticsOrchestrationSteps />
+
+<AnalyticsPipelineDiagram />
