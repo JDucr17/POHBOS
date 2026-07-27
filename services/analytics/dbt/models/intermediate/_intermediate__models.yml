@@ -1,0 +1,272 @@
+version: 2
+
+models:
+  - name: int_daily_event_traffic_by_source
+    description: >
+      One row per traffic source and UTC event date with at least one observed
+      event, aggregating request volume, visitor and URI diversity, 4xx responses,
+      and referrer presence from staged events.
+    columns:
+      - name: source_id
+        description: Identifier for the traffic source that produced the events.
+        data_tests:
+          - not_null
+      - name: event_date
+        description: UTC calendar date on which the events occurred.
+        data_tests:
+          - not_null
+      - name: request_count
+        description: Number of observed events for the source-day.
+        data_tests:
+          - not_null
+      - name: distinct_visitor_count
+        description: Number of distinct non-null visitor identifiers for the source-day.
+        data_tests:
+          - not_null
+      - name: distinct_uri_count
+        description: Number of distinct non-null URIs requested for the source-day.
+        data_tests:
+          - not_null
+      - name: http_4xx_count
+        description: Number of observed requests with a 4xx response for the source-day.
+        data_tests:
+          - not_null
+      - name: http_4xx_rate
+        description: >
+          Fraction from zero to one of all observed source-day requests that
+          received a 4xx response.
+        data_tests:
+          - not_null
+      - name: referrer_present_count
+        description: Number of observed requests reporting a referrer for the source-day.
+        data_tests:
+          - not_null
+      - name: referrer_present_rate
+        description: >
+          Fraction from zero to one of all observed source-day requests that
+          reported a referrer.
+        data_tests:
+          - not_null
+
+  - name: int_decisions_with_event_date
+    description: >
+      One row per persisted detector decision, enriched with the triggering
+      event's timestamp and UTC analytical date. The operational decided_at
+      timestamp does not determine the analytical day.
+    columns:
+      - name: decision_id
+        description: UUIDv7 identifier assigned to the persisted detector decision.
+        data_tests:
+          - not_null
+          - unique
+      - name: event_id
+        description: UUIDv7 identifier of the event that triggered the decision.
+        data_tests:
+          - not_null
+      - name: source_id
+        description: Persisted traffic-source identifier from the decision.
+        data_tests:
+          - not_null
+      - name: visitor_id
+        description: Persisted visitor identifier from the decision.
+        data_tests:
+          - not_null
+      - name: event_time
+        description: Timestamp when the triggering event occurred at the source.
+        data_tests:
+          - not_null
+      - name: event_date
+        description: UTC analytical date derived from the triggering event's event_time.
+        data_tests:
+          - not_null
+      - name: decided_at
+        description: >
+          Operational timestamp when the detector produced the decision; not
+          used to determine the analytical date.
+        data_tests:
+          - not_null
+      - name: status
+        description: >
+          Persisted scoring outcome that determines score, risk, and baseline
+          nullability.
+        data_tests:
+          - not_null
+      - name: score_raw
+        description: Persisted raw HBOS score; null when status is not scored.
+      - name: score_normalized
+        description: Persisted normalized HBOS score; null when status is not scored.
+      - name: risk_level
+        description: Persisted policy risk band; null when status is not scored.
+      - name: action
+        description: Persisted recommended policy action for the decision.
+        data_tests:
+          - not_null
+      - name: policy_version
+        description: Policy version active when the decision was produced.
+        data_tests:
+          - not_null
+      - name: baseline_run_id
+        description: >
+          Nullable numeric identity of the compatible baseline. Present for
+          scored and insufficient-history decisions and null for no-baseline decisions.
+
+  - name: int_daily_decision_outcomes_by_source
+    description: >
+      One row per traffic source and UTC event date with at least one persisted
+      detector decision, summarizing evaluation coverage, scoring outcomes,
+      persisted risk and action distributions, and normalized-score statistics.
+      Each decision represents one evaluated trailing window. Score statistics
+      use scored decisions only, remain null when none were scored, and measure
+      relative atypicality rather than maliciousness probability.
+    columns:
+      - name: source_id
+        description: Identifier for the traffic source evaluated on the source-day.
+        data_tests:
+          - not_null
+      - name: event_date
+        description: UTC analytical date of the events that triggered the decisions.
+        data_tests:
+          - not_null
+      - name: evaluated_window_count
+        description: Number of persisted detector evaluations for the source-day, with one decision representing one evaluated trailing window.
+        data_tests:
+          - not_null
+      - name: scored_window_count
+        description: Number of decisions with persisted status scored.
+        data_tests:
+          - not_null
+      - name: no_baseline_window_count
+        description: Number of decisions with persisted status no_baseline.
+        data_tests:
+          - not_null
+      - name: insufficient_history_window_count
+        description: Number of decisions with persisted status insufficient_history.
+        data_tests:
+          - not_null
+      - name: low_risk_count
+        description: Number of scored decisions with persisted low risk.
+        data_tests:
+          - not_null
+      - name: medium_risk_count
+        description: Number of scored decisions with persisted medium risk.
+        data_tests:
+          - not_null
+      - name: high_risk_count
+        description: Number of scored decisions with persisted high risk.
+        data_tests:
+          - not_null
+      - name: critical_risk_count
+        description: Number of scored decisions with persisted critical risk.
+        data_tests:
+          - not_null
+      - name: allow_action_count
+        description: Number of all source-day decisions with persisted action allow.
+        data_tests:
+          - not_null
+      - name: log_action_count
+        description: Number of all source-day decisions with persisted action log.
+        data_tests:
+          - not_null
+      - name: challenge_action_count
+        description: Number of all source-day decisions with persisted action challenge.
+        data_tests:
+          - not_null
+      - name: block_action_count
+        description: Number of all source-day decisions with persisted action block.
+        data_tests:
+          - not_null
+      - name: average_normalized_score
+        description: >
+          Mean persisted normalized score across scored decisions; null when no
+          decisions were scored. The score represents relative atypicality, not probability.
+      - name: p90_normalized_score
+        description: >
+          Continuous 90th percentile of persisted normalized scores across scored
+          decisions; null when no decisions were scored.
+      - name: p99_normalized_score
+        description: >
+          Continuous 99th percentile of persisted normalized scores across scored
+          decisions; null when no decisions were scored.
+      - name: maximum_normalized_score
+        description: >
+          Maximum persisted normalized score across scored decisions; null when
+          no decisions were scored.
+
+  - name: int_baseline_usage_by_source_day
+    description: >
+      Summarizes each observed period of baseline usage for a source per day.
+      A new segment begins when the baseline changes. The same baseline may
+      appear again in a later segment.
+    columns:
+      - name: source_id
+        description: Identifier for the traffic source whose decisions used the baseline.
+        data_tests:
+          - not_null
+      - name: event_date
+        description: UTC analytical date of the events evaluated with the baseline.
+        data_tests:
+          - not_null
+      - name: segment_number
+        description: Position of the baseline-usage segment within the day, starting at 1.
+        data_tests:
+          - not_null
+      - name: baseline_run_id
+        description: Numeric identity of the baseline referenced by persisted decisions.
+        data_tests:
+          - not_null
+      - name: baseline_usage_window_count
+        description: Number of decisions in the observed baseline-usage segment.
+        data_tests:
+          - not_null
+      - name: scored_window_count
+        description: Number of those decisions with status scored.
+        data_tests:
+          - not_null
+      - name: insufficient_history_window_count
+        description: Number of those decisions with status insufficient_history.
+        data_tests:
+          - not_null
+      - name: first_event_time
+        description: First observed triggering-event boundary of the segment.
+        data_tests:
+          - not_null
+      - name: last_event_time
+        description: Last observed triggering-event boundary of the segment.
+        data_tests:
+          - not_null
+      - name: first_decided_at
+        description: Earliest operational decision timestamp within the segment.
+        data_tests:
+          - not_null
+      - name: last_decided_at
+        description: Latest operational decision timestamp within the segment.
+        data_tests:
+          - not_null
+      - name: baseline_status
+        description: Persisted outcome of the referenced baseline fit.
+        data_tests:
+          - not_null
+      - name: baseline_fit_at
+        description: Timestamp when the referenced baseline fit completed.
+        data_tests:
+          - not_null
+      - name: baseline_event_count
+        description: Number of events that fed the referenced baseline fit.
+        data_tests:
+          - not_null
+      - name: baseline_window_count
+        description: Number of sampled trailing windows available to the baseline fit.
+        data_tests:
+          - not_null
+      - name: baseline_distinct_visitor_count
+        description: Number of distinct visitors contributing windows to the fit.
+        data_tests:
+          - not_null
+      - name: baseline_registry_hash
+        description: Feature-registry fingerprint recorded for the baseline fit.
+        data_tests:
+          - not_null
+      - name: baseline_features_fit
+        description: Feature names fitted by the referenced baseline.
+        data_tests:
+          - not_null

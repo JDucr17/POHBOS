@@ -1,0 +1,9 @@
+pohbos_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: data/warehouse/pohbos_analytics.duckdb
+      schema: main
+      threads: 4
+      external_root: "{{ env_var('STREAMLINE_EXPORT_ROOT', '../../apps/showcase/public/data') }}"

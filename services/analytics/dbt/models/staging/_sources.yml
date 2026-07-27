@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: pipeline_raw
+    description: Raw Parquet snapshots extracted from the operational POHBOS database.
+    config:
+      external_location: "data/raw/{name}.parquet"
+
+    tables:
+      - name: events
+        description: Raw event records exported from the operational events table.
+
+      - name: decisions
+        description: Raw detector decision records exported from the operational decisions table.
+
+      - name: baseline_runs
+        description: Raw baseline run metadata exported from the operational baseline_runs table.

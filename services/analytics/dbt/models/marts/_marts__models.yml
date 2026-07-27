@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: mart_source_daily_risk_summary
+    description: >
+      Summarizes each source’s traffic, detector outcomes, score distribution,
+      recommended actions, and baseline usage for each UTC day.
+    columns:
+      - name: source_id
+        description: Identifier for the traffic source.
+        data_tests:
+          - not_null
+      - name: event_date
+        description: UTC analytical date of the observed traffic.
+        data_tests:
+          - not_null
+      - name: request_count
+        description: Number of observed requests for the source-day.
+        data_tests:
+          - not_null
+      - name: distinct_visitor_count
+        description: Number of distinct non-null visitors for the source-day.
+        data_tests:
+          - not_null
+      - name: distinct_uri_count
+        description: Number of distinct non-null URIs for the source-day.
+        data_tests:
+          - not_null
+      - name: http_4xx_count
+        description: Number of requests with a 4xx response.
+        data_tests:
+          - not_null
+      - name: http_4xx_rate
+        description: Fraction of source-day requests with a 4xx response.
+        data_tests:
+          - not_null
+      - name: referrer_present_count
+        description: Number of requests reporting a referrer.
+        data_tests:
+          - not_null
+      - name: referrer_present_rate
+        description: Fraction of source-day requests reporting a referrer.
+        data_tests:
+          - not_null
+      - name: evaluated_window_count
+        description: Number of persisted detector evaluations for the source-day.
+        data_tests:
+          - not_null
+      - name: scored_window_count
+        description: Number of evaluations with status scored.
+        data_tests:
+          - not_null
+      - name: no_baseline_window_count
+        description: Number of evaluations with status no_baseline.
+        data_tests:
+          - not_null
+      - name: insufficient_history_window_count
+        description: Number of evaluations with status insufficient_history.
+        data_tests:
+          - not_null
+      - name: low_risk_count
+        description: Number of scored evaluations with low risk.
+        data_tests:
+          - not_null
+      - name: medium_risk_count
+        description: Number of scored evaluations with medium risk.
+        data_tests:
+          - not_null
+      - name: high_risk_count
+        description: Number of scored evaluations with high risk.
+        data_tests:
+          - not_null
+      - name: critical_risk_count
+        description: Number of scored evaluations with critical risk.
+        data_tests:
+          - not_null
+      - name: allow_action_count
+        description: Number of evaluations with recommended action allow.
+        data_tests:
+          - not_null
+      - name: log_action_count
+        description: Number of evaluations with recommended action log.
+        data_tests:
+          - not_null
+      - name: challenge_action_count
+        description: Number of evaluations with recommended action challenge.
+        data_tests:
+          - not_null
+      - name: block_action_count
+        description: Number of evaluations with recommended action block.
+        data_tests:
+          - not_null
+      - name: average_normalized_score
+        description: Average normalized score for scored windows.
+      - name: p90_normalized_score
+        description: Continuous 90th percentile normalized score for scored windows.
+      - name: p99_normalized_score
+        description: Continuous 99th percentile normalized score for scored windows.
+      - name: maximum_normalized_score
+        description: Maximum normalized score for scored windows.
+      - name: baseline_usage_segments
+        description: Ordered baseline-usage periods observed during the UTC day.

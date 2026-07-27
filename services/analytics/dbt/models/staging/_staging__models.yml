@@ -1,0 +1,162 @@
+version: 2
+
+models:
+  - name: stg_pipeline__events
+    description: >
+      One row per ingested event, preserving the typed raw snapshot,
+      renaming its identifier, and deriving event-level analytical fields.
+    columns:
+      - name: event_id
+        description: UUIDv7 identifier assigned to the ingested event.
+        data_tests:
+          - not_null
+          - unique
+      - name: source_id
+        description: Identifier for the traffic source that produced the event.
+        data_tests:
+          - not_null
+      - name: visitor_id
+        description: Source-provided identifier for the visitor associated with the event.
+        data_tests:
+          - not_null
+      - name: event_time
+        description: Timestamp when the event occurred at the source.
+        data_tests:
+          - not_null
+      - name: event_date
+        description: UTC calendar date derived from event_time.
+        data_tests:
+          - not_null
+      - name: ingested_at
+        description: Timestamp when the event row was persisted by the operational sink.
+        data_tests:
+          - not_null
+      - name: uri
+        description: Requested URI projected by the raw snapshot extractor.
+      - name: http_method
+        description: HTTP request method.
+      - name: status_code
+        description: HTTP response status code.
+        data_tests:
+          - not_null
+      - name: resource_type
+        description: Persisted resource classification for the requested URI.
+      - name: referrer_present
+        description: Whether the event reported a referrer.
+        data_tests:
+          - not_null
+      - name: user_agent
+        description: User-agent string when present in the raw event.
+      - name: bytes
+        description: Nullable response byte count from the raw event.
+      - name: is_4xx
+        description: Whether status_code is between 400 and 499.
+
+  - name: stg_pipeline__decisions
+    description: >
+      One row per persisted detector decision, preserving the typed scores,
+      status, risk, action, policy, and baseline facts exactly as emitted.
+    columns:
+      - name: decision_id
+        description: UUIDv7 identifier assigned to the detector decision.
+        data_tests:
+          - not_null
+          - unique
+      - name: event_id
+        description: UUIDv7 identifier of the event that triggered this decision.
+        data_tests:
+          - not_null
+          - unique
+      - name: source_id
+        description: Identifier for the traffic source evaluated by the detector.
+        data_tests:
+          - not_null
+      - name: visitor_id
+        description: Source-provided identifier for the visitor associated with the decision.
+        data_tests:
+          - not_null
+      - name: decided_at
+        description: Timestamp when the detector produced the decision.
+        data_tests:
+          - not_null
+      - name: status
+        description: >
+          Persisted scoring outcome. Scored decisions have scores, risk, and a
+          baseline; insufficient-history decisions have a baseline but no scores
+          or risk; no-baseline decisions have none of those values.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['scored', 'insufficient_history', 'no_baseline']
+      - name: score_raw
+        description: Persisted raw HBOS score; null when status is not scored.
+      - name: score_normalized
+        description: Persisted normalized HBOS score; null when status is not scored.
+      - name: risk_level
+        description: Persisted policy risk band; null when status is not scored.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['low', 'medium', 'high', 'critical']
+      - name: action
+        description: Persisted recommended policy action, present for every decision status.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['allow', 'log', 'challenge', 'block']
+      - name: policy_version
+        description: Policy version active when the decision was produced, present for every status.
+        data_tests:
+          - not_null
+      - name: baseline_run_id
+        description: >
+          Nullable numeric identity of the compatible baseline. Present for
+          scored and insufficient-history decisions and null for no-baseline decisions.
+
+  - name: stg_pipeline__baseline_runs
+    description: >
+      One row per baseline fit attempt, whether succeeded, insufficient, or failed,
+      preserving the typed metadata exported without the serialized model.
+    columns:
+      - name: baseline_run_id
+        description: Numeric identity assigned to the baseline fit attempt.
+        data_tests:
+          - not_null
+          - unique
+      - name: source_id
+        description: Identifier for the traffic source evaluated by the fit attempt.
+        data_tests:
+          - not_null
+      - name: status
+        description: Persisted outcome of the baseline fit attempt.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['succeeded', 'insufficient_history', 'failed']
+      - name: fit_at
+        description: Timestamp when the fit attempt completed.
+        data_tests:
+          - not_null
+      - name: event_count
+        description: Number of events that fed the fit attempt.
+        data_tests:
+          - not_null
+      - name: window_count
+        description: Number of sampled trailing windows available to the fit attempt.
+        data_tests:
+          - not_null
+      - name: distinct_visitors
+        description: Number of distinct visitors that contributed sampled windows.
+        data_tests:
+          - not_null
+      - name: registry_hash
+        description: Feature-registry fingerprint recorded for the fit attempt.
+        data_tests:
+          - not_null
+      - name: features_fit
+        description: Feature names for which histograms were fitted; empty for terminal runs.
+        data_tests:
+          - not_null

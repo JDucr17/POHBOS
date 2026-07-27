@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: source_daily_risk_summary
+    description: Publishes the daily source risk summary as Parquet for the web app.
+    columns:
+      - name: source_id
+        description: Identifier for the traffic source.
+        data_tests:
+          - not_null
+      - name: event_date
+        description: UTC analytical date of the source summary.
+        data_tests:
+          - not_null
