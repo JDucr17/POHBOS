@@ -323,3 +323,15 @@ node_modules/
 .astro/
 .output/
 *.tsbuildinfo
+
+# dbt runtime output
+services/analytics/dbt/target/
+services/analytics/dbt/logs/
+services/analytics/dbt/profiles.yml
+services/analytics/dbt/.user.yml
+services/analytics/dbt/dbt_packages/
+
+# Generated analytics data
+services/analytics/data/raw/
+services/analytics/data/warehouse/
+services/analytics/data/marts/
