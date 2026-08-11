@@ -1,59 +1,240 @@
-<section class="bg-card relative isolate overflow-hidden" aria-labelledby="home-hero-title">
-  <div class="hero-lines pointer-events-none absolute inset-0"></div>
+<section class="hero" aria-labelledby="home-hero-title">
+  <div class="hero-surface" aria-hidden="true">
+    <div class="hero-lines"></div>
 
-  <svg
-    class="pointer-events-none absolute -top-24 -right-24 hidden h-[28rem] w-[28rem] sm:block lg:-top-32 lg:right-6 lg:h-[34rem] lg:w-[34rem]"
-    viewBox="0 0 400 400"
-    fill="none"
-    aria-hidden="true"
-  >
-    <circle cx="200" cy="200" r="70" stroke="var(--primary)" stroke-width="1.25" opacity="0.5"
-    ></circle>
-    <circle cx="200" cy="200" r="118" stroke="var(--primary)" stroke-width="1.25" opacity="0.4"
-    ></circle>
-    <circle cx="200" cy="200" r="166" stroke="var(--primary)" stroke-width="1.25" opacity="0.3"
-    ></circle>
-    <circle cx="200" cy="200" r="214" stroke="var(--primary)" stroke-width="1.25" opacity="0.2"
-    ></circle>
-  </svg>
+    <svg class="hero-trail" viewBox="0 0 640 390" fill="none">
+      <defs>
+        <linearGradient id="trail-stroke" x1="18" y1="238" x2="622" y2="54">
+          <stop offset="0" stop-color="var(--primary)" stop-opacity="0"></stop>
+          <stop offset="0.18" stop-color="var(--primary)" stop-opacity="0.3"></stop>
+          <stop offset="1" stop-color="var(--primary)" stop-opacity="0.64"></stop>
+        </linearGradient>
+        <linearGradient id="trail-secondary-stroke" x1="12" y1="286" x2="630" y2="110">
+          <stop offset="0" stop-color="var(--cold-path)" stop-opacity="0.06"></stop>
+          <stop offset="0.42" stop-color="var(--cold-path)" stop-opacity="0.38"></stop>
+          <stop offset="1" stop-color="var(--primary)" stop-opacity="0.5"></stop>
+        </linearGradient>
+        <linearGradient id="trail-tertiary-stroke" x1="14" y1="42" x2="632" y2="205">
+          <stop offset="0" stop-color="var(--sink)" stop-opacity="0.08"></stop>
+          <stop offset="0.48" stop-color="var(--primary)" stop-opacity="0.4"></stop>
+          <stop offset="1" stop-color="var(--risk-medium)" stop-opacity="0.54"></stop>
+        </linearGradient>
+      </defs>
+      <path
+        class="trail-line trail-line--tertiary"
+        d="M14 42C146 87 240 54 350 112C462 170 520 130 632 205"></path>
+      <path
+        class="trail-line trail-line--quaternary"
+        d="M18 306C120 360 220 300 320 338S500 390 632 350"></path>
+      <path
+        class="trail-line trail-line--secondary"
+        d="M12 286C140 245 230 265 340 210C445 155 520 175 630 110"></path>
+      <path class="trail-line" d="M18 238C142 201 223 222 330 165C432 111 493 128 622 54"></path>
 
-  <div class="relative z-10 w-full px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-    <div class="max-w-xl">
-      <h1
-        id="home-hero-title"
-        class="text-foreground text-2xl leading-tight font-semibold tracking-tight sm:text-3xl"
-      >
+      <circle cx="32" cy="48" r="4.2" class="hero-dot hero-dot--red"></circle>
+      <circle cx="84" cy="63" r="3.9" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="138" cy="74" r="3.6" class="hero-dot"></circle>
+      <circle cx="194" cy="70" r="3.3" class="hero-dot hero-dot--green"></circle>
+      <circle cx="250" cy="79" r="3" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="305" cy="96" r="2.8" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="360" cy="119" r="2.6" class="hero-dot hero-dot--red"></circle>
+      <circle cx="415" cy="144" r="2.4" class="hero-dot"></circle>
+      <circle cx="470" cy="155" r="2.2" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="525" cy="151" r="2" class="hero-dot hero-dot--green"></circle>
+      <circle cx="578" cy="173" r="1.8" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="625" cy="199" r="1.6" class="hero-dot hero-dot--red"></circle>
+
+      <circle cx="35" cy="314" r="4" class="hero-dot hero-dot--green"></circle>
+      <circle cx="87" cy="337" r="3.7" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="140" cy="340" r="3.4" class="hero-dot"></circle>
+      <circle cx="195" cy="327" r="3.1" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="250" cy="316" r="2.8" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="305" cy="331" r="2.6" class="hero-dot hero-dot--red"></circle>
+      <circle cx="360" cy="349" r="2.4" class="hero-dot hero-dot--green"></circle>
+      <circle cx="415" cy="366" r="2.2" class="hero-dot"></circle>
+      <circle cx="470" cy="369" r="2" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="525" cy="361" r="1.8" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="580" cy="351" r="1.7" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="625" cy="350" r="1.6" class="hero-dot hero-dot--red"></circle>
+
+      <circle cx="30" cy="279" r="4.2" class="hero-dot hero-dot--red"></circle>
+      <circle cx="80" cy="263" r="3.8" class="hero-dot"></circle>
+      <circle cx="132" cy="251" r="3.4" class="hero-dot hero-dot--green"></circle>
+      <circle cx="185" cy="253" r="2.9" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="238" cy="247" r="2.3" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="290" cy="229" r="2.2" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="345" cy="207" r="7" class="trail-halo trail-halo--red"></circle>
+      <circle cx="345" cy="207" r="2.1" class="hero-dot hero-dot--red"></circle>
+      <circle cx="400" cy="181" r="2" class="hero-dot"></circle>
+      <circle cx="455" cy="161" r="1.9" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="510" cy="158" r="1.8" class="hero-dot hero-dot--green"></circle>
+      <circle cx="565" cy="139" r="7" class="trail-halo trail-halo--teal"></circle>
+      <circle cx="565" cy="139" r="1.7" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="615" cy="116" r="1.6" class="hero-dot hero-dot--red"></circle>
+
+      <circle cx="39" cy="231" r="4.5" class="hero-dot hero-dot--red"></circle>
+      <circle cx="83" cy="217" r="4" class="hero-dot"></circle>
+      <circle cx="129" cy="207" r="3.6" class="hero-dot hero-dot--green"></circle>
+      <circle cx="181" cy="205" r="3.1" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="232" cy="196" r="2.4" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="279" cy="181" r="2.3" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="333" cy="162" r="2.2" class="hero-dot hero-dot--red"></circle>
+      <circle cx="381" cy="137" r="2.1" class="hero-dot"></circle>
+      <circle cx="431" cy="119" r="2" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="480" cy="112" r="1.9" class="hero-dot hero-dot--green"></circle>
+      <circle cx="529" cy="93" r="1.8" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="579" cy="69" r="1.7" class="hero-dot hero-dot--red"></circle>
+      <circle cx="61" cy="247" r="1.5" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="108" cy="197" r="1.7" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="154" cy="225" r="1.5" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="204" cy="190" r="1.7" class="hero-dot hero-dot--green"></circle>
+      <circle cx="254" cy="208" r="1.5" class="hero-dot hero-dot--red"></circle>
+      <circle cx="307" cy="171" r="1.7" class="hero-dot"></circle>
+      <circle cx="356" cy="149" r="1.5" class="hero-dot hero-dot--green"></circle>
+      <circle cx="404" cy="130" r="7" class="trail-halo trail-halo--red"></circle>
+      <circle cx="404" cy="130" r="1.7" class="hero-dot hero-dot--red"></circle>
+      <circle cx="454" cy="133" r="1.5" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="504" cy="101" r="7" class="trail-halo trail-halo--yellow"></circle>
+      <circle cx="504" cy="101" r="1.7" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="553" cy="84" r="1.5" class="hero-dot hero-dot--green"></circle>
+      <circle cx="610" cy="54" r="1.7" class="hero-dot hero-dot--teal"></circle>
+    </svg>
+
+    <svg class="hero-orbit" viewBox="0 0 760 520" fill="none">
+      <path class="orbit-axis" d="M106 252H748M430 4V512"></path>
+
+      <circle cx="430" cy="252" r="38" class="orbit-ring orbit-ring--strong"></circle>
+      <circle cx="430" cy="252" r="76" class="orbit-ring"></circle>
+      <circle cx="430" cy="252" r="120" class="orbit-ring"></circle>
+      <circle cx="430" cy="252" r="168" class="orbit-ring orbit-ring--soft"></circle>
+      <circle cx="430" cy="252" r="220" class="orbit-ring orbit-ring--soft"></circle>
+      <circle cx="430" cy="252" r="278" class="orbit-ring orbit-ring--faint"></circle>
+      <circle cx="430" cy="252" r="326" class="orbit-ring orbit-ring--faint"></circle>
+      <circle cx="430" cy="252" r="370" class="orbit-ring orbit-ring--faint"></circle>
+
+      <circle cx="430" cy="252" r="99" class="orbit-arc" stroke-dasharray="112 38 24 71 63 314"
+      ></circle>
+      <circle
+        cx="430"
+        cy="252"
+        r="194"
+        class="orbit-arc orbit-arc--soft"
+        stroke-dasharray="176 84 46 132 98 684"></circle>
+      <circle
+        cx="430"
+        cy="252"
+        r="300"
+        class="orbit-arc orbit-arc--soft"
+        stroke-dasharray="270 128 64 184 112 1127"></circle>
+
+      <circle cx="430" cy="252" r="12" class="orbit-core"></circle>
+      <circle cx="430" cy="252" r="3" class="hero-dot"></circle>
+
+      <circle cx="372" cy="214" r="9" class="observation-halo observation-halo--green"></circle>
+      <circle cx="372" cy="214" r="2.7" class="hero-dot hero-dot--green"></circle>
+      <circle cx="521" cy="329" r="10" class="observation-halo observation-halo--yellow"></circle>
+      <circle cx="521" cy="329" r="2.8" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="598" cy="154" r="9" class="observation-halo observation-halo--red"></circle>
+      <circle cx="598" cy="154" r="2.7" class="hero-dot hero-dot--red"></circle>
+
+      <circle cx="348" cy="92" r="2" class="hero-dot"></circle>
+      <circle cx="282" cy="154" r="1.8" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="260" cy="284" r="2" class="hero-dot hero-dot--red"></circle>
+      <circle cx="314" cy="382" r="1.8" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="413" cy="445" r="2" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="541" cy="432" r="1.8" class="hero-dot hero-dot--green"></circle>
+      <circle cx="626" cy="365" r="2" class="hero-dot"></circle>
+      <circle cx="683" cy="267" r="1.8" class="hero-dot hero-dot--red"></circle>
+      <circle cx="665" cy="111" r="2" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="531" cy="58" r="1.8" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="205" cy="91" r="1.7" class="hero-dot hero-dot--green"></circle>
+      <circle cx="168" cy="348" r="1.9" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="722" cy="405" r="1.7" class="hero-dot hero-dot--green"></circle>
+      <circle cx="729" cy="71" r="1.8" class="hero-dot hero-dot--red"></circle>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-copy">
+      <h1 id="home-hero-title" class="hero-title">
         An anomaly scoring pipeline that analyzes HTTP traffic behavior against website-specific
-        baselines using <span class="text-primary">HBOS</span>.
+        baselines using <span>HBOS.</span>
       </h1>
 
-      <a
-        href="/docs/about"
-        class="text-primary hover:text-primary-hover focus-visible:ring-ring mt-4 inline-flex rounded-sm text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-      >
+      <a href="/docs/about" class="hero-subtitle">
         Inspired by Cloudflare's bot-management architecture.
       </a>
 
-      <div class="mt-5 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-        <a
-          href="/analytics"
-          class="bg-node-surface-top text-node-fg hover:bg-node-surface focus-visible:ring-ring inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-        >
-          Explore analytics →
-        </a>
-        <a
-          href="/docs/scoring"
-          class="text-primary hover:bg-muted hover:text-primary-hover focus-visible:ring-ring inline-flex h-10 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
-        >
-          Read more →
-        </a>
+      <div class="hero-actions">
+        <a href="/analytics" class="hero-primary-action">Explore analytics →</a>
+        <a href="/docs/scoring" class="hero-secondary-action">Read more →</a>
       </div>
     </div>
   </div>
+
+  <svg class="hero-horizon" viewBox="0 0 1440 472" preserveAspectRatio="none" aria-hidden="true">
+    <g transform="translate(0 40)">
+      <path
+        class="horizon-cutout"
+        d="M0 357C215 366 367 409 570 411C758 414 890 380 1047 355C1178 335 1311 344 1440 365V432H0Z"
+      ></path>
+      <path
+        class="horizon-edge"
+        d="M0 357C215 366 367 409 570 411C758 414 890 380 1047 355C1178 335 1311 344 1440 365"
+      ></path>
+    </g>
+  </svg>
 </section>
 
 <style>
+  .hero {
+    --hero-surface-height: clamp(28rem, 50vh, 29.5rem);
+    --hero-pipeline-gap: 1.25rem;
+    --hero-grid-size: 34px;
+    position: relative;
+    z-index: 1;
+    height: calc(var(--hero-surface-height) + var(--hero-pipeline-gap));
+    isolation: isolate;
+    background-color: var(--canvas-bg);
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--border) 50%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--border) 50%, transparent) 1px,
+        transparent 1px
+      ),
+      radial-gradient(
+        circle,
+        color-mix(in oklch, var(--muted-foreground) 50%, transparent) 1.5px,
+        transparent 2px
+      );
+    background-position:
+      0 0,
+      0 0,
+      calc(var(--hero-grid-size) / 2) calc(var(--hero-grid-size) / 2);
+    background-size: var(--hero-grid-size) var(--hero-grid-size);
+  }
+
+  .hero-surface {
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--hero-surface-height);
+    overflow: hidden;
+    background: var(--card);
+  }
+
   .hero-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-lines {
+    z-index: 1;
     background-image: repeating-linear-gradient(
       -45deg,
       color-mix(in oklch, var(--primary) 12%, transparent) 0,
@@ -61,5 +242,366 @@
       transparent 1px,
       transparent 10px
     );
+    opacity: 0.42;
+    mask-image: linear-gradient(90deg, rgb(0 0 0 / 18%), rgb(0 0 0 / 68%) 38%, #000 100%);
+    -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 18%), rgb(0 0 0 / 68%) 38%, #000 100%);
+  }
+
+  .hero-trail {
+    position: absolute;
+    z-index: 3;
+    top: 1.25rem;
+    left: 38%;
+    width: min(36vw, 38rem);
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .trail-line {
+    stroke: url("#trail-stroke");
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .trail-line--secondary {
+    stroke: url("#trail-secondary-stroke");
+    opacity: 0.74;
+  }
+
+  .trail-line--tertiary {
+    stroke: url("#trail-tertiary-stroke");
+    opacity: 0.72;
+  }
+
+  .trail-line--quaternary {
+    stroke: url("#trail-stroke");
+    opacity: 0.82;
+  }
+
+  .trail-halo {
+    fill: var(--card);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .trail-halo--red {
+    stroke: color-mix(in oklch, var(--risk-high) 34%, transparent);
+  }
+
+  .trail-halo--yellow {
+    stroke: color-mix(in oklch, var(--risk-medium) 34%, transparent);
+  }
+
+  .trail-halo--teal {
+    stroke: color-mix(in oklch, var(--cold-path) 34%, transparent);
+  }
+
+  .hero-orbit {
+    position: absolute;
+    z-index: 3;
+    top: -4.5rem;
+    right: -5.5rem;
+    width: min(54vw, 56rem);
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .orbit-axis {
+    stroke: color-mix(in oklch, var(--flow) 9%, transparent);
+    stroke-width: 1;
+    stroke-dasharray: 2 13;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .orbit-ring,
+  .orbit-arc {
+    stroke: color-mix(in oklch, var(--primary) 25%, transparent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .orbit-ring--strong {
+    stroke: color-mix(in oklch, var(--primary) 35%, transparent);
+  }
+
+  .orbit-ring--soft,
+  .orbit-arc--soft {
+    stroke: color-mix(in oklch, var(--primary) 18%, transparent);
+  }
+
+  .orbit-ring--faint {
+    stroke: color-mix(in oklch, var(--flow) 13%, transparent);
+  }
+
+  .orbit-arc {
+    stroke-linecap: round;
+  }
+
+  .orbit-core {
+    fill: var(--card);
+    stroke: color-mix(in oklch, var(--primary) 32%, transparent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .observation-halo {
+    fill: transparent;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .observation-halo--green {
+    stroke: color-mix(in oklch, var(--risk-low) 27%, transparent);
+  }
+
+  .observation-halo--yellow {
+    stroke: color-mix(in oklch, var(--risk-medium) 27%, transparent);
+  }
+
+  .observation-halo--red {
+    stroke: color-mix(in oklch, var(--risk-high) 27%, transparent);
+  }
+
+  .hero-dot {
+    fill: var(--primary);
+    opacity: 0.72;
+  }
+
+  .hero-dot--green {
+    fill: var(--risk-low);
+  }
+
+  .hero-dot--yellow {
+    fill: var(--risk-medium);
+  }
+
+  .hero-dot--red {
+    fill: var(--risk-high);
+  }
+
+  .hero-dot--teal {
+    fill: var(--cold-path);
+  }
+
+  .hero-dot--purple {
+    fill: var(--sink);
+  }
+
+  .hero-dot--green,
+  .hero-dot--yellow,
+  .hero-dot--red,
+  .hero-dot--teal,
+  .hero-dot--purple {
+    opacity: 0.68;
+  }
+
+  .hero-trail .hero-dot {
+    opacity: 0.92;
+    filter: drop-shadow(0 0 2.5px color-mix(in oklch, var(--primary) 82%, transparent))
+      drop-shadow(0 0 6px color-mix(in oklch, var(--primary) 45%, transparent));
+  }
+
+  .hero-trail .hero-dot--green {
+    filter: drop-shadow(0 0 2.5px color-mix(in oklch, var(--risk-low) 84%, transparent))
+      drop-shadow(0 0 6px color-mix(in oklch, var(--risk-low) 46%, transparent));
+  }
+
+  .hero-trail .hero-dot--yellow {
+    filter: drop-shadow(0 0 2.5px color-mix(in oklch, var(--risk-medium) 84%, transparent))
+      drop-shadow(0 0 6px color-mix(in oklch, var(--risk-medium) 46%, transparent));
+  }
+
+  .hero-trail .hero-dot--red {
+    filter: drop-shadow(0 0 2.5px color-mix(in oklch, var(--risk-high) 84%, transparent))
+      drop-shadow(0 0 6px color-mix(in oklch, var(--risk-high) 46%, transparent));
+  }
+
+  .hero-trail .hero-dot--teal {
+    filter: drop-shadow(0 0 2.5px color-mix(in oklch, var(--cold-path) 84%, transparent))
+      drop-shadow(0 0 6px color-mix(in oklch, var(--cold-path) 46%, transparent));
+  }
+
+  .hero-trail .hero-dot--purple {
+    filter: drop-shadow(0 0 2.5px color-mix(in oklch, var(--sink) 84%, transparent))
+      drop-shadow(0 0 6px color-mix(in oklch, var(--sink) 46%, transparent));
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    padding: clamp(3.75rem, 7.5vh, 4.25rem) clamp(1.5rem, 5.35vw, 6rem) 1.5rem;
+  }
+
+  .hero-copy {
+    max-width: 38rem;
+  }
+
+  .hero-title {
+    margin: 0;
+    color: var(--foreground);
+    font-size: clamp(1.9rem, 2vw, 2.1rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.32;
+  }
+
+  .hero-title span {
+    color: var(--primary);
+  }
+
+  .hero-subtitle {
+    display: inline-flex;
+    margin-top: 1.5rem;
+    border-radius: 0.25rem;
+    color: var(--primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: color 150ms ease;
+  }
+
+  .hero-subtitle:hover {
+    color: var(--primary-hover);
+  }
+
+  .hero-subtitle:focus-visible,
+  .hero-primary-action:focus-visible,
+  .hero-secondary-action:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .hero-primary-action,
+  .hero-secondary-action {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .hero-primary-action {
+    background: var(--node-surface-top);
+    color: var(--node-fg);
+  }
+
+  .hero-primary-action:hover {
+    background: var(--node-surface);
+  }
+
+  .hero-secondary-action {
+    color: var(--primary);
+  }
+
+  .hero-secondary-action:hover {
+    background: var(--muted);
+    color: var(--primary-hover);
+  }
+
+  .hero-horizon {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--hero-surface-height);
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .horizon-cutout {
+    fill: var(--canvas-bg);
+  }
+
+  .horizon-edge {
+    fill: none;
+    stroke: var(--node-surface-top);
+    opacity: 0.42;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @media (max-width: 63.99rem) {
+    .hero-trail {
+      top: 5rem;
+      left: 50%;
+      width: 31rem;
+      opacity: 0.58;
+    }
+
+    .hero-orbit {
+      top: -2rem;
+      right: -17rem;
+      width: 45rem;
+      opacity: 0.64;
+    }
+
+    .hero-copy {
+      max-width: 34rem;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .hero {
+      --hero-surface-height: 34rem;
+      --hero-pipeline-gap: 0.75rem;
+    }
+
+    .hero-content {
+      padding: 3.25rem 1.5rem 6rem;
+    }
+
+    .hero-title {
+      font-size: clamp(1.75rem, 7vw, 2rem);
+      line-height: 1.25;
+    }
+
+    .hero-trail {
+      display: none;
+    }
+
+    .hero-orbit {
+      top: 3rem;
+      right: -23rem;
+      width: 39rem;
+      opacity: 0.34;
+    }
+
+    .hero-lines {
+      opacity: 0.28;
+      mask-image: linear-gradient(90deg, rgb(0 0 0 / 12%), rgb(0 0 0 / 58%) 76%, #000);
+      -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 12%), rgb(0 0 0 / 58%) 76%, #000);
+    }
+
+    .hero-actions {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-subtitle,
+    .hero-primary-action,
+    .hero-secondary-action {
+      transition: none;
+    }
   }
 </style>

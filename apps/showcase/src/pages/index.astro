@@ -5,7 +5,6 @@ import AnalyticsPreview from "@/features/home/AnalyticsPreview.astro";
 import HomeHero from "@/features/home/HomeHero.astro";
 import WipCard from "@/features/home/WipCard.astro";
 import HomeHeader from "@/features/navigation/HomeHeader.astro";
-import AnimatedDivider from "@/lib/components/AnimatedDivider.astro";
 ---
 
 <ImmersiveLayout
@@ -16,7 +15,6 @@ import AnimatedDivider from "@/lib/components/AnimatedDivider.astro";
 
   <main class="flex-1">
     <HomeHero />
-    <AnimatedDivider />
 
     <section class="w-full" aria-label="Pipeline visualization">
       <Pipeline client:load />
