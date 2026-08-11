@@ -1,4 +1,6 @@
 ---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
 const features = [
   { name: "window_request_count", surprise: "0.8" },
   { name: "html_to_asset_ratio", surprise: "1.6" },
@@ -11,6 +13,13 @@ const distribution = [
   164, 153, 139, 124, 109, 94, 81, 69, 58, 49, 42, 36, 31, 27, 24, 21, 18,
   16, 14, 12, 10, 9, 8, 7, 6, 5, 4, 3, 3, 2, 2, 1, 1,
 ];
+
+const mobileSteps = [
+  { title: "Collect surprise terms", description: "The example window contributes 0.8, 1.6, 0.3, and 1.1 across four behavioral features.", tone: "flow" },
+  { title: "Calculate raw score", description: "Sum the per-feature surprise terms to produce a raw HBOS score of 3.8.", tone: "primary" },
+  { title: "Compare with the source", description: "Locate 3.8 within the raw-score distribution fitted from this source's historical windows.", tone: "cold" },
+  { title: "Normalize", description: "The raw score falls at the 95th percentile and becomes a normalized score of 0.95.", tone: "success" },
+] as const;
 ---
 
 <figure class="normalization-diagram">
@@ -181,6 +190,12 @@ const distribution = [
     </g>
   </svg>
 </figure>
+
+<MobileProcessDiagram
+  title="Raw score to percentile normalization"
+  description="A raw HBOS score is interpreted against the source's own historical score distribution."
+  steps={[...mobileSteps]}
+/>
 
 <style>
   .normalization-diagram {
@@ -365,5 +380,11 @@ const distribution = [
 
   .percentile-line {
     stroke-dasharray: 6 6;
+  }
+
+  @media (max-width: 48rem) {
+    .normalization-diagram {
+      display: none;
+    }
   }
 </style>

@@ -1,3 +1,15 @@
+---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
+const mobileSteps = [
+  { title: "Extract", description: "The Python extractor copies events, decisions, and baseline runs from Postgres into raw Parquet snapshots.", tone: "primary" },
+  { title: "Model and test", description: "dbt organizes the analytics models and tests; DuckDB executes them.", tone: "flow" },
+  { title: "Build mart", description: "Once the models pass their tests, the daily source-risk summary mart is produced.", tone: "cold" },
+  { title: "Export", description: "The completed mart is exported as the static Parquet artifact consumed by the showcase.", tone: "sink" },
+  { title: "Browser dashboard", description: "The dashboard loads the Parquet file and runs SQL in the browser through DuckDB-Wasm.", tone: "success" },
+] as const;
+---
+
 <figure class="analytics-pipeline-diagram">
   <svg
     viewBox="0 0 1400 900"
@@ -265,6 +277,12 @@
   </svg>
 </figure>
 
+<MobileProcessDiagram
+  title="Analytics pipeline"
+  description="Apache Airflow orchestrates extraction, mart construction, testing, and export once a week."
+  steps={[...mobileSteps]}
+/>
+
 <style>
   .analytics-pipeline-diagram {
     width: 112%;
@@ -447,8 +465,7 @@
 
   @media (max-width: 48rem) {
     .analytics-pipeline-diagram {
-      width: 100%;
-      margin-left: 0;
+      display: none;
     }
   }
 </style>

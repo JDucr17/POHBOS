@@ -14,7 +14,7 @@
           <stop offset="0.42" stop-color="var(--cold-path)" stop-opacity="0.38"></stop>
           <stop offset="1" stop-color="var(--primary)" stop-opacity="0.5"></stop>
         </linearGradient>
-        <linearGradient id="trail-tertiary-stroke" x1="14" y1="42" x2="632" y2="205">
+        <linearGradient id="trail-tertiary-stroke" x1="128" y1="42" x2="632" y2="205">
           <stop offset="0" stop-color="var(--sink)" stop-opacity="0.08"></stop>
           <stop offset="0.48" stop-color="var(--primary)" stop-opacity="0.4"></stop>
           <stop offset="1" stop-color="var(--risk-medium)" stop-opacity="0.54"></stop>
@@ -22,7 +22,7 @@
       </defs>
       <path
         class="trail-line trail-line--tertiary"
-        d="M14 42C146 87 240 54 350 112C462 170 520 130 632 205"></path>
+        d="M128 42C230 82 295 68 382 112C474 159 534 143 632 205"></path>
       <path
         class="trail-line trail-line--quaternary"
         d="M18 306C120 360 220 300 320 338S500 390 632 350"></path>
@@ -31,17 +31,17 @@
         d="M12 286C140 245 230 265 340 210C445 155 520 175 630 110"></path>
       <path class="trail-line" d="M18 238C142 201 223 222 330 165C432 111 493 128 622 54"></path>
 
-      <circle cx="32" cy="48" r="4.2" class="hero-dot hero-dot--red"></circle>
-      <circle cx="84" cy="63" r="3.9" class="hero-dot hero-dot--yellow"></circle>
-      <circle cx="138" cy="74" r="3.6" class="hero-dot"></circle>
-      <circle cx="194" cy="70" r="3.3" class="hero-dot hero-dot--green"></circle>
-      <circle cx="250" cy="79" r="3" class="hero-dot hero-dot--purple"></circle>
-      <circle cx="305" cy="96" r="2.8" class="hero-dot hero-dot--teal"></circle>
-      <circle cx="360" cy="119" r="2.6" class="hero-dot hero-dot--red"></circle>
-      <circle cx="415" cy="144" r="2.4" class="hero-dot"></circle>
-      <circle cx="470" cy="155" r="2.2" class="hero-dot hero-dot--yellow"></circle>
-      <circle cx="525" cy="151" r="2" class="hero-dot hero-dot--green"></circle>
-      <circle cx="578" cy="173" r="1.8" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="140" cy="48" r="4.2" class="hero-dot hero-dot--red"></circle>
+      <circle cx="182" cy="62" r="3.9" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="225" cy="74" r="3.6" class="hero-dot"></circle>
+      <circle cx="270" cy="78" r="3.3" class="hero-dot hero-dot--green"></circle>
+      <circle cx="315" cy="90" r="3" class="hero-dot hero-dot--purple"></circle>
+      <circle cx="360" cy="108" r="2.8" class="hero-dot hero-dot--teal"></circle>
+      <circle cx="405" cy="128" r="2.6" class="hero-dot hero-dot--red"></circle>
+      <circle cx="450" cy="147" r="2.4" class="hero-dot"></circle>
+      <circle cx="495" cy="159" r="2.2" class="hero-dot hero-dot--yellow"></circle>
+      <circle cx="540" cy="160" r="2" class="hero-dot hero-dot--green"></circle>
+      <circle cx="585" cy="179" r="1.8" class="hero-dot hero-dot--purple"></circle>
       <circle cx="625" cy="199" r="1.6" class="hero-dot hero-dot--red"></circle>
 
       <circle cx="35" cy="314" r="4" class="hero-dot hero-dot--green"></circle>
@@ -191,6 +191,7 @@
     --hero-surface-height: clamp(28rem, 50vh, 29.5rem);
     --hero-pipeline-gap: 1.25rem;
     --hero-grid-size: 34px;
+    --hero-content-padding: clamp(1.5rem, 5.35vw, 6rem);
     position: relative;
     z-index: 1;
     height: calc(var(--hero-surface-height) + var(--hero-pipeline-gap));
@@ -251,8 +252,8 @@
     position: absolute;
     z-index: 3;
     top: 1.25rem;
-    left: 38%;
-    width: min(36vw, 38rem);
+    left: calc(var(--hero-content-padding) + 40rem);
+    width: min(36vw, 38rem, calc(100% - var(--hero-content-padding) - 40rem));
     height: auto;
     overflow: visible;
     pointer-events: none;
@@ -433,7 +434,7 @@
     position: relative;
     z-index: 4;
     width: 100%;
-    padding: clamp(3.75rem, 7.5vh, 4.25rem) clamp(1.5rem, 5.35vw, 6rem) 1.5rem;
+    padding: clamp(3.75rem, 7.5vh, 4.25rem) var(--hero-content-padding) 1.5rem;
   }
 
   .hero-copy {
@@ -541,8 +542,8 @@
   @media (max-width: 63.99rem) {
     .hero-trail {
       top: 5rem;
-      left: 50%;
-      width: 31rem;
+      left: calc(var(--hero-content-padding) + 36rem);
+      width: min(31rem, calc(100% - var(--hero-content-padding) - 36rem));
       opacity: 0.58;
     }
 
@@ -558,10 +559,19 @@
     }
   }
 
+  @media (max-width: 55rem) {
+    .hero-trail,
+    .hero-orbit,
+    .hero-lines {
+      display: none;
+    }
+  }
+
   @media (max-width: 47.99rem) {
     .hero {
       --hero-surface-height: 34rem;
       --hero-pipeline-gap: 0.75rem;
+      --hero-content-padding: 1.5rem;
     }
 
     .hero-content {
@@ -571,17 +581,6 @@
     .hero-title {
       font-size: clamp(1.75rem, 7vw, 2rem);
       line-height: 1.25;
-    }
-
-    .hero-trail {
-      display: none;
-    }
-
-    .hero-orbit {
-      top: 3rem;
-      right: -23rem;
-      width: 39rem;
-      opacity: 0.34;
     }
 
     .hero-lines {

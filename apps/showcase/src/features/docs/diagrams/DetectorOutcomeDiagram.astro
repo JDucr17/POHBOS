@@ -1,3 +1,21 @@
+---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
+const mobileSteps = [
+  { title: "Consume and decode", description: "Consume a raw event from Kafka and decode its event envelope.", tone: "sink" },
+  { title: "Join visitor timeline", description: "Accept an event only when its event time can join the visitor's timeline; late events are skipped.", tone: "primary" },
+  { title: "Update trailing window", description: "Fold the event into the in-memory window and prune older events by event time.", tone: "cold" },
+  { title: "Check cadence gate", description: "Continue only when enough event time has passed since the visitor's previous score.", tone: "warning" },
+  { title: "Resolve outcome", description: "Emit no_baseline, insufficient_history, or score the eligible window and emit scored.", tone: "flow" },
+  { title: "Publish decision", description: "Publish the resulting decision envelope to the decisions topic.", tone: "success" },
+] as const;
+
+const mobileNotes = [
+  { title: "Decode failure", description: "Route the malformed record to the dead-letter queue and commit it.", tone: "error" },
+  { title: "Gate closed", description: "Update the window without emitting a decision until more event time passes.", tone: "warning" },
+] as const;
+---
+
 <figure class="detector-outcome-diagram">
   <svg viewBox="0 0 1024 476" width="100%" role="img" aria-labelledby="detector-title detector-desc">
     <title id="detector-title">Detector — Three-Outcome Resolution</title>
@@ -152,6 +170,13 @@
   </svg>
 </figure>
 
+<MobileProcessDiagram
+  title="Detector — Three-Outcome Resolution"
+  description="Each event advances through timeline and cadence checks before the detector emits a decision."
+  steps={[...mobileSteps]}
+  notes={[...mobileNotes]}
+/>
+
 <style>
   .detector-outcome-diagram { width: 112%; margin: 2rem 0 2.5rem -1%; }
   svg { display: block; height: auto; font-family: inherit; }
@@ -200,5 +225,5 @@
   .outlined { stroke: var(--risk-low); }
   .cold-outlined { stroke: var(--cold-path); }
   .window-span { stroke-dasharray: 3 3; }
-  @media (max-width: 48rem) { .detector-outcome-diagram { width: 100%; margin-left: 0; } }
+  @media (max-width: 48rem) { .detector-outcome-diagram { display: none; } }
 </style>

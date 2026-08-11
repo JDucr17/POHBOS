@@ -1,7 +1,16 @@
 ---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
 const denseBins = [18, 34, 58, 86, 118, 150, 180, 205, 230, 225, 198, 172, 143, 112, 86, 64, 47, 32, 21, 12, 6];
 const sparseBins = [205, 230, 212, 176, 140, 104, 76, 55, 36, 23, 14, 8, 5, 4, 3, 3, 3, 3, 3, 3, 7];
 const denseObservedHeight = denseBins.at(8) ?? 0;
+
+const mobileSteps = [
+  { title: "Choose a feature", description: "Look up the observed window_request_count in the source's fitted histogram.", tone: "primary" },
+  { title: "Locate its bin", description: "The bin height shows how frequently that range appeared across the source's historical windows.", tone: "flow" },
+  { title: "Dense bin", description: "Eight requests falls in a common, high-density bin and contributes low surprise.", tone: "success" },
+  { title: "Sparse bin", description: "Twenty requests falls in an uncommon, low-density bin and contributes high surprise.", tone: "warning" },
+] as const;
 ---
 
 <figure class="hbos-histogram-diagram">
@@ -131,6 +140,12 @@ const denseObservedHeight = denseBins.at(8) ?? 0;
 
   </svg>
 </figure>
+
+<MobileProcessDiagram
+  title="HBOS histogram lookup"
+  description="Histogram density turns each observed feature value into a source-specific surprise contribution."
+  steps={[...mobileSteps]}
+/>
 
 <style>
   .hbos-histogram-diagram {
@@ -283,6 +298,12 @@ const denseObservedHeight = denseBins.at(8) ?? 0;
 
   .fill-risk-medium {
     fill: var(--risk-medium);
+  }
+
+  @media (max-width: 48rem) {
+    .hbos-histogram-diagram {
+      display: none;
+    }
   }
 
 </style>

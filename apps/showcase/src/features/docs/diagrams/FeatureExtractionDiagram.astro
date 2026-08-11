@@ -1,3 +1,16 @@
+---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
+const mobileSteps = [
+  { title: "Read the trailing window", description: "Use the visitor's recent requests, ordered from the current event back through the window.", tone: "primary" },
+  { title: "Extract behavior", description: "Reduce those requests into stable numerical features for the detector.", tone: "flow" },
+  { title: "Volume and pace", description: "window_request_count and window_span_seconds", tone: "cold" },
+  { title: "Rhythm", description: "mean_inter_request_gap_ms and inter_request_gap_cv", tone: "cold" },
+  { title: "Content mix", description: "distinct_endpoints_hit and html_to_asset_ratio", tone: "sink" },
+  { title: "Client hygiene", description: "error_4xx_rate, method_entropy, and has_referrer_ratio", tone: "warning" },
+] as const;
+---
+
 <figure class="feature-extraction-diagram">
   <svg
     viewBox="0 120 1200 565"
@@ -153,6 +166,12 @@
   </svg>
 </figure>
 
+<MobileProcessDiagram
+  title="Feature extraction"
+  description="Recent requests in a visitor's trailing window become the features used for scoring."
+  steps={[...mobileSteps]}
+/>
+
 <style>
   .feature-extraction-diagram {
     margin: 2rem 0 2.5rem;
@@ -292,5 +311,11 @@
 
   .fill-flow {
     fill: var(--flow);
+  }
+
+  @media (max-width: 48rem) {
+    .feature-extraction-diagram {
+      display: none;
+    }
   }
 </style>

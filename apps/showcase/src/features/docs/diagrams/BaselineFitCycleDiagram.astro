@@ -1,4 +1,6 @@
 ---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
 const stages = [
   { number: 1, x: 22, width: 170, title: "Read history" },
   { number: 2, x: 208, width: 210, title: "Reconstruct windows" },
@@ -16,6 +18,20 @@ const matrixRows = [
 ];
 
 const matrixColumnCenters = [489, 539, 589, 639, 689];
+
+const mobileSteps = [
+  { title: "Read history", description: "Read recent persisted events from Postgres for each source.", tone: "primary" },
+  { title: "Reconstruct windows", description: "Build cadenced trailing windows for each source and visitor.", tone: "flow" },
+  { title: "Create feature matrix", description: "Arrange eligible windows as rows and extracted features in registry order as columns.", tone: "cold" },
+  { title: "Fit baseline", description: "Fit a histogram per feature and calculate raw-score quantiles.", tone: "cold" },
+  { title: "Store baseline", description: "Persist the baseline artifact, metadata, and quantiles in baseline_runs.", tone: "sink" },
+  { title: "Publish signal", description: "Publish the source and baseline run identifiers so the running detector activates the new baseline.", tone: "success" },
+] as const;
+
+const mobileNotes = [
+  { title: "Fit gates", description: "A source needs enough sampled windows and distinct visitors; otherwise it is recorded as insufficient_history.", tone: "warning" },
+  { title: "Process behavior", description: "The worker runs on a schedule, completes one fitting cycle, and exits cleanly.", tone: "cold" },
+] as const;
 ---
 
 <figure class="baseline-fit-cycle">
@@ -198,6 +214,13 @@ const matrixColumnCenters = [489, 539, 589, 639, 689];
   </svg>
 </figure>
 
+<MobileProcessDiagram
+  title="Baseline Worker — Fit Cycle"
+  description="The cold-path job fits and stores source baselines, then signals the live detector without restarting it."
+  steps={[...mobileSteps]}
+  notes={[...mobileNotes]}
+/>
+
 <style>
   .baseline-fit-cycle { width: 100%; margin: 2rem 0 2.5rem; }
   svg { display: block; height: auto; font-family: inherit; }
@@ -242,5 +265,5 @@ const matrixColumnCenters = [489, 539, 589, 639, 689];
   .matrix { fill: var(--card); stroke: var(--border); }
   .matrix-head { fill: var(--foreground); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
   .matrix-label, .matrix-value { fill: var(--foreground); font-size: 13px; }
-  @media (max-width: 48rem) { .baseline-fit-cycle { width: 100%; margin-left: 0; } }
+  @media (max-width: 48rem) { .baseline-fit-cycle { display: none; } }
 </style>

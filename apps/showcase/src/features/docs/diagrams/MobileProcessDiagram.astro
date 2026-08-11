@@ -1,0 +1,208 @@
+---
+export interface MobileDiagramStep {
+  title: string;
+  description: string;
+  tone?: "primary" | "flow" | "cold" | "sink" | "success" | "warning" | "error";
+}
+
+export interface MobileDiagramNote {
+  title: string;
+  description: string;
+  tone?: MobileDiagramStep["tone"];
+}
+
+interface Props {
+  title: string;
+  description: string;
+  steps: MobileDiagramStep[];
+  notes?: MobileDiagramNote[];
+}
+
+const { title, description, steps, notes = [] } = Astro.props;
+---
+
+<figure class="mobile-process-diagram" aria-label={title}>
+  <figcaption>
+    <strong>{title}</strong>
+    <span>{description}</span>
+  </figcaption>
+
+  <ol class="mobile-process-diagram__steps">
+    {
+      steps.map((step, index) => (
+        <li class="mobile-process-diagram__step" data-tone={step.tone ?? "primary"}>
+          <span class="mobile-process-diagram__number" aria-hidden="true">
+            {index + 1}
+          </span>
+          <div>
+            <strong>{step.title}</strong>
+            <p>{step.description}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  {
+    notes.length > 0 && (
+      <div class="mobile-process-diagram__notes">
+        {notes.map((note) => (
+          <aside data-tone={note.tone ?? "primary"}>
+            <strong>{note.title}</strong>
+            <p>{note.description}</p>
+          </aside>
+        ))}
+      </div>
+    )
+  }
+</figure>
+
+<style>
+  .mobile-process-diagram {
+    display: none;
+  }
+
+  @media (max-width: 48rem) {
+    .mobile-process-diagram {
+      display: block;
+      width: 100%;
+      margin: 1.5rem 0;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.875rem;
+      background: var(--card);
+    }
+
+    figcaption {
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.125rem 0.125rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    figcaption strong {
+      color: var(--foreground);
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    figcaption span {
+      color: var(--muted-foreground);
+      font-size: 0.8125rem;
+      line-height: 1.5;
+    }
+
+    .mobile-process-diagram__steps {
+      display: grid;
+      gap: 1.5rem;
+      margin: 1rem 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: none;
+    }
+
+    .mobile-process-diagram__step {
+      --step-color: var(--primary);
+      position: relative;
+      display: grid;
+      grid-template-columns: 2rem minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+      margin: 0;
+      padding: 0.875rem;
+      border: 1px solid color-mix(in oklch, var(--step-color) 60%, var(--border));
+      border-radius: 0.75rem;
+      background: var(--background);
+    }
+
+    .mobile-process-diagram__step:not(:last-child)::after {
+      position: absolute;
+      top: calc(100% + 0.25rem);
+      left: 1.83rem;
+      width: 1px;
+      height: 1rem;
+      background: var(--step-color);
+      content: "";
+    }
+
+    .mobile-process-diagram__step:not(:last-child)::before {
+      position: absolute;
+      top: calc(100% + 1rem);
+      left: 1.65rem;
+      width: 0.4rem;
+      height: 0.4rem;
+      border-right: 1px solid var(--step-color);
+      border-bottom: 1px solid var(--step-color);
+      content: "";
+      transform: rotate(45deg);
+    }
+
+    .mobile-process-diagram__number {
+      display: grid;
+      width: 2rem;
+      height: 2rem;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--step-color);
+      color: var(--primary-foreground);
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .mobile-process-diagram__step strong,
+    .mobile-process-diagram__notes strong {
+      color: var(--foreground);
+      font-size: 0.875rem;
+      line-height: 1.35;
+    }
+
+    .mobile-process-diagram__step p,
+    .mobile-process-diagram__notes p {
+      margin: 0.3rem 0 0;
+      color: var(--muted-foreground);
+      font-size: 0.8125rem;
+      line-height: 1.5;
+    }
+
+    [data-tone="flow"] {
+      --step-color: var(--flow);
+    }
+
+    [data-tone="cold"] {
+      --step-color: var(--cold-path);
+    }
+
+    [data-tone="sink"] {
+      --step-color: var(--sink);
+    }
+
+    [data-tone="success"] {
+      --step-color: var(--risk-low);
+    }
+
+    [data-tone="warning"] {
+      --step-color: var(--risk-medium);
+    }
+
+    [data-tone="error"] {
+      --step-color: var(--destructive);
+    }
+
+    .mobile-process-diagram__notes {
+      --step-color: var(--primary);
+      display: grid;
+      gap: 0.625rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .mobile-process-diagram__notes aside {
+      padding: 0.75rem 0.875rem;
+      border-left: 3px solid var(--step-color);
+      border-radius: 0.375rem;
+      background: color-mix(in oklch, var(--muted) 32%, var(--card));
+    }
+  }
+</style>

@@ -1,3 +1,15 @@
+---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
+const mobileSteps = [
+  { title: "Maintain the trailing window", description: "At 12:05, retain events from the most recent five minutes and age out events at or before 12:00.", tone: "cold" },
+  { title: "Advance with event time", description: "The window slides forward as each accepted event joins the visitor's timeline.", tone: "flow" },
+  { title: "Check cadence", description: "Wait 60 seconds after the previous score; the 12:05 event is eligible and the next earliest score is 12:06.", tone: "primary" },
+  { title: "Check event count", description: "Score only when the trailing window also contains the configured minimum number of events.", tone: "warning" },
+  { title: "Score the window", description: "The current window is scored only when both the cadence and minimum-event gates are open.", tone: "success" },
+] as const;
+---
+
 <figure class="trailing-window-diagram">
   <svg
     viewBox="0 0 1200 850"
@@ -200,6 +212,12 @@
   </svg>
 </figure>
 
+<MobileProcessDiagram
+  title="Trailing window scoring model"
+  description="Event-time windowing and two explicit gates determine when a visitor is eligible to score."
+  steps={[...mobileSteps]}
+/>
+
 <style>
   .trailing-window-diagram {
     margin: 2rem 0 2.5rem;
@@ -360,5 +378,11 @@
 
   .bars {
     stroke-width: 5;
+  }
+
+  @media (max-width: 48rem) {
+    .trailing-window-diagram {
+      display: none;
+    }
   }
 </style>

@@ -1,4 +1,6 @@
 ---
+import MobileProcessDiagram from "./MobileProcessDiagram.astro";
+
 const records = [
   { id: "event-101", state: "valid", tone: "valid" },
   { id: "event-102", state: "valid", tone: "valid" },
@@ -21,6 +23,19 @@ const insertedRecords = [
   { id: "event-102", y: 318 },
   { id: "event-104", y: 344 },
 ];
+
+const mobileSteps = [
+  { title: "Consume from topic", description: "Read records from the raw_events Kafka topic into the current batch.", tone: "sink" },
+  { title: "Assemble batch", description: "Release the batch when it reaches five records or has been open for 500 ms.", tone: "primary" },
+  { title: "Decode and split", description: "Separate valid records from malformed records that cannot be decoded.", tone: "flow" },
+  { title: "Handle durably", description: "Insert new records into Postgres, skip existing duplicates, and send malformed records to the dead-letter queue.", tone: "cold" },
+  { title: "Advance offsets", description: "Commit through offset 1005 only after every record has been durably handled.", tone: "success" },
+] as const;
+
+const mobileNotes = [
+  { title: "Transient failure", description: "Leave offsets uncommitted when storage is unavailable so Kafka redelivers the records.", tone: "primary" },
+  { title: "Permanent failure", description: "Dead-letter a corrupted record so partition progress can continue.", tone: "error" },
+] as const;
 ---
 
 <figure class="sink-batch-flow-diagram">
@@ -215,6 +230,13 @@ const insertedRecords = [
   </svg>
 </figure>
 
+<MobileProcessDiagram
+  title="Sink batch and offset flow"
+  description="Offsets advance only after each consumed record is inserted, skipped as a duplicate, or dead-lettered."
+  steps={[...mobileSteps]}
+  notes={[...mobileNotes]}
+/>
+
 <style>
   .sink-batch-flow-diagram {
     width: 100%;
@@ -290,4 +312,10 @@ const insertedRecords = [
 
   .batch-dot, .offset-dot { fill: var(--card); stroke: var(--primary); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
   .committed { fill: var(--primary); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  @media (max-width: 48rem) {
+    .sink-batch-flow-diagram {
+      display: none;
+    }
+  }
 </style>
