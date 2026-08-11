@@ -118,7 +118,10 @@
 
     <g aria-label="Publish decision">
       <rect x="898" y="185" width="113" height="174" rx="7" class="stage" />
-      <text x="912" y="209" class="stage-title">6. Publish Decision</text>
+      <text x="954" y="205" text-anchor="middle" class="stage-title">
+        <tspan x="954" dy="0">6. Publish</tspan>
+        <tspan x="954" dy="14">Decision</tspan>
+      </text>
       <path d="M935 247h15l24-15v55l-24-15h-15c-7 0-10-5-10-12s3-13 10-13Zm15 25 4 25h-11l-4-25m35-28c10 0 10 29 0 29" class="sink-stroke" />
       <path d="m984 244 8-7m-8 20h12m-12 13 8 7" class="sink-stroke" />
       <text x="954" y="312" text-anchor="middle" class="small">Publish decision</text>
@@ -153,6 +156,7 @@
   .detector-outcome-diagram { width: 112%; margin: 2rem 0 2.5rem -1%; }
   svg { display: block; height: auto; font-family: inherit; }
   .frame, .stage { fill: var(--card); stroke: var(--border); vector-effect: non-scaling-stroke; }
+  .stage { stroke: color-mix(in oklch, var(--primary) 22%, var(--border)); stroke-width: 0.8; }
   .error-card { fill: var(--card); stroke: var(--destructive); }
   .warning-card { fill: var(--card); stroke: var(--risk-medium); }
   .success-card { fill: var(--card); stroke: var(--risk-low); }

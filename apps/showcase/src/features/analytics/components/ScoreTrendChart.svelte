@@ -140,9 +140,9 @@
   title="Score trend"
   description="Daily average, p90, and p99 anomaly scores for scored windows."
 >
-  <div class="mb-3 flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-muted-foreground">
+  <div class="mb-3 grid grid-cols-3 gap-x-3 gap-y-2 text-[11px] text-muted-foreground">
     {#each Object.entries(chartConfig) as [key, item] (key)}
-      <span class="inline-flex items-center gap-1.5">
+      <span class="inline-flex min-w-0 items-center gap-1.5 whitespace-nowrap">
         <span class="h-0.5 w-3 rounded-full" style={`background: ${item.color}`} aria-hidden="true"
         ></span>
         {item.label}

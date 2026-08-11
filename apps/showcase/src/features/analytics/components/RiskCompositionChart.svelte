@@ -50,9 +50,11 @@
   title="Risk levels over time"
   description="Risk levels assigned to scored windows each day."
 >
-  <div class="mb-3 flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-muted-foreground">
+  <div
+    class="mb-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[11px] text-muted-foreground sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4"
+  >
     {#each Object.entries(chartConfig) as [key, item] (key)}
-      <span class="inline-flex items-center gap-1.5">
+      <span class="inline-flex min-w-0 items-center gap-1.5 whitespace-nowrap">
         <span class="size-2 rounded-sm" style={`background: ${item.color}`} aria-hidden="true"
         ></span>
         {item.label}
