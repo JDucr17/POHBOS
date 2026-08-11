@@ -9,6 +9,7 @@
     formatFullUtcDate,
     formatInteger,
     formatPercent,
+    responsiveDateTicks,
     toUtcDate,
   } from "@/features/analytics/format";
   import type { DailyRiskSummary } from "@/features/analytics/types";
@@ -31,6 +32,7 @@
       isPartialDay: day.isPartialDay,
     })),
   );
+  const xTicks = $derived(responsiveDateTicks(chartData.map((day) => day.date)));
   const riskTotal = $derived(data.reduce((total, day) => total + day.scoredWindowCount, 0));
   const chartConfig = {
     low: { label: "Low", color: "var(--risk-low)" },
@@ -63,7 +65,10 @@
         data={chartData}
         x="date"
         yPadding={[0, 18]}
-        bandPadding={0.28}
+        padding={{ top: 4, right: 20, bottom: 24, left: 44 }}
+        bandPadding={0.32}
+        highlight={{ bar: { y: "scored" }, opacity: 0.06 }}
+        tooltipContext={{ hideDelay: 100 }}
         seriesLayout="stack"
         series={[
           { key: "low", label: chartConfig.low.label, color: "var(--color-low)" },
@@ -76,12 +81,21 @@
           },
         ]}
         props={{
-          xAxis: { format: formatChartDate, ticks: chartData.length },
+          xAxis: { format: formatChartDate, ticks: xTicks, tickLength: 6 },
           yAxis: { format: formatCompact },
         }}
       >
         {#snippet tooltip({ context })}
-          <Tooltip.Root {context} variant="none">
+          <Tooltip.Root
+            {context}
+            variant="none"
+            anchor="bottom"
+            xOffset={0}
+            yOffset={12}
+            contained="window"
+            pointerEvents={true}
+            classes={{ root: "select-text" }}
+          >
             {#snippet children({ data: point })}
               <ChartTooltipContent
                 date={formatFullUtcDate(point.eventDate)}

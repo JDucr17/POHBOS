@@ -59,19 +59,19 @@ const insertedRecords = [
       <circle cx="42" cy="126" r="15" class="step-badge" /><text x="42" y="132" text-anchor="middle" class="step-number">1</text>
       <text x="66" y="132" class="step-title">Consume from topic</text>
 
-      <circle cx="352" cy="126" r="15" class="step-badge" /><text x="352" y="132" text-anchor="middle" class="step-number">2</text>
-      <text x="376" y="124" class="step-title">Batch assembled</text>
-      <text x="376" y="145" class="small muted-text">size or age</text>
+      <circle cx="362" cy="126" r="15" class="step-badge" /><text x="362" y="132" text-anchor="middle" class="step-number">2</text>
+      <text x="386" y="124" class="step-title">Batch assembled</text>
+      <text x="386" y="145" class="small muted-text">size or age</text>
 
-      <circle cx="570" cy="126" r="15" class="step-badge" /><text x="570" y="132" text-anchor="middle" class="step-number">3</text>
-      <text x="594" y="132" class="step-title">Decode + split</text>
+      <circle cx="582" cy="126" r="15" class="step-badge" /><text x="582" y="132" text-anchor="middle" class="step-number">3</text>
+      <text x="606" y="132" class="step-title">Decode + split</text>
 
-      <circle cx="838" cy="126" r="15" class="step-badge" /><text x="838" y="132" text-anchor="middle" class="step-number">4</text>
-      <text x="862" y="124" class="step-title">Persist good,</text>
-      <text x="862" y="145" class="step-title">DLQ bad</text>
+      <circle cx="858" cy="126" r="15" class="step-badge" /><text x="858" y="132" text-anchor="middle" class="step-number">4</text>
+      <text x="882" y="124" class="step-title">Persist good,</text>
+      <text x="882" y="145" class="step-title">DLQ bad</text>
 
-      <circle cx="1150" cy="126" r="15" class="step-badge" /><text x="1150" y="132" text-anchor="middle" class="step-number">5</text>
-      <text x="1174" y="132" class="step-title">Advance offsets</text>
+      <circle cx="1162" cy="126" r="15" class="step-badge" /><text x="1162" y="132" text-anchor="middle" class="step-number">5</text>
+      <text x="1186" y="132" class="step-title">Advance offsets</text>
     </g>
 
     <g aria-label="Kafka topic and current batch">
@@ -108,7 +108,10 @@ const insertedRecords = [
       {[0, 1, 2, 3, 4].map((index) => (
         <circle cx={388 + index * 23} cy="455" r="7" class="batch-dot" />
       ))}
-      <text x="432" y="500" text-anchor="middle" class="small">first record started the timer</text>
+      <text x="432" y="492" text-anchor="middle" class="small">
+        <tspan x="432">first record started</tspan>
+        <tspan x="432" dy="20">the timer</tspan>
+      </text>
     </g>
 
     <line x1="520" y1="390" x2="558" y2="390" class="primary-line" marker-end="url(#primary-arrow)" />
@@ -171,7 +174,7 @@ const insertedRecords = [
       <path d="m1247 276 9 9 18-22" class="primary-stroke check" />
       <text x="1260" y="327" text-anchor="middle" class="card-title">Advance offsets</text>
       <text x="1260" y="350" text-anchor="middle" class="small muted-text">after durable handling</text>
-      <line x1="1172" y1="410" x2="1348" y2="410" class="primary-line" marker-end="url(#primary-arrow)" />
+      <line x1="1172" y1="410" x2="1360" y2="410" class="primary-line" marker-end="url(#primary-arrow)" />
       {offsets.map((offset, index) => {
         const x = 1180 + index * 38;
         return (
@@ -190,32 +193,32 @@ const insertedRecords = [
       <line x1="510" y1="674" x2="510" y2="760" class="divider" />
       <line x1="952" y1="674" x2="952" y2="760" class="divider" />
 
-      <path d="M58 680c8 5 15 5 22 0v15c0 11-7 18-22 26-15-8-22-15-22-26v-15c7 5 14 5 22 0Z" class="primary-stroke" />
-      <path d="m49 700 6 6 12-14" class="primary-stroke principle-check" />
-      <text x="100" y="698" class="card-title accent-text">Key principle</text>
-      <text x="100" y="729" class="small">Offsets advance only after every record is inserted,</text>
-      <text x="100" y="751" class="small">skipped, or sent to the DLQ.</text>
+      <path d="M70 680c8 5 15 5 22 0v15c0 11-7 18-22 26-15-8-22-15-22-26v-15c7 5 14 5 22 0Z" class="primary-stroke" />
+      <path d="m61 700 6 6 12-14" class="primary-stroke principle-check" />
+      <text x="108" y="698" class="card-title accent-text">Key principle</text>
+      <text x="108" y="729" class="small">Offsets advance only after every record is inserted,</text>
+      <text x="108" y="751" class="small">skipped, or sent to the DLQ.</text>
 
-      <path d="M532 699a17 17 0 0 1 27-14" class="primary-stroke" />
-      <path d="m556 681 5 5-7 2" class="transient-arrowhead" />
-      <path d="M564 701a17 17 0 0 1-27 14" class="primary-stroke" />
-      <path d="m540 719-5-5 7-2" class="transient-arrowhead" />
-      <text x="590" y="698" class="card-title">Transient failure</text>
-      <text x="590" y="729" class="small">Storage unavailable → leave offsets uncommitted</text>
-      <text x="590" y="751" class="small accent-text">→ redelivery</text>
+      <path d="M540 699a17 17 0 0 1 27-14" class="primary-stroke" />
+      <path d="m564 681 5 5-7 2" class="transient-arrowhead" />
+      <path d="M572 701a17 17 0 0 1-27 14" class="primary-stroke" />
+      <path d="m548 719-5-5 7-2" class="transient-arrowhead" />
+      <text x="594" y="698" class="card-title">Transient failure</text>
+      <text x="594" y="729" class="small">Storage unavailable → leave offsets uncommitted</text>
+      <text x="594" y="751" class="small accent-text">→ redelivery</text>
 
-      <path d="M992 718l21-36 21 36Zm21-23v10m0 6v1" class="error-stroke" />
-      <text x="1050" y="698" class="card-title error-text">Permanent failure</text>
-      <text x="1050" y="729" class="small">Corrupted record → send to DLQ</text>
-      <text x="1050" y="751" class="small error-text">→ partition progress continues</text>
+      <path d="M977 718l21-36 21 36Zm21-23v10m0 6v1" class="error-stroke" />
+      <text x="1036" y="698" class="card-title error-text">Permanent failure</text>
+      <text x="1036" y="729" class="small">Corrupted record → send to DLQ</text>
+      <text x="1036" y="751" class="small error-text">→ partition progress continues</text>
     </g>
   </svg>
 </figure>
 
 <style>
   .sink-batch-flow-diagram {
-    width: 112%;
-    margin: 2rem 0 2.5rem -1%;
+    width: 100%;
+    margin: 2rem 0 2.5rem;
   }
   svg { display: block; height: auto; font-family: inherit; }
 
@@ -226,12 +229,16 @@ const insertedRecords = [
     }
   }
 
-  .frame, .primary-card, .neutral-card, .record, .principles {
+  .frame {
     fill: var(--card); stroke: var(--border); vector-effect: non-scaling-stroke;
   }
+  .primary-card, .neutral-card, .record {
+    fill: var(--card); stroke: var(--border); vector-effect: non-scaling-stroke;
+  }
+  .principles { fill: color-mix(in oklch, var(--muted) 40%, var(--card)); stroke: var(--border); vector-effect: non-scaling-stroke; }
   .primary-card { stroke: color-mix(in oklch, var(--primary) 55%, var(--border)); }
   .success-card, .record--valid {
-    fill: color-mix(in oklch, var(--risk-low) 5%, var(--card));
+    fill: var(--card);
     stroke: color-mix(in oklch, var(--risk-low) 58%, var(--border));
     vector-effect: non-scaling-stroke;
   }
@@ -241,10 +248,9 @@ const insertedRecords = [
     vector-effect: non-scaling-stroke;
   }
   .record--duplicate {
-    fill: color-mix(in oklch, var(--risk-medium) 6%, var(--card));
-    stroke: color-mix(in oklch, var(--risk-medium) 60%, var(--border));
+    fill: var(--card);
+    stroke: var(--risk-medium);
   }
-  .principles { fill: color-mix(in oklch, var(--primary) 3%, var(--card)); }
 
   .heading, .body, .step-title, .card-title, .label, .small, .record-id, .record-state, .offset-label { fill: var(--foreground); }
   .heading { font-size: 31px; font-weight: 700; }
@@ -270,12 +276,12 @@ const insertedRecords = [
   .duplicate-stroke, .insert-check, .transient-arrowhead {
     fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round;
   }
+  .record-icon { stroke: var(--muted-foreground); }
   .primary-line, .primary-stroke, .primary-outline, .batch-line { stroke: var(--primary); stroke-width: 2; }
   .success-line, .success-stroke, .success-outline, .record-icon--valid { stroke: var(--risk-low); stroke-width: 2; }
   .error-line, .error-stroke, .error-outline, .record-icon--error { stroke: var(--destructive); stroke-width: 2; }
   .duplicate-outline, .duplicate-stroke { stroke: var(--risk-medium); stroke-width: 2; }
   .record-icon--duplicate { stroke: var(--risk-medium); stroke-width: 2; }
-  .record-icon { stroke: var(--muted-foreground); }
   .divider { stroke: var(--border); }
   .check { stroke-width: 3; }
   .insert-check { stroke: var(--risk-low); stroke-width: 1.75; }

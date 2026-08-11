@@ -10,6 +10,11 @@ const scoreFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 3,
   maximumFractionDigits: 3,
 });
+const dateTickSpacing = 80;
+
+interface DateTickScale {
+  range(): unknown[];
+}
 
 export function formatInteger(value: number): string {
   return integerFormatter.format(value);
@@ -33,6 +38,34 @@ export function formatChartDate(value: Date | string): string {
     day: "numeric",
     timeZone: "UTC",
   }).format(new Date(value));
+}
+
+export function responsiveDateTicks(dates: Date[]): (scale: DateTickScale) => Date[] {
+  return (scale) => {
+    if (dates.length <= 2) return dates;
+
+    const range = scale.range();
+    const firstPosition = Number(range[0]);
+    const lastPosition = Number(range.at(-1));
+
+    if (!Number.isFinite(firstPosition) || !Number.isFinite(lastPosition)) {
+      return [dates[0]!, dates.at(-1)!];
+    }
+
+    const availableWidth = Math.abs(lastPosition - firstPosition);
+    const tickCount = Math.min(
+      dates.length,
+      Math.max(2, Math.floor(availableWidth / dateTickSpacing) + 1),
+    );
+
+    if (tickCount === dates.length) return dates;
+
+    const lastDateIndex = dates.length - 1;
+    return Array.from({ length: tickCount }, (_, index) => {
+      const dateIndex = Math.round((index * lastDateIndex) / (tickCount - 1));
+      return dates[dateIndex]!;
+    });
+  };
 }
 
 export function formatFullUtcDate(value: Date | string): string {

@@ -14,6 +14,8 @@ const matrixRows = [
   ["⋮", "…", "…", "…", "…", "…"],
   ["wₘ", "51", "22.7", "180", "0.07", "…"],
 ];
+
+const matrixColumnCenters = [489, 539, 589, 639, 689];
 ---
 
 <figure class="baseline-fit-cycle">
@@ -81,25 +83,25 @@ const matrixRows = [
       <text x="357" y="426" text-anchor="middle" class="body">(cadenced).</text>
     </g>
 
-    <g aria-label="Feature matrix" transform="translate(-42 0)">
-      <text x="572" y="215" class="matrix-head">req_count</text>
-      <text x="626" y="215" class="matrix-head">span_s</text>
-      <text x="680" y="215" class="matrix-head">gap_ms</text>
-      <text x="734" y="215" class="matrix-head">4xx_rate</text>
-      <rect x="538" y="226" width="232" height="134" class="matrix" />
-      {[584, 636, 688, 740].map((x) => <line x1={x} y1="226" x2={x} y2="360" class="matrix-line" />)}
-      {[259.5, 293, 326.5].map((y) => <line x1="538" y1={y} x2="770" y2={y} class="matrix-line" />)}
+    <g aria-label="Feature matrix" transform="translate(8 0)">
+      <text x="489" y="215" text-anchor="middle" class="matrix-head">req_count</text>
+      <text x="539" y="215" text-anchor="middle" class="matrix-head">span_s</text>
+      <text x="589" y="215" text-anchor="middle" class="matrix-head">gap_ms</text>
+      <text x="639" y="215" text-anchor="middle" class="matrix-head">4xx_rate</text>
+      <rect x="464" y="226" width="250" height="134" class="matrix" />
+      {[514, 564, 614, 664].map((x) => <line x1={x} y1="226" x2={x} y2="360" class="matrix-line" />)}
+      {[259.5, 293, 326.5].map((y) => <line x1="464" y1={y} x2="714" y2={y} class="matrix-line" />)}
       {matrixRows.map((row, rowIndex) => (
         <g>
-          <text x="522" y={249 + rowIndex * 33.5} text-anchor="end" class="matrix-label">{row[0]}</text>
+          <text x="456" y={249 + rowIndex * 33.5} text-anchor="end" class="matrix-label">{row[0]}</text>
           {row.slice(1).map((value, columnIndex) => (
-            <text x={561 + columnIndex * 52} y={249 + rowIndex * 33.5} text-anchor="middle" class="matrix-value">{value}</text>
+            <text x={matrixColumnCenters[columnIndex]} y={249 + rowIndex * 33.5} text-anchor="middle" class="matrix-value">{value}</text>
           ))}
         </g>
       ))}
-      <text x="641" y="402" text-anchor="middle" class="body">Rows = eligible windows (w₁ … wₘ)</text>
-      <text x="641" y="432" text-anchor="middle" class="body">Columns = extracted features</text>
-      <text x="641" y="458" text-anchor="middle" class="body">(registry order)</text>
+      <text x="589" y="402" text-anchor="middle" class="body">Rows = eligible windows (w₁ … wₘ)</text>
+      <text x="589" y="432" text-anchor="middle" class="body">Columns = extracted features</text>
+      <text x="589" y="458" text-anchor="middle" class="body">(registry order)</text>
     </g>
 
     <g aria-label="Fit histograms and quantiles" transform="translate(-28 0)">
@@ -124,9 +126,9 @@ const matrixRows = [
       <text x="1072" y="448" text-anchor="middle" class="body">metadata and quantiles.</text>
     </g>
 
-    <g aria-label="Publish baseline signal" transform="translate(-12 0)">
-      <path d="M1244 248h18l28-18v72l-28-18h-18c-8 0-12-7-12-18s4-18 12-18Zm18 36 5 35h-14l-5-35m42-37c13 0 13 38 0 38" class="sink-stroke" transform="translate(256 52) scale(.8)" />
-      <path d="m1303 244 11-9m-11 27h16m-16 18 11 9" class="sink-stroke" transform="translate(256 52) scale(.8)" />
+    <g aria-label="Publish baseline signal" transform="translate(-25 0)">
+      <path d="M1244 248h18l28-18v72l-28-18h-18c-8 0-12-7-12-18s4-18 12-18Zm18 36 5 35h-14l-5-35m42-37c13 0 13 38 0 38" class="sink-stroke" transform="translate(262 40) scale(.8)" />
+      <path d="m1303 244 11-9m-11 27h16m-16 18 11 9" class="sink-stroke" transform="translate(262 40) scale(.8)" />
       <text x="1274" y="326" text-anchor="middle" class="label">baseline signal</text>
       <text x="1274" y="351" text-anchor="middle" class="body">(Kafka topic)</text>
       <line x1="1196" y1="386" x2="1352" y2="386" class="divider" />
@@ -186,7 +188,7 @@ const matrixRows = [
     </g>
 
     <g aria-label="Process behavior">
-      <rect x="1070" y="722" width="266" height="134" rx="10" class="behavior-card" />
+      <rect x="1070" y="714" width="266" height="150" rx="10" class="behavior-card" />
       <circle cx="1108" cy="775" r="17" class="sink-outline" /><path d="M1108 764v12l8 5" class="sink-stroke" />
       <text x="1142" y="756" class="live-label">Process behavior</text>
       <text x="1142" y="786" class="body">Runs on a schedule,</text>
@@ -197,12 +199,13 @@ const matrixRows = [
 </figure>
 
 <style>
-  .baseline-fit-cycle { width: 112%; margin: 2rem 0 2.5rem -1%; }
+  .baseline-fit-cycle { width: 100%; margin: 2rem 0 2.5rem; }
   svg { display: block; height: auto; font-family: inherit; }
   .frame, .stage-card { fill: var(--card); stroke: var(--border); vector-effect: non-scaling-stroke; }
   .stage-card { stroke: color-mix(in oklch, var(--primary) 22%, var(--border)); }
-  .gate-card { fill: color-mix(in oklch, var(--cold-path) 3%, var(--card)); stroke: var(--cold-path); stroke-dasharray: 5 4; }
-  .live-card, .live-inner, .behavior-card { fill: color-mix(in oklch, var(--sink) 3%, var(--card)); stroke: color-mix(in oklch, var(--sink) 58%, var(--border)); }
+  .gate-card { fill: color-mix(in oklch, var(--muted) 40%, var(--card)); stroke: var(--cold-path); stroke-dasharray: 5 4; }
+  .live-card, .behavior-card { fill: color-mix(in oklch, var(--muted) 40%, var(--card)); stroke: color-mix(in oklch, var(--sink) 58%, var(--border)); }
+  .live-inner { fill: var(--card); stroke: color-mix(in oklch, var(--sink) 58%, var(--border)); }
   .behavior-card { stroke-dasharray: 5 4; }
   .diagram-title { fill: var(--foreground); font-size: 31px; font-weight: 750; }
   .diagram-subtitle { fill: var(--muted-foreground); font-size: 18px; }

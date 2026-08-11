@@ -98,11 +98,11 @@ const accentVar =
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 0.82em;
     font-weight: 500;
-    background: color-mix(in oklch, var(--doc-accent) 8%, var(--card));
-    color: color-mix(in oklch, var(--doc-accent) 55%, var(--foreground));
+    background: var(--muted);
+    color: var(--foreground);
     padding: 0.15em 0.42em;
     border-radius: 5px;
-    border: 1px solid color-mix(in oklch, var(--doc-accent) 22%, var(--border));
+    border: 1px solid var(--border);
     white-space: nowrap;
   }
 
@@ -128,5 +128,11 @@ const accentVar =
     border: none;
     border-top: 1px solid var(--border);
     margin: 2.25rem 0;
+  }
+
+  @media (min-width: 96rem) {
+    .docs-prose :global(figure) {
+      max-width: 66rem;
+    }
   }
 </style>

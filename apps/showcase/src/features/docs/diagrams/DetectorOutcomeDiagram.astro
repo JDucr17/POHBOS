@@ -7,7 +7,7 @@
     </desc>
     <defs>
       <marker id="arrow-primary" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="primary-fill" /></marker>
-      <marker id="arrow-success" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="success-fill" /></marker>
+      <marker id="arrow-success" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10Z" class="success-fill" /></marker>
       <marker id="arrow-error" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="error-fill" /></marker>
       <marker id="arrow-warning" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" class="warning-fill" /></marker>
     </defs>
@@ -32,7 +32,7 @@
       <text x="86" y="345" text-anchor="middle" class="small">envelope.</text>
     </g>
 
-    <line x1="154" y1="199" x2="176" y2="199" class="success-line" marker-end="url(#arrow-success)" />
+    <line x1="154" y1="199" x2="174" y2="199" class="success-line" marker-end="url(#arrow-success)" />
 
     <g aria-label="Join visitor timeline">
       <rect x="178" y="115" width="155" height="165" rx="7" class="stage" />
@@ -45,7 +45,7 @@
       <text x="255" y="253" text-anchor="middle" class="small">visitor's timeline?</text>
     </g>
 
-    <line x1="333" y1="199" x2="355" y2="199" class="success-line" marker-end="url(#arrow-success)" />
+    <line x1="333" y1="199" x2="353" y2="199" class="success-line" marker-end="url(#arrow-success)" />
     <text x="339" y="214" class="success-label">Yes</text>
 
     <g aria-label="Update trailing window">
@@ -63,20 +63,23 @@
       <text x="434" y="301" text-anchor="middle" class="small">(prune by event-time).</text>
     </g>
 
-    <line x1="510" y1="199" x2="529" y2="199" class="success-line" marker-end="url(#arrow-success)" />
+    <line x1="510" y1="199" x2="527" y2="199" class="success-line" marker-end="url(#arrow-success)" />
 
     <g aria-label="Cadence gate">
       <rect x="531" y="115" width="120" height="165" rx="7" class="stage" />
       <text x="548" y="139" class="stage-title">4. Cadence Gate</text>
       <circle cx="591" cy="192" r="20" class="sink-outline" />
       <path d="M591 178v15l10 6" class="sink-stroke" />
-      <text x="591" y="235" text-anchor="middle" class="small">Is the cadence gate open?</text>
+      <text x="591" y="232" text-anchor="middle" class="small">
+        <tspan x="591" dy="0">Is the cadence</tspan>
+        <tspan x="591" dy="14">gate open?</tspan>
+      </text>
     </g>
 
-    <line x1="651" y1="199" x2="682" y2="199" class="success-line outcome-connector" marker-end="url(#arrow-success)" />
+    <line x1="651" y1="199" x2="675" y2="199" class="success-line outcome-connector" marker-end="url(#arrow-success)" />
     <text x="660" y="191" class="success-label">Yes</text>
 
-    <g aria-label="Resolve decision" class="resolve-stage" transform="translate(8 0)">
+    <g aria-label="Resolve decision" class="resolve-stage">
       <rect x="679" y="115" width="195" height="328" rx="7" class="stage" />
       <text x="690" y="134" class="stage-title">
         <tspan x="690" dy="0">5. Resolve Decision</tspan>
@@ -91,27 +94,27 @@
       <text x="743" y="211" class="micro">Emit:</text>
       <text x="773" y="211" class="status">no_baseline</text>
 
-      <rect x="688" y="234" width="181" height="94" rx="6" class="warning-card" />
-      <circle cx="714" cy="261" r="14" class="warning-outline dashed" />
-      <path d="M714 251v11l7 4" class="warning-stroke" />
-      <text x="743" y="254" class="outcome-title warning-text">Insufficient history</text>
-      <text x="743" y="273" class="micro">Baseline found.</text>
-      <text x="743" y="289" class="micro">Window not eligible.</text>
-      <text x="743" y="306" class="micro">Emit:</text>
-      <text x="743" y="322" class="status">insufficient_history</text>
+      <rect x="688" y="236" width="181" height="94" rx="6" class="warning-card" />
+      <circle cx="714" cy="263" r="14" class="warning-outline dashed" />
+      <path d="M714 253v11l7 4" class="warning-stroke" />
+      <text x="743" y="256" class="outcome-title warning-text">Insufficient history</text>
+      <text x="743" y="275" class="micro">Baseline found.</text>
+      <text x="743" y="291" class="micro">Window not eligible.</text>
+      <text x="743" y="308" class="micro">Emit:</text>
+      <text x="743" y="324" class="status">insufficient_history</text>
 
-      <rect x="688" y="332" width="181" height="94" rx="6" class="success-card" />
-      <circle cx="714" cy="359" r="14" class="success-outline" />
-      <path d="m706 359 6 6 11-14" class="success-line" />
-      <text x="743" y="351" class="outcome-title success-text">Scored</text>
-      <text x="743" y="366" class="micro">Window eligible.</text>
-      <text x="743" y="381" class="micro">Extract features and score.</text>
-      <text x="743" y="396" class="micro">Apply policy.</text>
-      <text x="743" y="408" class="micro">Emit decision with status:</text>
-      <text x="743" y="422" class="status">scored</text>
+      <rect x="688" y="340" width="181" height="94" rx="6" class="success-card" />
+      <circle cx="714" cy="367" r="14" class="success-outline" />
+      <path d="m706 367 6 6 11-14" class="success-line" />
+      <text x="743" y="359" class="outcome-title success-text">Scored</text>
+      <text x="743" y="374" class="micro">Window eligible.</text>
+      <text x="743" y="389" class="micro">Extract features and score.</text>
+      <text x="743" y="404" class="micro">Apply policy.</text>
+      <text x="743" y="416" class="micro">Emit decision with status:</text>
+      <text x="743" y="430" class="status">scored</text>
     </g>
 
-    <line x1="882" y1="260" x2="896" y2="260" class="success-line outcome-connector" marker-end="url(#arrow-success)" />
+    <line x1="874" y1="260" x2="894" y2="260" class="success-line outcome-connector" marker-end="url(#arrow-success)" />
 
     <g aria-label="Publish decision">
       <rect x="898" y="185" width="113" height="174" rx="7" class="stage" />
@@ -150,9 +153,9 @@
   .detector-outcome-diagram { width: 112%; margin: 2rem 0 2.5rem -1%; }
   svg { display: block; height: auto; font-family: inherit; }
   .frame, .stage { fill: var(--card); stroke: var(--border); vector-effect: non-scaling-stroke; }
-  .error-card { fill: color-mix(in oklch, var(--destructive) 5%, var(--card)); stroke: color-mix(in oklch, var(--destructive) 45%, var(--border)); }
-  .warning-card { fill: color-mix(in oklch, var(--risk-medium) 5%, var(--card)); stroke: color-mix(in oklch, var(--risk-medium) 48%, var(--border)); }
-  .success-card { fill: color-mix(in oklch, var(--risk-low) 5%, var(--card)); stroke: color-mix(in oklch, var(--risk-low) 48%, var(--border)); }
+  .error-card { fill: var(--card); stroke: var(--destructive); }
+  .warning-card { fill: var(--card); stroke: var(--risk-medium); }
+  .success-card { fill: var(--card); stroke: var(--risk-low); }
   .error-card, .warning-card, .success-card { vector-effect: non-scaling-stroke; }
   .diagram-title { fill: var(--foreground); font-size: 27px; font-weight: 750; }
   .diagram-subtitle { fill: var(--muted-foreground); font-size: 17px; }

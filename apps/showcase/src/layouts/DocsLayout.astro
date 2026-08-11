@@ -14,20 +14,12 @@ interface Props {
   headings?: MarkdownHeading[];
 }
 
-const {
-  title,
-  description,
-  accent = "primary",
-  section,
-  headings = [],
-} = Astro.props;
+const { title, description, accent = "primary", section, headings = [] } = Astro.props;
 
 const accentVar =
-  accent === "flow"
-    ? "var(--flow)"
-    : accent === "cold"
-      ? "var(--cold-path)"
-      : "var(--primary)";
+  accent === "flow" ? "var(--flow)" : accent === "cold" ? "var(--cold-path)" : "var(--primary)";
+
+const hasTableOfContents = headings.some((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
 
 <!doctype html>
@@ -40,12 +32,19 @@ const accentVar =
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>
-  <body class="flex min-h-screen flex-col bg-background">
+  <body class="bg-background flex min-h-screen flex-col">
     <div class="flex flex-1 flex-col md:flex-row md:items-start">
       <Sidebar />
-      <main class="doc-main min-w-0 flex-1 bg-card" style={`--doc-accent: ${accentVar};`}>
-        <div class="flex gap-10 px-6 lg:px-12 xl:gap-16">
-          <article class="doc-article min-w-0 flex-1 pt-10 pb-24">
+      <main class="doc-main bg-card min-w-0 flex-1" style={`--doc-accent: ${accentVar};`}>
+        <div
+          class:list={["doc-content px-6 lg:px-12", hasTableOfContents && "doc-content--with-toc"]}
+        >
+          <article
+            class:list={[
+              "doc-article min-w-0 pt-10 pb-24",
+              !hasTableOfContents && "doc-article--without-toc",
+            ]}
+          >
             <header class="mb-10 flex items-start justify-between gap-6">
               <div class="min-w-0">
                 {section && <p class="doc-eyebrow">{section}</p>}
@@ -53,9 +52,10 @@ const accentVar =
               </div>
               <CopyLink />
             </header>
+            <TableOfContents headings={headings} variant="compact" />
             <slot />
           </article>
-          <TableOfContents headings={headings} />
+          <TableOfContents headings={headings} variant="sidebar" />
         </div>
       </main>
     </div>
@@ -83,5 +83,41 @@ const accentVar =
   }
   .doc-article {
     max-width: 54rem;
+  }
+
+  @media (min-width: 72rem) {
+    .doc-content--with-toc {
+      display: grid;
+      grid-template-columns: minmax(0, 54rem) 11rem;
+      column-gap: 2rem;
+      justify-content: space-between;
+    }
+
+    .doc-content--with-toc .doc-article :global(.docs-prose figure) {
+      width: 100%;
+      max-width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  @media (min-width: 96rem) {
+    .doc-content--with-toc {
+      grid-template-columns: minmax(0, 64rem) 14rem;
+      column-gap: 4rem;
+    }
+
+    .doc-article {
+      max-width: 64rem;
+    }
+
+    .doc-article--without-toc {
+      max-width: 68rem;
+    }
+  }
+
+  @media (min-width: 110rem) {
+    .doc-content--with-toc {
+      grid-template-columns: minmax(0, 64rem) 17rem;
+    }
   }
 </style>

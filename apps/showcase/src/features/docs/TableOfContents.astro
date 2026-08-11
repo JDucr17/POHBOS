@@ -3,30 +3,45 @@ import type { MarkdownHeading } from "astro";
 
 interface Props {
   headings: MarkdownHeading[];
+  variant?: "compact" | "sidebar";
 }
 
-const { headings } = Astro.props;
+const { headings, variant = "sidebar" } = Astro.props;
 const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 ---
 
 {
-  items.length > 0 && (
-    <nav
-      aria-label="On this page"
-      class="toc ml-auto hidden w-56 shrink-0 lg:block"
-    >
-      <div class="sticky top-0 pt-10 pb-12">
-        <p class="toc-label mb-4 text-muted-foreground">On this page</p>
-        <ul class="flex flex-col border-l border-border">
+  items.length > 0 && variant === "compact" && (
+    <details class="toc-compact">
+      <summary>On this page</summary>
+      <ul class="toc-compact-list">
+        {items.map((h) => (
+          <li>
+            <a
+              href={`#${h.slug}`}
+              class:list={["toc-compact-link", h.depth === 3 && "toc-compact-link--nested"]}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )
+}
+
+{
+  items.length > 0 && variant === "sidebar" && (
+    <nav aria-label="On this page" class="toc ml-auto">
+      <div class="sticky top-8 pb-12">
+        <p class="toc-label text-muted-foreground mb-4">On this page</p>
+        <ul class="border-border flex flex-col border-l">
           {items.map((h) => (
             <li>
               <a
                 href={`#${h.slug}`}
                 data-toc-link
-                class:list={[
-                  "toc-link block py-1.5 text-sm leading-snug",
-                  h.depth === 3 ? "pl-7" : "pl-4",
-                ]}
+                class:list={["toc-link block py-1.5", h.depth === 3 && "toc-link--nested"]}
               >
                 {h.text}
               </a>
@@ -39,6 +54,65 @@ const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 }
 
 <style>
+  .toc-compact {
+    margin: -0.25rem 0 2rem;
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    background: color-mix(in oklch, var(--muted) 40%, var(--card));
+  }
+
+  .toc-compact summary {
+    display: flex;
+    cursor: pointer;
+    list-style: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    color: var(--foreground);
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+
+  .toc-compact summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-compact summary::after {
+    content: "+";
+    color: var(--muted-foreground);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .toc-compact[open] summary {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-compact[open] summary::after {
+    content: "−";
+  }
+
+  .toc-compact-list {
+    padding: 0.55rem 0.75rem 0.7rem;
+  }
+
+  .toc-compact-link {
+    display: block;
+    padding: 0.35rem 0.3rem;
+    color: var(--muted-foreground);
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
+  .toc-compact-link:hover {
+    color: var(--doc-accent);
+  }
+
+  .toc-compact-link--nested {
+    padding-left: 1.2rem;
+  }
+
   .toc-label {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 0.68rem;
@@ -50,10 +124,17 @@ const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
   .toc-link {
     color: var(--muted-foreground);
     margin-left: -1px;
+    padding-left: 0.75rem;
     border-left: 2px solid transparent;
+    font-size: 0.78rem;
+    line-height: 1.35;
     transition:
       color 0.15s ease,
       border-color 0.15s ease;
+  }
+
+  .toc-link--nested {
+    padding-left: 1.25rem;
   }
 
   .toc-link:hover {
@@ -65,26 +146,57 @@ const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     border-left-color: var(--doc-accent);
     font-weight: 600;
   }
+
+  .toc {
+    display: none;
+    width: 11rem;
+  }
+
+  @media (min-width: 72rem) {
+    .toc {
+      display: block;
+    }
+
+    .toc-compact {
+      display: none;
+    }
+  }
+
+  @media (min-width: 96rem) {
+    .toc {
+      width: 14rem;
+    }
+
+    .toc-link {
+      padding-left: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .toc-link--nested {
+      padding-left: 1.75rem;
+    }
+  }
+
+  @media (min-width: 110rem) {
+    .toc {
+      width: 17rem;
+    }
+  }
 </style>
 
 <script>
-  const links = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"),
-  );
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]"));
 
   const entries = links
     .map((link) => {
       const id = decodeURIComponent((link.getAttribute("href") ?? "").slice(1));
       return { link, el: document.getElementById(id) };
     })
-    .filter((entry): entry is { link: HTMLAnchorElement; el: HTMLElement } =>
-      Boolean(entry.el),
-    );
+    .filter((entry): entry is { link: HTMLAnchorElement; el: HTMLElement } => Boolean(entry.el));
 
   const firstEntry = entries[0];
-  const lastEntry = entries.at(-1);
 
-  if (firstEntry && lastEntry) {
+  if (firstEntry) {
     const OFFSET = 120;
 
     let active: HTMLAnchorElement | null = null;
@@ -97,17 +209,22 @@ const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
       active = link;
     };
 
+    let navigationTarget: HTMLAnchorElement | null = null;
+
+    for (const link of links) {
+      link.addEventListener("click", () => {
+        navigationTarget = link;
+        setActive(link);
+      });
+    }
+
     let ticking = false;
 
     const update = () => {
       ticking = false;
 
-      const atBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 2;
-
-      if (atBottom) {
-        setActive(lastEntry.link);
+      if (navigationTarget) {
+        setActive(navigationTarget);
         return;
       }
 
@@ -130,6 +247,25 @@ const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
       ticking = true;
       requestAnimationFrame(update);
     };
+
+    const releaseNavigationTarget = () => {
+      if (!navigationTarget) return;
+
+      navigationTarget = null;
+      onScroll();
+    };
+
+    const scrollKeys = new Set(["ArrowDown", "ArrowUp", "End", "Home", "PageDown", "PageUp", " "]);
+
+    window.addEventListener("wheel", releaseNavigationTarget, { passive: true });
+    window.addEventListener("touchstart", releaseNavigationTarget, { passive: true });
+    window.addEventListener("pointerdown", (event) => {
+      if (event.target instanceof Element && event.target.closest("[data-toc-link]")) return;
+      releaseNavigationTarget();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (scrollKeys.has(event.key)) releaseNavigationTarget();
+    });
 
     update();
     window.addEventListener("scroll", onScroll, { passive: true });

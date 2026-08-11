@@ -1,23 +1,13 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
-import duckdbEhWorker from "@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url";
-import duckdbEhWasm from "@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url";
-import duckdbMvpWorker from "@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js?url";
-import duckdbMvpWasm from "@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm?url";
 
-const bundles: duckdb.DuckDBBundles = {
-  mvp: {
-    mainModule: duckdbMvpWasm,
-    mainWorker: duckdbMvpWorker,
-  },
-  eh: {
-    mainModule: duckdbEhWasm,
-    mainWorker: duckdbEhWorker,
-  },
-};
+const bundles = duckdb.getJsDelivrBundles();
 
 export async function createBrowserDatabase(): Promise<duckdb.AsyncDuckDB> {
   const bundle = await duckdb.selectBundle(bundles);
-  const worker = new Worker(bundle.mainWorker!);
+  const workerUrl = URL.createObjectURL(
+    new Blob([`importScripts("${bundle.mainWorker!}");`], { type: "text/javascript" }),
+  );
+  const worker = new Worker(workerUrl);
   const database = new duckdb.AsyncDuckDB(new duckdb.VoidLogger(), worker);
 
   try {
@@ -26,6 +16,8 @@ export async function createBrowserDatabase(): Promise<duckdb.AsyncDuckDB> {
   } catch (error) {
     await database.terminate();
     throw error;
+  } finally {
+    URL.revokeObjectURL(workerUrl);
   }
 }
 

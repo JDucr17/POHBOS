@@ -10,6 +10,7 @@
     formatFullUtcDate,
     formatInteger,
     formatPercent,
+    responsiveDateTicks,
     toUtcDate,
   } from "@/features/analytics/format";
   import type { DailyRiskSummary } from "@/features/analytics/types";
@@ -31,6 +32,7 @@
       isPartialDay: day.isPartialDay,
     })),
   );
+  const xTicks = $derived(responsiveDateTicks(chartData.map((day) => day.date)));
   const yMaximum = $derived.by(() => {
     const observedMaximum = Math.max(0, ...chartData.map((day) => day.evaluationRate));
     return Math.min(100, Math.max(5, Math.ceil((observedMaximum * 1.15) / 5) * 5));
@@ -50,8 +52,10 @@
         data={chartData}
         x="date"
         xScale={scaleUtc()}
+        xPadding={[18, 18]}
         yDomain={[0, yMaximum]}
         yPadding={[0, 18]}
+        padding={{ top: 4, right: 20, bottom: 24, left: 44 }}
         points
         series={[
           {
@@ -67,7 +71,7 @@
             line: { class: "stroke-2" },
           },
           points: { r: 3.5 },
-          xAxis: { format: formatChartDate, ticks: chartData.length },
+          xAxis: { format: formatChartDate, ticks: xTicks, tickLength: 6 },
           yAxis: { format: formatPercent },
         }}
       >
